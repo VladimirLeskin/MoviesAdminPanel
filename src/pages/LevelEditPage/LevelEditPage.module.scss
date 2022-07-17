@@ -1,0 +1,13 @@
+.root {
+  padding: 20px;
+  display: flex;
+
+  .Control {
+    margin-bottom: 20px;
+  }
+
+  .ImagePreview {
+    display: block;
+    max-width: 150px;
+  }
+}
