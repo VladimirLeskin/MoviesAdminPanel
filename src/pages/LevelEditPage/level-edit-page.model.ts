@@ -102,6 +102,7 @@ export class LevelEditPageModel {
         id: q.id,
         image: {id: q.image_id, path: q.imagePath},
         variants: q.variants.filter(v => v.movie_id !== q.correctId),
+        correctVariant: q.variants.find(v => v.movie_id === q.correctId),
       })).sort((a, b) => +a.id - +b.id),
     };
   }

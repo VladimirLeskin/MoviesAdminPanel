@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const dotenv = require('dotenv');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
+dotenv.config({path: path.resolve('.env.local')});
 dotenv.config();
 const hashType = '[contenthash:8]';
 

@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useState} from 'react';
+import React, {FC, useCallback} from 'react';
 import {Drawer, IconButton} from '@mui/material';
 import {Remove} from '@mui/icons-material';
 
@@ -18,6 +18,7 @@ interface Image {
 interface QuestionEditProps {
   id?: string;
   image: {id: string; path: string};
+  correctVariant?: IEditedLevelQuestionVariant;
   variants: IEditedLevelQuestionVariant[];
 }
 
@@ -25,25 +26,34 @@ interface QuestionEditCallProps {
   onChange: (q: QuestionEditProps) => void;
 }
 
-export const QuestionEdit: FC<QuestionEditProps & QuestionEditCallProps> = ({id, image, variants, onChange}) => {
-  const [selectedObjId, setSelectedObjId] = useState<string | undefined>();
+export const QuestionEdit: FC<QuestionEditProps & QuestionEditCallProps> = ({
+  id,
+  image,
+  correctVariant,
+  variants,
+  onChange,
+}) => {
   const {state: pickerOpened, toggleState: togglePicker} = useBooleanState(false);
 
   const onSelectImage = useCallback(
     (movie: IMovieDto, newImage: Image) => {
-      setSelectedObjId(movie.movie_id);
-      onChange({id, image: newImage, variants});
+      onChange({id, image: newImage, variants, correctVariant: {movie_id: movie.movie_id, title: movie.title}});
     },
     [id, onChange, variants]
   );
 
   const onAddVariant = useCallback(
     (movie: IMovieDto) => {
-      if (movie.movie_id !== selectedObjId) {
-        onChange({id, image, variants: variants.concat({title: movie.title, movie_id: movie.movie_id})});
+      if (movie.movie_id !== correctVariant?.movie_id) {
+        onChange({
+          id,
+          image,
+          correctVariant,
+          variants: variants.concat({title: movie.title, movie_id: movie.movie_id}),
+        });
       }
     },
-    [id, image, onChange, selectedObjId, variants]
+    [correctVariant, id, image, onChange, variants]
   );
 
   const onRemoveVariant = useCallback(
@@ -60,6 +70,11 @@ export const QuestionEdit: FC<QuestionEditProps & QuestionEditCallProps> = ({id,
       </div>
       <div>
         <div>
+          <div>
+            <span>
+              <b>{correctVariant?.title}</b>
+            </span>
+          </div>
           {variants.map((v, index) => (
             <div key={v.movie_id}>
               <IconButton onClick={() => onRemoveVariant(index)}>

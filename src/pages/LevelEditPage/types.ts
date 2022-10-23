@@ -9,6 +9,7 @@ export interface IEditedLevelQuestion {
   id?: string;
   image: {id: string, path: string};
   variants: IEditedLevelQuestionVariant[];
+  correctVariant?: IEditedLevelQuestionVariant;
 }
 
 export interface IEditedLevelInfo {

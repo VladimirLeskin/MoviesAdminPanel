@@ -88,7 +88,9 @@ export const LevelEditPage: FC = observer(() => {
           <label>Вопросы</label>
           <div>
             {levelInfo.questions.map((q, index) => (
-              <QuestionEdit {...q} key={q.image.id} onChange={v => onQuestionChanged(index, v)} />
+              <div key={q.image.id} className={css.SingleQuestion}>
+                <QuestionEdit {...q} onChange={v => onQuestionChanged(index, v)} />
+              </div>
             ))}
             <IconButton onClick={addQuestion}>
               <Add />
