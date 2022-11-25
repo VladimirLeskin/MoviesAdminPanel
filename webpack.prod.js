@@ -4,6 +4,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const staticFilePath = 'static';
+const hashType = '[contenthash:8]';
 
 module.exports = merge(common, {
   mode: 'production',
