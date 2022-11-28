@@ -1,7 +1,8 @@
 import Config from '../entries/Config';
 import axios, {AxiosResponse} from 'axios';
 import {IPagedResponse} from './types';
-import {IMovieDto} from './dto/MovieDto';
+import {IMovieDto, IMovieInfoDto} from './dto/MovieDto';
+import { ILevelDto } from './dto/LevelDto';
 
 interface IFindRequestParams {
   pageSize?: number;
@@ -14,10 +15,18 @@ export default class MoviesApi {
     return Config.apiUrl;
   }
 
+  public static getMovieInfo(movieId: string): Promise<AxiosResponse<IMovieInfoDto>> {
+    return axios.get(`${MoviesApi.baseUrl}/movies/view?id=${movieId}`);
+  }
+
   public static getMovies(params: IFindRequestParams): Promise<AxiosResponse<IPagedResponse<IMovieDto>>> {
     const paramsParts = Object.entries(params)
       .filter(([, value]) => value != null)
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`);
     return axios.get(`${MoviesApi.baseUrl}/movies?${paramsParts.join('&')}`);
+  }
+
+  public static createMovieInfo(movieInfoDto: IMovieInfoDto): Promise<AxiosResponse<IMovieInfoDto>> {
+    return axios.post(`${MoviesApi.baseUrl}/movies/create`, movieInfoDto);
   }
 }

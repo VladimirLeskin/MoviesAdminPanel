@@ -39,8 +39,8 @@ export const ImageUpload: FC<ImageUploadProps> = props => {
 
   return (
     <div className={css.root}>
-      <label htmlFor="lvl-image">
-        <input accept="image/*" id="lvl-image" multiple type="file" style={{display: 'none'}} onChange={onFileChange} />
+      <label>
+        <input accept="image/*" multiple type="file" style={{display: 'none'}} onChange={onFileChange} />
         <Button variant="contained" component="span">
           Загрузить
         </Button>

@@ -1,0 +1,33 @@
+.root {
+  display: flex;
+  padding-top: 50px;
+
+  .Buttons {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 50px;
+  }
+
+  .Images {
+
+  }
+
+  .MovieInfo {
+    min-width: 600px;
+    width: 50%;
+    padding: 0 10px;
+
+    .Control {
+      margin: 10px 0;
+    }
+
+    .Description {
+      margin: 10px 0;
+    }
+  }
+
+  .Images {
+    padding: 0 10px;
+  }
+}

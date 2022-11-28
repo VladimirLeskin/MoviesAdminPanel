@@ -1,6 +1,7 @@
 import React, {FC} from 'react';
 import {Route, Routes} from 'react-router';
 import {LevelEditPage} from './pages/LevelEditPage/LevelEditPage';
+import {MovieEditPage} from './pages/MovieEditPage/MovieEditPage';
 import {BrowserRouter} from 'react-router-dom';
 
 import css from './App.module.scss';
@@ -12,6 +13,8 @@ export const App: FC = () => {
         <Routes>
           <Route path="/levels/:levelId" element={<LevelEditPage />} />
           <Route path="/levels/create" element={<LevelEditPage />} />
+          <Route path="/movies/:movieId" element={<MovieEditPage />} />
+          <Route path="/movies/create" element={<MovieEditPage />} />
         </Routes>
       </BrowserRouter>
     </div>

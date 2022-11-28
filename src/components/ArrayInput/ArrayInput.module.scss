@@ -1,0 +1,8 @@
+.ArrayInputItem {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 1ch;
+  align-items: center;
+  grid-template-columns: 1fr 10px;
+  margin-bottom: 8px;
+}
