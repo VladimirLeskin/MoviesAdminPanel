@@ -2,6 +2,7 @@ const {merge} = require('webpack-merge');
 const common = require('./webpack.common');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
 
 const staticFilePath = 'static';
 const hashType = '[contenthash:8]';
@@ -38,5 +39,11 @@ module.exports = merge(common, {
     new MiniCssExtractPlugin({
       filename: `${staticFilePath}/css/[name].${hashType}.css`,
     }),
+    new webpack.DefinePlugin(
+      ['API_HOST', 'IMAGES_HOST'].reduce((acc, cur) => {
+        acc[`process.env.${cur}`] = `"${process.env[cur]}"`;
+        return acc;
+      }, {})
+    ),
   ],
 });
