@@ -1,5 +1,5 @@
-import React, { FC, useCallback, useState } from "react";
-import { Button, TextField } from "@mui/material";
+import React, {FC, useCallback, useState} from 'react';
+import {Button, TextField} from '@mui/material';
 
 export interface IMovieFilter {
   search?: string;
@@ -10,24 +10,25 @@ interface MoviesPickerFilterProps {
   onChange: (filter: IMovieFilter) => void;
 }
 
-export const MoviesPickerFilter: FC<MoviesPickerFilterProps> = ({ onChange, ...filter }) => {
+export const MoviesPickerFilter: FC<MoviesPickerFilterProps> = ({onChange, ...filter}) => {
   const [filterState, setFilterState] = useState(filter);
 
   const onSearchChanged = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFilterState({ ...filterState, search: e.target.value });
+      setFilterState({...filterState, search: e.target.value});
     },
     [filterState]
   );
 
-  const onSubmit = useCallback(() => {
+  const onSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
     onChange(filterState);
   }, [filterState, onChange]);
 
   return (
-    <div>
-      <TextField size="small" value={filterState.search ?? ""} label="Название" onChange={onSearchChanged} />
-      <Button onClick={onSubmit}>Применить</Button>
-    </div>
+    <form onSubmit={onSubmit}>
+      <TextField size="small" value={filterState.search ?? ''} label="Название" onChange={onSearchChanged} />
+      <Button type="submit">Применить</Button>
+    </form>
   );
 };

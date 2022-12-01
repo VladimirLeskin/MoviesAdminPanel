@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, {FC} from 'react';
 
 interface IListItem {
   [key: string]: any;
@@ -16,7 +16,7 @@ interface ItemsListProps {
   columns: IListColumn[];
 }
 
-export const ItemsList: FC<ItemsListProps> = ({ data, columns }) => {
+export const ItemsList: FC<ItemsListProps> = ({data, columns}) => {
   return (
     <div>
       <table>
@@ -44,6 +44,6 @@ export const ItemsList: FC<ItemsListProps> = ({ data, columns }) => {
   );
 };
 
-function DefaultCell({ data }: { data: any }) {
+function DefaultCell({data}: { data: any }) {
   return <>{String(data)}</>;
 }

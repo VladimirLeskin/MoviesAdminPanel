@@ -1,0 +1,51 @@
+.root {
+  // TODO move to colors.scss
+  $mainColor: #009DFF;
+  $textColor: #fff;
+
+  background-color: #eee;
+  min-height: 30px;
+  width: 100%;
+  display: flex;
+
+  .logo {
+    line-height: 100%;
+    padding: 0 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: $mainColor;
+    color: $textColor;
+
+    &:after {
+      content: '';
+      position: absolute;
+      height: 100%;
+      left: 100%;
+      top: 0;
+      width: 7px;
+      box-sizing: border-box;
+      background: linear-gradient(to left bottom, transparent 47%, $mainColor 50%) top /
+      100% 50% no-repeat,
+      linear-gradient(to left top, transparent 47%, $mainColor 50%) bottom / 100% 50% no-repeat;
+    }
+  }
+
+  .menu {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+
+    .item {
+      margin: 0 10px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+
+      &.itemActive {
+        box-shadow: inset 0 3px 0 $mainColor;
+      }
+    }
+  }
+}

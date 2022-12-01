@@ -2,7 +2,6 @@ import Config from '../entries/Config';
 import axios, {AxiosResponse} from 'axios';
 import {IPagedResponse} from './types';
 import {IMovieDto, IMovieInfoDto} from './dto/MovieDto';
-import { ILevelDto } from './dto/LevelDto';
 
 interface IFindRequestParams {
   pageSize?: number;

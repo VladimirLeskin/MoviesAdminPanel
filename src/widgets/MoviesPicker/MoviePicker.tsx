@@ -3,6 +3,7 @@ import IconButton from '@mui/material/IconButton';
 import {SelectAll} from '@mui/icons-material';
 import {Button, Modal} from '@mui/material';
 import {observer} from 'mobx-react';
+import {Link} from 'react-router-dom';
 
 import {IMovieDto} from 'src/api/dto/MovieDto';
 import {Image} from 'src/components/Image/Image';
@@ -64,7 +65,9 @@ function MovieRow(props: IMovieRow) {
       <IconButton onClick={onSelectMovieHandler}>
         <SelectAll fontSize="small" />
       </IconButton>
-      <div>{movie.movie_id}</div>
+      <div>
+        <Link to={`/movies/${movie.movie_id}`} target="_blank">{movie.movie_id}</Link>
+      </div>
       <div>{movie.date}</div>
       <div>
         {movie.title}/{movie.original_title}

@@ -1,6 +1,5 @@
 import {makeAutoObservable} from 'mobx';
 import {IMovieDto} from '../../api/dto/MovieDto';
-import Config from '../../entries/Config';
 import MoviesApi from '../../api/Movies';
 
 interface IMovieFilter {

@@ -1,7 +1,9 @@
 import {QuestionDTO} from './QuestionDTO';
 
 export enum ELevelType {
+  // eslint-disable-next-line no-unused-vars
   COUNT = 'COUNT',
+  // eslint-disable-next-line no-unused-vars
   TIME = 'TIME',
 }
 
