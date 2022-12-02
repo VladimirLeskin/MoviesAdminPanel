@@ -1,7 +1,5 @@
-name: build-movies-frontend
+name: build-movies-admin-panel
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:

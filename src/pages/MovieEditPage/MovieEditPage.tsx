@@ -1,5 +1,5 @@
 import React, {FC, useCallback, useEffect} from 'react';
-import {useParams} from 'react-router';
+import {useNavigate, useParams} from 'react-router';
 import {MovieEditPageModel} from './movie-edit-page.model';
 import {observer} from 'mobx-react';
 import {Accordion, AccordionDetails, AccordionSummary, Box, Button, FormControl, TextField} from '@mui/material';
@@ -8,6 +8,7 @@ import {DescriptionForm} from './components/DescriptionForm';
 import {IEditedMovieInfo} from './types';
 import {ArrayInput} from 'src/components/ArrayInput/ArrayInput';
 import {ImageEditor} from './components/ImageEditor';
+import {ROUTES} from '../../constants';
 
 import css from './MoviesEditPage.module.scss';
 
@@ -23,13 +24,20 @@ const stringFields = [
   {key: 'country', title: 'Страна (2-4 символа)'},
 ];
 
-export const MovieEditPage: FC<MovieEditPageProps> = observer(props => {
+export const MovieEditPage: FC<MovieEditPageProps> = observer(() => {
+  const navigate = useNavigate();
   const {movieId} = useParams<{movieId: string}>();
   const {movieInfo, updateMovie, load, save} = movieEditPageModel;
 
   useEffect(() => {
     load(movieId);
   }, [load, movieId]);
+
+  useEffect(() => {
+    if (movieInfo.id && movieId !== movieInfo.id) {
+      navigate(ROUTES.MOVIES.DETAILS.replace(':movieId', movieInfo.id));
+    }
+  }, [movieId, movieInfo.id, navigate]);
 
   const updateField = useCallback(
     (id: string, value: any) => {

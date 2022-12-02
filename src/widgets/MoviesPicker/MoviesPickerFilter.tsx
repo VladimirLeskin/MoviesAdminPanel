@@ -20,15 +20,14 @@ export const MoviesPickerFilter: FC<MoviesPickerFilterProps> = ({onChange, ...fi
     [filterState]
   );
 
-  const onSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = useCallback(() => {
     onChange(filterState);
   }, [filterState, onChange]);
 
   return (
-    <form onSubmit={onSubmit}>
+    <div>
       <TextField size="small" value={filterState.search ?? ''} label="Название" onChange={onSearchChanged} />
-      <Button type="submit">Применить</Button>
-    </form>
+      <Button onClick={onSubmit}>Применить</Button>
+    </div>
   );
 };
