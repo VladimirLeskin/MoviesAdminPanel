@@ -9,6 +9,10 @@ const hashType = '[contenthash:8]';
 module.exports = merge(common, {
   mode: 'production',
   devtool: 'nosources-source-map',
+  output: {
+    clean: true,
+    publicPath: `/admin/`,
+  },
   optimization: {
     minimize: true,
     minimizer: [
