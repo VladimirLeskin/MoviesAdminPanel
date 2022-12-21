@@ -2,6 +2,7 @@ import React, {FC} from 'react';
 import {Route, Routes} from 'react-router';
 import {BrowserRouter} from 'react-router-dom';
 import {observer} from 'mobx-react';
+import {ToastContainer} from 'react-toastify';
 
 import {MovieEditPage} from './pages/MovieEditPage/MovieEditPage';
 import {Header} from './components/Header/Header';
@@ -12,6 +13,7 @@ import {AuthModel} from './models/AuthModel';
 import {LoginForm} from './components/LoginForm/LoginForm';
 import {LevelEditPage} from './pages/LevelEditPage/LevelEditPage';
 
+import 'react-toastify/dist/ReactToastify.css';
 import css from './App.module.scss';
 
 const HEADER_ITEMS = [
@@ -30,6 +32,9 @@ export const App: FC = observer(() => {
   }
   return (
     <div className={css.App}>
+      <div className={css.ToastContainer}>
+        <ToastContainer theme="colored" />
+      </div>
       <BrowserRouter>
         <Header title="админка" items={HEADER_ITEMS} />
         <div className={css.Content}>

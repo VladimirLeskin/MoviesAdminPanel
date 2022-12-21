@@ -2,7 +2,19 @@ import React, {FC, useCallback, useEffect} from 'react';
 import {useNavigate, useParams} from 'react-router';
 import {MovieEditPageModel} from './movie-edit-page.model';
 import {observer} from 'mobx-react';
-import {Accordion, AccordionDetails, AccordionSummary, Box, Button, FormControl, TextField} from '@mui/material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  FormControl,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  TextField,
+} from '@mui/material';
+import {SelectChangeEvent} from '@mui/material/Select/SelectInput';
 
 import {DescriptionForm} from './components/DescriptionForm';
 import {IEditedMovieInfo} from './types';
@@ -27,7 +39,7 @@ const stringFields = [
 export const MovieEditPage: FC<MovieEditPageProps> = observer(() => {
   const navigate = useNavigate();
   const {movieId} = useParams<{movieId: string}>();
-  const {movieInfo, updateMovie, load, save} = movieEditPageModel;
+  const {movieInfo, updateMovie, genresDescription, load, save} = movieEditPageModel;
 
   useEffect(() => {
     load(movieId);
@@ -66,6 +78,14 @@ export const MovieEditPage: FC<MovieEditPageProps> = observer(() => {
     [movieInfo, updateMovie]
   );
 
+  const onGenresChanged = useCallback(
+    (e: SelectChangeEvent<number[]>) => {
+      const value = e.target.value;
+      updateMovie({...movieInfo, genres: typeof value === 'string' ? value.split(',').map(v => +v) : value});
+    },
+    [movieInfo, updateMovie]
+  );
+
   const onImagesChanged = useCallback(
     (images: IEditedMovieInfo['images']) => {
       updateMovie({...movieInfo, images});
@@ -92,11 +112,32 @@ export const MovieEditPage: FC<MovieEditPageProps> = observer(() => {
               />
             </FormControl>
           ))}
-          <input
-            type="date"
-            value={movieInfo.release_date?.toISOString().substring(0, 10) ?? ''}
-            onChange={onReleaseDateChanged}
-          />
+          <Select
+            value={movieInfo.genres}
+            label="Жанры"
+            size="small"
+            onChange={onGenresChanged}
+            input={<OutlinedInput label="Жанры" />}
+            multiple
+            multiline
+          >
+            {genresDescription.map(genre => (
+              <MenuItem
+                key={genre.genre_id}
+                value={genre.genre_id}
+                selected={movieInfo.genres.includes(genre.genre_id)}
+              >
+                {genre.name}
+              </MenuItem>
+            ))}
+          </Select>
+          <p>
+            <input
+              type="date"
+              value={movieInfo.release_date?.toISOString().substring(0, 10) ?? ''}
+              onChange={onReleaseDateChanged}
+            />
+          </p>
         </Box>
         <ArrayInput
           onChange={onChangeDescription}

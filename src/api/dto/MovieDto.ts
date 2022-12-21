@@ -1,3 +1,9 @@
+export interface IMovieGenre {
+  genre_id: number;
+  name: string;
+  lang: string;
+}
+
 export interface IMovieDto {
   movie_id: string;
   original_title: string;
@@ -12,9 +18,10 @@ export interface IMovieInfoDto {
   tmdb_id?: string;
   country: string;
   adult: boolean;
+  genres: IMovieGenre['genre_id'][];
   original_title: string;
-  release_date_ts?: number;
-  images: Array<{id?: string; name?: string, content?: string}>;
+  release_date_ts?: number; // seconds, not milliseconds
+  images: Array<{id?: string; name?: string; content?: string}>;
   descriptions: Record<
     string,
     {

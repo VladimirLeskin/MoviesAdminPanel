@@ -1,7 +1,7 @@
 import Config from '../entries/Config';
 import axios, {AxiosResponse} from 'axios';
 import {IPagedResponse} from './types';
-import {IMovieDto, IMovieInfoDto} from './dto/MovieDto';
+import {IMovieDto, IMovieGenre, IMovieInfoDto} from './dto/MovieDto';
 
 interface IFindRequestParams {
   pageSize?: number;
@@ -23,6 +23,10 @@ export default class MoviesApi {
       .filter(([, value]) => value != null)
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`);
     return axios.get(`${MoviesApi.baseUrl}/movies?${paramsParts.join('&')}`);
+  }
+
+  public static getGenresDescriptions(): Promise<AxiosResponse<IPagedResponse<IMovieGenre>>> {
+    return axios.get(`${MoviesApi.baseUrl}/genres?`);
   }
 
   public static createMovieInfo(movieInfoDto: IMovieInfoDto): Promise<AxiosResponse<IMovieInfoDto>> {
