@@ -2,6 +2,13 @@
   padding: 20px;
   display: flex;
 
+  .SaveBtn {
+    position: sticky;
+    bottom: 16px;
+    right: 16px;
+    align-self: flex-end;
+  }
+
   .SingleQuestion {
     margin: 5px 0;
     padding: 5px;

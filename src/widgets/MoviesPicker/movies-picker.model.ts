@@ -6,10 +6,17 @@ interface IMovieFilter {
   search?: string;
 }
 
+interface IMoviePagination {
+  page?: number; // from 0
+  pageSize: number;
+}
+
 export class MoviesPickerModel {
   private _movies: IMovieDto[] = [];
   private _moviesLoading = false;
   public filter: IMovieFilter = {};
+  public pagination: IMoviePagination = {pageSize: 20};
+  public total: number = 0;
 
   constructor() {
     makeAutoObservable(this, undefined, {autoBind: true});
@@ -22,15 +29,28 @@ export class MoviesPickerModel {
     }));
   }
 
+  private lastRequestId?: Symbol;
+
   public async loadMovies() {
     this.moviesLoading = true;
-    const response = await MoviesApi.getMovies({search: this.filter.search});
-    this._movies = response.data.items;
-    this.moviesLoading = false;
+    const currentRequestId = Symbol();
+    this.lastRequestId = currentRequestId;
+    const response = await MoviesApi.getMovies({search: this.filter.search, ...this.pagination});
+    if (currentRequestId === this.lastRequestId) {
+      this._movies = response.data.items;
+      this.total = response.data.meta.totalCount;
+      this.pagination.pageSize = response.data.meta.perPage;
+      this.moviesLoading = false;
+    }
   }
 
   public onFilterChanged(filter: IMovieFilter) {
     this.filter = filter;
+    this.loadMovies();
+  }
+
+  public onPaginationChanged(pagination: IMoviePagination) {
+    this.pagination = pagination;
     this.loadMovies();
   }
 

@@ -24,9 +24,25 @@ export const MoviesPickerFilter: FC<MoviesPickerFilterProps> = ({onChange, ...fi
     onChange(filterState);
   }, [filterState, onChange]);
 
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        onSubmit();
+      }
+    },
+    [onSubmit]
+  );
+
   return (
     <div>
-      <TextField size="small" value={filterState.search ?? ''} label="Название" onChange={onSearchChanged} />
+      <TextField
+        size="small"
+        value={filterState.search ?? ''}
+        label="Поиск"
+        onChange={onSearchChanged}
+        onKeyDown={onKeyDown}
+        placeholder="Название, imdb_id"
+      />
       <Button onClick={onSubmit}>Применить</Button>
     </div>
   );

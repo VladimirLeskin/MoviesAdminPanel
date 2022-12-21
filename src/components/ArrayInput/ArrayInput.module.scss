@@ -1,8 +1,10 @@
 .ArrayInputItem {
-  display: grid;
-  grid-auto-flow: column;
-  grid-column-gap: 1ch;
-  align-items: center;
-  grid-template-columns: 1fr 10px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   margin-bottom: 8px;
+
+  .ArrayInputItemRenderer {
+    width: 100%;
+  }
 }

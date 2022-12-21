@@ -1,0 +1,18 @@
+.Spinner {
+  border: 2px solid currentColor;
+  border-left: none;
+  animation: linear infinite 1s spinner-rotation;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+@keyframes spinner-rotation {
+  from {
+    transform: rotateZ(0deg);
+  }
+
+  from {
+    transform: rotateZ(360deg);
+  }
+}

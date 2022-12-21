@@ -15,24 +15,20 @@ interface Image {
   path: string;
 }
 
-interface QuestionEditProps {
+interface QuestionEditValue {
   id?: string;
   image: {id: string; path: string};
   correctVariant?: IEditedLevelQuestionVariant;
   variants: IEditedLevelQuestionVariant[];
 }
 
-interface QuestionEditCallProps {
-  onChange: (q: QuestionEditProps) => void;
+interface QuestionEditProps {
+  value: QuestionEditValue;
+  onChange: (q: QuestionEditValue) => void;
 }
 
-export const QuestionEdit: FC<QuestionEditProps & QuestionEditCallProps> = ({
-  id,
-  image,
-  correctVariant,
-  variants,
-  onChange,
-}) => {
+export const QuestionEdit: FC<QuestionEditProps> = ({value, onChange}) => {
+  const {id, image, correctVariant, variants} = value;
   const {state: pickerOpened, toggleState: togglePicker} = useBooleanState(false);
 
   const onSelectImage = useCallback(
@@ -86,15 +82,7 @@ export const QuestionEdit: FC<QuestionEditProps & QuestionEditCallProps> = ({
         </div>
         <span onClick={togglePicker}>Добавить вариант</span>
       </div>
-      <Drawer
-        open={pickerOpened}
-        anchor="right"
-        variant="persistent"
-        ModalProps={{
-          keepMounted: true,
-        }}
-        onClose={togglePicker}
-      >
+      <Drawer open={pickerOpened} anchor="right" variant="persistent" onClose={togglePicker}>
         <div className={css.moviePicker}>
           <MoviePicker onSelectImage={onSelectImage} onSelectMovie={onAddVariant} />
         </div>

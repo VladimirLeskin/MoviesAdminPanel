@@ -9,11 +9,11 @@ export interface ArrayInputProps<ValueType, MetaType = void> {
   defaultValue: ValueType;
   value: ValueType[];
   metaData?: MetaType;
-
   disabled?: boolean;
 
   onChange: (value: ValueType[]) => void;
   onAddInput?: () => void;
+  keyGetter?: (v: ValueType, index: number) => string | undefined;
 }
 
 export const ArrayInput = <ValueType extends unknown, MetaType extends unknown = void>({
@@ -23,6 +23,7 @@ export const ArrayInput = <ValueType extends unknown, MetaType extends unknown =
   metaData,
   onChange,
   onAddInput,
+  keyGetter,
   disabled,
 }: PropsWithChildren<ArrayInputProps<ValueType, MetaType>>) => {
   const addHandler = useCallback(() => {
@@ -59,7 +60,7 @@ export const ArrayInput = <ValueType extends unknown, MetaType extends unknown =
         {value.map((inputValue, index) => {
           return (
             <ArrayInputItem<ValueType, MetaType>
-              key={index}
+              key={keyGetter?.(inputValue, index) ?? index}
               value={inputValue}
               index={index}
               onChange={onChangeItem}

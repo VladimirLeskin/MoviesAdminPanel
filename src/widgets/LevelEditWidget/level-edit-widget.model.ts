@@ -1,7 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import LevelsApi from 'src/api/Levels';
 import {ELevelType, ILevelDto} from 'src/api/dto/LevelDto';
-import {IEditedLevelInfo} from './types';
+import {IEditedLevelInfo} from '../../pages/LevelEditPage/types';
 
 const emptyLevel: IEditedLevelInfo = {
   type: ELevelType.TIME,
@@ -13,9 +13,11 @@ const emptyLevel: IEditedLevelInfo = {
   isNewImage: false,
 };
 
-export class LevelEditPageModel {
+export class LevelEditWidgetModel {
   private _levelInfo: IEditedLevelInfo = emptyLevel;
   private _isLoading = false;
+
+  public readonly defaultQuestion = {variants: [], image: {id: '', path: ''}};
 
   constructor() {
     makeAutoObservable(this, undefined, {autoBind: true});
@@ -28,20 +30,18 @@ export class LevelEditPageModel {
         const data = await LevelsApi.getLevelInfo(levelId);
         if (data.data) {
           const levelInfoDto = data.data;
-          this.levelInfo = LevelEditPageModel.levelDtoToLevelInfo(levelInfoDto);
+          this.levelInfo = LevelEditWidgetModel.levelDtoToLevelInfo(levelInfoDto);
         }
       } finally {
         this.isLoading = false;
       }
+    } else {
+      this.levelInfo = emptyLevel;
     }
   }
 
   public updateLevel(info: IEditedLevelInfo) {
     this.levelInfo = info;
-  }
-
-  public addQuestion() {
-    this.levelInfo.questions.push({variants: [], image: {id: '', path: ''}});
   }
 
   public async save() {
@@ -57,14 +57,16 @@ export class LevelEditPageModel {
         type: levelInfo.type,
         previewImage: levelInfo.previewImagePath,
         isNewImage: levelInfo.isNewImage,
-        questions: levelInfo.questions.map(q => ({
-          imageId: q.image.id,
-          variants: q.variants.map(v => v.movie_id),
-        })),
+        questions: levelInfo.questions
+          .map(q => ({
+            imageId: q.image.id,
+            variants: q.variants.map(v => v.movie_id).filter(movieId => movieId),
+          }))
+          .filter(q => q.imageId),
       });
 
       if (response.data) {
-        this.levelInfo = LevelEditPageModel.levelDtoToLevelInfo(response.data);
+        this.levelInfo = LevelEditWidgetModel.levelDtoToLevelInfo(response.data);
       }
     } catch (err: any) {
     } finally {
@@ -98,12 +100,14 @@ export class LevelEditPageModel {
       totalTime: levelInfoDto.totalTime,
       timeForEach: levelInfoDto.timeForEach,
       isNewImage: false,
-      questions: levelInfoDto.questions.map(q => ({
-        id: q.id,
-        image: {id: q.image_id, path: q.imagePath},
-        variants: q.variants.filter(v => v.movie_id !== q.correctId),
-        correctVariant: q.variants.find(v => v.movie_id === q.correctId),
-      })).sort((a, b) => +a.id - +b.id),
+      questions: levelInfoDto.questions
+        .map(q => ({
+          id: q.id,
+          image: {id: q.image_id, path: q.imagePath},
+          variants: q.variants.filter(v => v.movie_id !== q.correctId),
+          correctVariant: q.variants.find(v => v.movie_id === q.correctId),
+        }))
+        .sort((a, b) => +a.id - +b.id),
     };
   }
 }

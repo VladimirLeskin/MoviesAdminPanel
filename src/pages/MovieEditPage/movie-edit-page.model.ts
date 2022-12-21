@@ -2,6 +2,7 @@ import {makeAutoObservable} from 'mobx';
 import {IEditedMovieInfo} from './types';
 import MoviesApi from '../../api/Movies';
 import {IMovieInfoDto} from '../../api/dto/MovieDto';
+import Config from '../../entries/Config';
 
 const emptyMovie: IEditedMovieInfo = {
   adult: false,
@@ -99,7 +100,11 @@ export class MovieEditPageModel {
       release_date:
         movieInfoDto.release_date_ts !== undefined ? new Date(movieInfoDto.release_date_ts * 1000) : undefined,
       adult: movieInfoDto.adult ?? false,
-      images: movieInfoDto.images.map(img => ({...img, src: `/images/${img.name}`, content: undefined})),
+      images: movieInfoDto.images.map(img => ({
+        ...img,
+        src: `${Config.imagesUrl}/${img.name}`,
+        content: undefined,
+      })),
       descriptions: Object.entries(movieInfoDto.descriptions).map(([lang, description]) => ({
         lang,
         ...description,

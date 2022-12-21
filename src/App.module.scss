@@ -1,7 +1,13 @@
 .App {
   color: #212121;
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  overflow: hidden;
+  height: 100vh;
 
   .Content {
     padding: 8px;
+    height: 100%;
+    overflow: auto;
   }
 }

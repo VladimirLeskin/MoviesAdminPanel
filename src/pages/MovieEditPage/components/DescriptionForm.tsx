@@ -2,7 +2,7 @@ import React, {FC, useCallback} from 'react';
 import {FormControl, InputLabel, MenuItem, Select, TextField} from '@mui/material';
 import {SelectChangeEvent} from '@mui/material/Select/SelectInput';
 
-import css from '../../LevelEditPage/LevelEditPage.module.scss';
+import css from '../../../widgets/LevelEditWidget/LevelEditWidget.module.scss';
 
 interface IDescriptionInfo {
   lang?: string;

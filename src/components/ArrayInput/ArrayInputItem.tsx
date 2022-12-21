@@ -39,7 +39,7 @@ export const ArrayInputItem = <ValueType extends unknown, MetaType extends unkno
   const InputComponent = inputRender;
   return (
     <div className={css.ArrayInputItem}>
-      <div>
+      <div className={css.ArrayInputItemRenderer}>
         <InputComponent value={value} onChange={onChangeItem} disabled={disabled} metaData={metaData} />
       </div>
       {!disabled && (

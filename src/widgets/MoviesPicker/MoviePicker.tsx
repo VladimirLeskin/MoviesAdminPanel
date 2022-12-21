@@ -7,8 +7,11 @@ import {Link} from 'react-router-dom';
 
 import {IMovieDto} from 'src/api/dto/MovieDto';
 import {Image} from 'src/components/Image/Image';
+import {Pagination} from 'src/components/Pagination/Pagination';
+import {Spinner} from 'src/components/Spinner/Spinner';
 import {MoviesPickerFilter} from './MoviesPickerFilter';
 import {MoviesPickerModel} from './movies-picker.model';
+import {ROUTES} from '../../constants';
 
 import css from './MoviesPicker.module.scss';
 
@@ -18,24 +21,30 @@ interface MoviePickerProps {
 }
 
 const model = new MoviesPickerModel();
+model.loadMovies();
 
 export const MoviePicker: FC<MoviePickerProps> = observer(props => {
   const {onSelectImage, onSelectMovie} = props;
 
-  const {movies, filter, onFilterChanged} = model;
+  const {movies, total, pagination, filter, moviesLoading, onFilterChanged, onPaginationChanged} = model;
 
-  useEffect(() => {
-    model.loadMovies();
-  }, []);
+  const paginationContainer = (
+    <div className={css.PaginationContainer}>
+      <Spinner className={!moviesLoading && css.LoaderHidden} />
+      <Pagination {...pagination} itemsTotal={total} onChange={onPaginationChanged} />
+    </div>
+  );
 
   return (
     <div>
       <MoviesPickerFilter {...filter} onChange={onFilterChanged} />
+      {paginationContainer}
       <div>
         {movies.map(mov => (
           <MovieRow movie={mov} key={mov.movie_id} onSelectImage={onSelectImage} onSelectMovie={onSelectMovie} />
         ))}
       </div>
+      {paginationContainer}
     </div>
   );
 });
@@ -66,20 +75,29 @@ function MovieRow(props: IMovieRow) {
         <SelectAll fontSize="small" />
       </IconButton>
       <div>
-        <Link to={`/movies/${movie.movie_id}`} target="_blank">{movie.movie_id}</Link>
+        <Link to={ROUTES.MOVIES.DETAILS.replace(':movieId', movie.movie_id)} target="_blank">
+          {movie.movie_id}
+        </Link>
       </div>
       <div>{movie.date}</div>
       <div>
         {movie.title}/{movie.original_title}
       </div>
-      <div>
+      <div className={css.MoviesImagesThumbnails}>
         {movie.images.map(img => (
           <Image src={img.path} width={75} key={img.id} onClick={() => setPreviewImg(img)} />
         ))}
       </div>
       <Modal open={!!previewImg} onClose={() => setPreviewImg(undefined)} className={css.PreviewModal}>
         <div className={css.PreviewModalContent}>
-          <Image src={previewImg?.path} style={{display: 'block', maxWidth: 700, maxHeight: 500}} />
+          <div>
+            <Image src={previewImg?.path} style={{maxWidth: 700, maxHeight: 500}} />
+          </div>
+          <div className={css.MoviesImagesThumbnails}>
+            {movie.images.map(img => (
+              <Image src={img.path} width={75} key={img.id} onClick={() => setPreviewImg(img)} />
+            ))}
+          </div>
           <Button variant="contained" onClick={onSelectImageHandler}>
             Выбрать эту картинку
           </Button>

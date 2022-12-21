@@ -5,7 +5,7 @@ import {IMovieDto, IMovieInfoDto} from './dto/MovieDto';
 
 interface IFindRequestParams {
   pageSize?: number;
-  offset?: number;
+  page?: number;
   search?: string;
 }
 

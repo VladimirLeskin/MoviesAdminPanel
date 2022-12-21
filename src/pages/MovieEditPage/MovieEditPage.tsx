@@ -58,7 +58,10 @@ export const MovieEditPage: FC<MovieEditPageProps> = observer(() => {
 
   const onReleaseDateChanged = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      updateMovie({...movieInfo, release_date: new Date(e.target.value)});
+      const newDate = new Date(e.target.value);
+      if (!isNaN(newDate.getTime())) {
+        updateMovie({...movieInfo, release_date: new Date(e.target.value)});
+      }
     },
     [movieInfo, updateMovie]
   );

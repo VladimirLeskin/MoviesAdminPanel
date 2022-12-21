@@ -1,18 +1,18 @@
 import React, {FC} from 'react';
 import {Route, Routes} from 'react-router';
 import {BrowserRouter} from 'react-router-dom';
+import {observer} from 'mobx-react';
 
-import {LevelEditPage} from './pages/LevelEditPage/LevelEditPage';
 import {MovieEditPage} from './pages/MovieEditPage/MovieEditPage';
 import {Header} from './components/Header/Header';
 import {ROUTES} from './constants';
 import {MoviePicker} from './widgets/MoviesPicker/MoviePicker';
 import {LevelsListPage} from './pages/LevelsListPage/LevelsListPage';
-
-import css from './App.module.scss';
-import {observer} from 'mobx-react';
 import {AuthModel} from './models/AuthModel';
 import {LoginForm} from './components/LoginForm/LoginForm';
+import {LevelEditPage} from './pages/LevelEditPage/LevelEditPage';
+
+import css from './App.module.scss';
 
 const HEADER_ITEMS = [
   {title: 'Фильмы', href: ROUTES.MOVIES.LIST},
