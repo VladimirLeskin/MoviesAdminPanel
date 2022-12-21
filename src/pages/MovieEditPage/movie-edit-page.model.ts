@@ -1,9 +1,10 @@
 import {makeAutoObservable, runInAction} from 'mobx';
+import {toast} from 'react-toastify';
+
 import {IEditedMovieInfo} from './types';
 import MoviesApi from '../../api/Movies';
 import {IMovieGenre, IMovieInfoDto} from '../../api/dto/MovieDto';
 import Config from '../../entries/Config';
-import {toast} from "react-toastify";
 
 const emptyMovie: IEditedMovieInfo = {
   adult: false,
