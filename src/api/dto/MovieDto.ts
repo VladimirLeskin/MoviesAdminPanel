@@ -15,7 +15,7 @@ export interface IMovieDto {
 export interface IMovieInfoDto {
   id?: string;
   imdb_id: string;
-  tmdb_id?: string;
+  tmdb_id?: number;
   country: string;
   adult: boolean;
   genres: IMovieGenre['genre_id'][];

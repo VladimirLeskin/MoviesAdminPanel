@@ -54,15 +54,28 @@ export class MovieEditPageModel {
   }
 
   public async save() {
-    const movieInfo = this.movieInfo;
-    this.isLoading = true;
+    const validationErrors = this.validate();
+    if (validationErrors.length) {
+      toast.error(validationErrors.join(', '));
+      return;
+    }
+
+    let toastId;
+    const toastOptions = {isLoading: false, autoClose: 10000, closeButton: true};
+
     try {
+      const movieInfo = this.movieInfo;
+      this.isLoading = true;
+      toastId = toast.loading('Сохраняем');
+
       const response = await MoviesApi.createMovieInfo({
         id: movieInfo.id,
         original_title: movieInfo.original_title,
         descriptions: movieInfo.descriptions.reduce((acc, d) => {
           const {lang, ...descr} = d;
-          acc[lang] = descr;
+          if (descr.title) {
+            acc[lang] = descr;
+          }
           return acc;
         }, {}),
         adult: movieInfo.adult,
@@ -70,16 +83,16 @@ export class MovieEditPageModel {
         images: movieInfo.images.map(img => ({...img, name: img.src, content: img.content})),
         release_date_ts: movieInfo.release_date && movieInfo.release_date?.getTime() / 1000,
         country: movieInfo.country,
-        tmdb_id: movieInfo.tmdb_id,
+        tmdb_id: +String(movieInfo.tmdb_id) || undefined,
         imdb_id: movieInfo.imdb_id,
       });
 
-      toast.success('Сохранено');
+      toast.update(toastId, {type: 'success', render: 'Сохранено', ...toastOptions});
       if (response.data) {
         this.movieInfo = MovieEditPageModel.movieDtoToMovieInfo(response.data);
       }
     } catch (err: any) {
-      toast.error('Ошибка сохранения');
+      toast.update(toastId, {type: 'error', render: 'Ошибка сохранения', ...toastOptions});
     } finally {
       this.isLoading = false;
     }
@@ -106,7 +119,7 @@ export class MovieEditPageModel {
       id: movieInfoDto.id,
       original_title: movieInfoDto.original_title,
       imdb_id: movieInfoDto.imdb_id,
-      tmdb_id: movieInfoDto.tmdb_id,
+      tmdb_id: movieInfoDto.tmdb_id?.toString(),
       country: movieInfoDto.country,
       release_date:
         movieInfoDto.release_date_ts !== undefined ? new Date(movieInfoDto.release_date_ts * 1000) : undefined,
@@ -122,5 +135,19 @@ export class MovieEditPageModel {
         ...description,
       })),
     };
+  }
+
+  private validate(): string[] {
+    const errors: string[] = [];
+    if (!this.movieInfo.imdb_id) {
+      errors.push('imdb_id пусто');
+    }
+    for (let i = 0; i < this.movieInfo.descriptions.length; i++) {
+      const description = this.movieInfo.descriptions[i];
+      if (!description.title) {
+        errors.push(`Отсутствует название для языка: ${description.lang}`);
+      }
+    }
+    return errors;
   }
 }

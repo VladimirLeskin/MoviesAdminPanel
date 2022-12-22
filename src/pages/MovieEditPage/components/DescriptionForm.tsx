@@ -40,7 +40,7 @@ export const DescriptionForm: FC<DescriptionFormProps> = ({info, onChange}) => {
   return (
     <div>
       <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Язык</InputLabel>
+        <InputLabel>Язык</InputLabel>
         <Select value={info.lang} label="Язык" onChange={onLangChanged}>
           <MenuItem value="ru">ru</MenuItem>
           <MenuItem value="en">en</MenuItem>

@@ -7,14 +7,17 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
-  Button,
+  Checkbox,
+  Fab,
   FormControl,
+  InputLabel,
+  ListItemText,
   MenuItem,
-  OutlinedInput,
   Select,
   TextField,
 } from '@mui/material';
 import {SelectChangeEvent} from '@mui/material/Select/SelectInput';
+import {Save} from '@mui/icons-material';
 
 import {DescriptionForm} from './components/DescriptionForm';
 import {IEditedMovieInfo} from './types';
@@ -39,7 +42,7 @@ const stringFields = [
 export const MovieEditPage: FC<MovieEditPageProps> = observer(() => {
   const navigate = useNavigate();
   const {movieId} = useParams<{movieId: string}>();
-  const {movieInfo, updateMovie, genresDescription, load, save} = movieEditPageModel;
+  const {movieInfo, updateMovie, genresDescription, isLoading, load, save} = movieEditPageModel;
 
   useEffect(() => {
     load(movieId);
@@ -95,9 +98,6 @@ export const MovieEditPage: FC<MovieEditPageProps> = observer(() => {
 
   return (
     <div className={css.root}>
-      <div className={css.Buttons}>
-        <Button onClick={save}>Сохранить</Button>
-      </div>
       <div className={css.MovieInfo}>
         <Box flexDirection="column" display="flex">
           {stringFields.map(({key, title}) => (
@@ -112,25 +112,30 @@ export const MovieEditPage: FC<MovieEditPageProps> = observer(() => {
               />
             </FormControl>
           ))}
-          <Select
-            value={movieInfo.genres}
-            label="Жанры"
-            size="small"
-            onChange={onGenresChanged}
-            input={<OutlinedInput label="Жанры" />}
-            multiple
-            multiline
-          >
-            {genresDescription.map(genre => (
-              <MenuItem
-                key={genre.genre_id}
-                value={genre.genre_id}
-                selected={movieInfo.genres.includes(genre.genre_id)}
-              >
-                {genre.name}
-              </MenuItem>
-            ))}
-          </Select>
+          <FormControl variant="outlined">
+            <InputLabel>Жанры</InputLabel>
+            <Select
+              variant="outlined"
+              label="Жанры"
+              value={movieInfo.genres}
+              onChange={onGenresChanged}
+              multiple
+              multiline
+              renderValue={selected =>
+                genresDescription
+                  .filter(g => selected.includes(g.genre_id))
+                  .map(g => g.name)
+                  .join(', ')
+              }
+            >
+              {genresDescription.map(genre => (
+                <MenuItem key={genre.genre_id} value={genre.genre_id}>
+                  <Checkbox checked={movieInfo.genres.includes(genre.genre_id)} />
+                  <ListItemText primary={genre.name} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <p>
             <input
               type="date"
@@ -148,6 +153,11 @@ export const MovieEditPage: FC<MovieEditPageProps> = observer(() => {
       </div>
       <div className={css.Images}>
         <ArrayInput inputRender={ImagesInput} defaultValue={{}} value={movieInfo.images} onChange={onImagesChanged} />
+      </div>
+      <div className={css.Buttons}>
+        <Fab onClick={save} variant="extended" color="primary" disabled={isLoading}>
+          <Save /> Сохранить
+        </Fab>
       </div>
     </div>
   );

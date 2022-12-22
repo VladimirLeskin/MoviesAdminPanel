@@ -1,13 +1,13 @@
 .root {
   display: flex;
-  padding-top: 50px;
   position: relative;
+  flex-wrap: wrap;
 
   .Buttons {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 50px;
+    position: sticky;
+    bottom: 18px;
+    text-align: center;
+    width: 100%;
   }
 
   .Images {

@@ -33,7 +33,7 @@ export const App: FC = observer(() => {
   return (
     <div className={css.App}>
       <div className={css.ToastContainer}>
-        <ToastContainer theme="colored" />
+        <ToastContainer theme="colored" autoClose={10000} closeButton />
       </div>
       <BrowserRouter basename="/adminka">
         <Header title="админка" items={HEADER_ITEMS} />
