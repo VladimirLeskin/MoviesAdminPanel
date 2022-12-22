@@ -17,7 +17,7 @@ const emptyMovie: IEditedMovieInfo = {
   original_title: '',
 };
 
-export class MovieEditPageModel {
+export class MovieEditWidgetModel {
   private _movieInfo: IEditedMovieInfo = emptyMovie;
   private _isLoading = false;
   public genresDescription: IMovieGenre[] = [];
@@ -41,7 +41,7 @@ export class MovieEditPageModel {
         const data = await MoviesApi.getMovieInfo(movieId);
         if (data.data) {
           const levelInfoDto = data.data;
-          this.movieInfo = MovieEditPageModel.movieDtoToMovieInfo(levelInfoDto);
+          this.movieInfo = MovieEditWidgetModel.movieDtoToMovieInfo(levelInfoDto);
         }
       } finally {
         this.isLoading = false;
@@ -89,7 +89,7 @@ export class MovieEditPageModel {
 
       toast.update(toastId, {type: 'success', render: 'Сохранено', ...toastOptions});
       if (response.data) {
-        this.movieInfo = MovieEditPageModel.movieDtoToMovieInfo(response.data);
+        this.movieInfo = MovieEditWidgetModel.movieDtoToMovieInfo(response.data);
       }
     } catch (err: any) {
       toast.update(toastId, {type: 'error', render: 'Ошибка сохранения', ...toastOptions});

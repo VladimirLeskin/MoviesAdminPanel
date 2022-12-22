@@ -1,7 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import LevelsApi from 'src/api/Levels';
 import {ELevelType, ILevelDto} from 'src/api/dto/LevelDto';
-import {IEditedLevelInfo} from '../../pages/LevelEditPage/types';
+import {IEditedLevelInfo} from './types';
 
 const emptyLevel: IEditedLevelInfo = {
   type: ELevelType.TIME,

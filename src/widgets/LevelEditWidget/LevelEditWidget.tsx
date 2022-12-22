@@ -6,9 +6,9 @@ import {Save} from '@mui/icons-material';
 import {LevelEditWidgetModel} from './level-edit-widget.model';
 import {ImageUpload} from 'src/components/ImageUpload/ImageUpload';
 import {Image} from 'src/components/Image/Image';
-import {QuestionEdit} from '../../pages/LevelEditPage/components/QuestionEdit/QuestionEdit';
+import {QuestionEdit} from './components/QuestionEdit/QuestionEdit';
 import {ArrayInput} from 'src/components/ArrayInput/ArrayInput';
-import {IEditedLevelQuestion} from '../../pages/LevelEditPage/types';
+import {IEditedLevelQuestion} from './types';
 
 import css from './LevelEditWidget.module.scss';
 
