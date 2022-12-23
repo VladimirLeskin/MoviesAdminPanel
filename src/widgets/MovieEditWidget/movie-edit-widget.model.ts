@@ -30,7 +30,7 @@ export class MovieEditWidgetModel {
     if (!this.genresDescription.length) {
       MoviesApi.getGenresDescriptions().then(resp => {
         runInAction(() => {
-          this.genresDescription = resp.data.items;
+          this.genresDescription = resp.data.items.sort((a, b) => a.name.localeCompare(b.name));
         });
       });
     }

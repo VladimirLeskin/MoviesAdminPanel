@@ -131,7 +131,7 @@ export const MovieEditWidget: FC<Props> = observer(({movieId, onSaved}) => {
             >
               {genresDescription.map(genre => (
                 <MenuItem key={genre.genre_id} value={genre.genre_id}>
-                  <Checkbox checked={movieInfo.genres.includes(genre.genre_id)} />
+                  <Checkbox checked={movieInfo.genres.includes(genre.genre_id)} size="small" />
                   <ListItemText primary={genre.name} />
                 </MenuItem>
               ))}
