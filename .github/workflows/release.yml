@@ -1,5 +1,7 @@
 name: build-movies-admin-panel
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -16,6 +18,7 @@ jobs:
         env:
           API_HOST: "http://84.201.189.140:8088"
           IMAGES_HOST: "http://84.201.189.140:8088"
+          ROUTER_BASENAME: "adminka"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2

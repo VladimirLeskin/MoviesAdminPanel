@@ -8,7 +8,7 @@ import {Link} from 'react-router-dom';
 export const MOVIES_LIST_COLUMNS: ColDef<IMovieDto & {id: string}>[] = [
   {
     colId: 'movie_id',
-    width: 75,
+    width: 100,
     field: 'movie_id',
     headerName: 'id',
     sortable: true,
@@ -26,5 +26,5 @@ export const MOVIES_LIST_COLUMNS: ColDef<IMovieDto & {id: string}>[] = [
   },
   {colId: 'title', headerName: 'Оригинальное название', field: 'title', sortable: true, resizable: true},
   {colId: 'original_title', headerName: 'Название', field: 'original_title', sortable: true, resizable: true},
-  {colId: 'date', headerName: 'Название', field: 'date', sortable: true, resizable: true},
+  {colId: 'date', headerName: 'Дата выхода', field: 'date', sortable: true, resizable: true},
 ];

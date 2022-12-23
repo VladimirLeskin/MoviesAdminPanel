@@ -2,12 +2,14 @@ import React, {FC, useCallback, useEffect, useState} from 'react';
 import {observer} from 'mobx-react';
 import {Button, Drawer, IconButton} from '@mui/material';
 import {Close} from '@mui/icons-material';
+import {Link} from 'react-router-dom';
 
 import {AgGrid} from 'src/components/AgGrid/AgGrid';
 import {useBooleanState} from 'src/hooks/useBooleanState';
 import {LevelsListModel} from './levels-list.model';
 import {LEVELS_LIST_COLUMNS} from './constants';
 import {LevelEditWidget} from '../../widgets/LevelEditWidget/LevelEditWidget';
+import {ROUTES} from 'src/constants';
 
 import css from './LevelsListPage.module.scss';
 
@@ -29,11 +31,6 @@ export const LevelsListPage: FC = observer(() => {
     [selectedLevelId, setShowLevelDetails, toggleLevelDetails]
   );
 
-  const onCreateLevel = useCallback(() => {
-    setShowLevelDetails(true);
-    setSelectedLevelId(undefined);
-  }, [setShowLevelDetails]);
-
   useEffect(() => {
     loadItems();
   }, [loadItems]);
@@ -41,9 +38,11 @@ export const LevelsListPage: FC = observer(() => {
   return (
     <>
       <div className={css.root}>
-        <Button onClick={onCreateLevel} color="primary" variant="contained">
-          Добавить
-        </Button>
+        <Link to={ROUTES.LEVELS.CREATE}>
+          <Button color="primary" variant="contained" fullWidth>
+            Добавить
+          </Button>
+        </Link>
         <AgGrid
           rowData={items}
           onShowDetails={onLevelDetailsClicked}

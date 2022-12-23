@@ -8,14 +8,15 @@ import css from './ImagesCellRenderer.module.scss';
 
 interface Props {
   movie: IMovieDto;
-  onSelectImage: (movie: IMovieDto, image: {id: string; path: string}) => void;
+  onSelectImage?: (movie: IMovieDto, image: {id: string; path: string}) => void;
 }
 
 export const ImagesCellRenderer: FC<Props> = ({movie, onSelectImage}) => {
   const [previewImg, setPreviewImg] = useState<{id: string; path: string} | undefined>();
+
   const onSelectImageHandler = useCallback(() => {
     if (previewImg) {
-      onSelectImage(movie, previewImg);
+      onSelectImage?.(movie, previewImg);
     }
   }, [movie, onSelectImage, previewImg]);
 
@@ -34,9 +35,11 @@ export const ImagesCellRenderer: FC<Props> = ({movie, onSelectImage}) => {
               <Image src={img.path} width={75} key={img.id} onClick={() => setPreviewImg(img)} />
             ))}
           </div>
-          <Button variant="contained" onClick={onSelectImageHandler}>
-            Выбрать эту картинку
-          </Button>
+          {onSelectImage && (
+            <Button variant="contained" onClick={onSelectImageHandler}>
+              Выбрать эту картинку
+            </Button>
+          )}
         </div>
       </Modal>
     </div>

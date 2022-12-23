@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const dotenv = require('dotenv');
+const webpack = require('webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 dotenv.config({path: path.resolve('.env.local')});
@@ -61,6 +62,9 @@ module.exports = {
       typescript: {
         configFile: path.resolve(__dirname, 'tsconfig.json'),
       },
+    }),
+    new webpack.DefinePlugin({
+      'process.env.ROUTER_BASENAME': JSON.stringify(process.env.ROUTER_BASENAME ?? ''),
     }),
   ],
 };

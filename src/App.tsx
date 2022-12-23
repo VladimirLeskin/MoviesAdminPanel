@@ -1,20 +1,22 @@
-import React, {FC} from 'react';
+import React, {FC, Suspense} from 'react';
 import {Route, Routes} from 'react-router';
 import {BrowserRouter} from 'react-router-dom';
 import {observer} from 'mobx-react';
 import {ToastContainer} from 'react-toastify';
 
-import {MovieEditPage} from './pages/MovieEditPage/MovieEditPage';
 import {Header} from './components/Header/Header';
 import {ROUTES} from './constants';
-import {MoviePicker} from './widgets/MoviesPicker/MoviePicker';
-import {LevelsListPage} from './pages/LevelsListPage/LevelsListPage';
 import {AuthModel} from './models/AuthModel';
 import {LoginForm} from './components/LoginForm/LoginForm';
-import {LevelEditPage} from './pages/LevelEditPage/LevelEditPage';
+import {EUserRoles} from './api/Auth';
 
 import 'react-toastify/dist/ReactToastify.css';
 import css from './App.module.scss';
+
+const LevelsListPage = React.lazy(() => import('./pages/LevelsListPage').then(m => ({default: m.LevelsListPage})));
+const MovieEditPage = React.lazy(() => import('./pages/MovieEditPage').then(m => ({default: m.MovieEditPage})));
+const LevelEditPage = React.lazy(() => import('./pages/LevelEditPage').then(m => ({default: m.LevelEditPage})));
+const MoviesListPage = React.lazy(() => import('./pages/MoviesListPage').then(m => ({default: m.MoviesListPage})));
 
 const HEADER_ITEMS = [
   {title: 'Фильмы', href: ROUTES.MOVIES.LIST},
@@ -23,32 +25,35 @@ const HEADER_ITEMS = [
 
 const authModel = new AuthModel();
 
+const ADMIN_ROLES = [EUserRoles.admin, EUserRoles.operator];
+
 export const App: FC = observer(() => {
   if (!authModel.login || authModel.isLoading) {
     if (authModel.isLoading) {
       return <>Загрузка...</>;
     }
     return <LoginForm onLogin={authModel.onLogin} />;
+  } else if (!ADMIN_ROLES.some(r => !!authModel.roles?.[r])) {
+    return null;
   }
   return (
     <div className={css.App}>
       <div className={css.ToastContainer}>
         <ToastContainer theme="colored" autoClose={10000} closeButton />
       </div>
-      <BrowserRouter basename="/adminka">
+      <BrowserRouter basename={`/${process.env.ROUTER_BASENAME}`}>
         <Header title="админка" items={HEADER_ITEMS} />
         <div className={css.Content}>
-          <Routes>
-            <Route path={ROUTES.LEVELS.DETAILS} element={<LevelEditPage />} />
-            <Route path={ROUTES.LEVELS.CREATE} element={<LevelEditPage />} />
-            <Route path={ROUTES.LEVELS.LIST} element={<LevelsListPage />} />
-            <Route path={ROUTES.MOVIES.DETAILS} element={<MovieEditPage />} />
-            <Route path={ROUTES.MOVIES.CREATE} element={<MovieEditPage />} />
-            <Route
-              path={ROUTES.MOVIES.LIST}
-              element={<MoviePicker onSelectImage={() => 1} onSelectMovie={() => 1} />}
-            />
-          </Routes>
+          <Suspense fallback={<>Загрузка...</>}>
+            <Routes>
+              <Route path={ROUTES.LEVELS.DETAILS} element={<LevelEditPage />} />
+              <Route path={ROUTES.LEVELS.CREATE} element={<LevelEditPage />} />
+              <Route path={ROUTES.LEVELS.LIST} element={<LevelsListPage />} />
+              <Route path={ROUTES.MOVIES.DETAILS} element={<MovieEditPage />} />
+              <Route path={ROUTES.MOVIES.CREATE} element={<MovieEditPage />} />
+              <Route path={ROUTES.MOVIES.LIST} element={<MoviesListPage />} />
+            </Routes>
+          </Suspense>
         </div>
       </BrowserRouter>
     </div>

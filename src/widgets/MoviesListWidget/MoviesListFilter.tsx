@@ -10,7 +10,7 @@ interface MoviesPickerFilterProps {
   onChange: (filter: IMovieFilter) => void;
 }
 
-export const MoviesPickerFilter: FC<MoviesPickerFilterProps> = ({onChange, ...filter}) => {
+export const MoviesListFilter: FC<MoviesPickerFilterProps> = ({onChange, ...filter}) => {
   const [filterState, setFilterState] = useState(filter);
 
   const onSearchChanged = useCallback(

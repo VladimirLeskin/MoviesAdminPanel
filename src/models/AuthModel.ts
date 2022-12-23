@@ -1,8 +1,9 @@
-import {AuthApi} from '../api/Auth';
+import {AuthApi, EUserRoles, IUserRole} from '../api/Auth';
 import {makeAutoObservable} from 'mobx';
 
 export class AuthModel {
   public login?: string = undefined;
+  public roles?: Partial<Record<EUserRoles, IUserRole>>;
   public isLoading = false;
 
   constructor() {
@@ -26,6 +27,7 @@ export class AuthModel {
     this.isLoading = true;
     AuthApi.auth().then(resp => {
       this.login = resp.data.login;
+      this.roles = resp.data.roles;
     }).finally(() => {
       this.isLoading = false;
     });

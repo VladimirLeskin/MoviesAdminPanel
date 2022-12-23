@@ -11,9 +11,11 @@ interface IMoviePagination {
   pageSize: number;
 }
 
-export class MoviesPickerModel {
+export class MoviesListWidgetModel {
   private _movies: IMovieDto[] = [];
   private _moviesLoading = false;
+  private inited = false;
+
   public filter: IMovieFilter = {};
   public pagination: IMoviePagination = {pageSize: 20};
   public total: number = 0;
@@ -30,6 +32,13 @@ export class MoviesPickerModel {
   }
 
   private lastRequestId?: Symbol;
+
+  public init() {
+    if (!this.inited) {
+      this.loadMovies();
+    }
+    this.inited = true;
+  }
 
   public async loadMovies() {
     this.moviesLoading = true;

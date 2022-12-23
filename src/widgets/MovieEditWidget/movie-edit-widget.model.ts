@@ -5,6 +5,7 @@ import {IEditedMovieInfo} from './types';
 import MoviesApi from '../../api/Movies';
 import {IMovieGenre, IMovieInfoDto} from '../../api/dto/MovieDto';
 import Config from '../../entries/Config';
+import {getAxiosErrorText} from '../../api/stdAxiosErrorHandler';
 
 const emptyMovie: IEditedMovieInfo = {
   adult: false,
@@ -91,8 +92,12 @@ export class MovieEditWidgetModel {
       if (response.data) {
         this.movieInfo = MovieEditWidgetModel.movieDtoToMovieInfo(response.data);
       }
-    } catch (err: any) {
-      toast.update(toastId, {type: 'error', render: 'Ошибка сохранения', ...toastOptions});
+    } catch (err) {
+      toast.update(toastId, {
+        type: 'error',
+        render: `Ошибка сохранения\n${getAxiosErrorText(err)}`,
+        ...toastOptions,
+      });
     } finally {
       this.isLoading = false;
     }
