@@ -126,7 +126,9 @@ const _DESCRIPTION_STRING_FIELDS = [
   {key: 'description', title: 'Описание'},
 ];
 
-function DescriptionArrayAdapter({value, onChange}) {
+type TDescription = IEditedLevelInfo['descriptions'][0];
+
+function DescriptionArrayAdapter({value, onChange}: {value: TDescription; onChange: (v: TDescription) => void}) {
   return (
     <Accordion className={css.Description}>
       <AccordionSummary>{[value.lang, value.title].join(': ')}</AccordionSummary>
