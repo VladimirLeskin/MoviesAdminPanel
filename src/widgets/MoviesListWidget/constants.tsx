@@ -1,9 +1,9 @@
 import React from 'react';
 import {ColDef, ICellRendererParams} from 'ag-grid-community';
+import {Link} from 'react-router-dom';
 
 import {IMovieDto} from 'src/api/dto/MovieDto';
 import {ROUTES} from 'src/constants';
-import {Link} from 'react-router-dom';
 
 export const MOVIES_LIST_COLUMNS: ColDef<IMovieDto & {id: string}>[] = [
   {
@@ -24,7 +24,13 @@ export const MOVIES_LIST_COLUMNS: ColDef<IMovieDto & {id: string}>[] = [
       );
     },
   },
-  {colId: 'title', headerName: 'Оригинальное название', field: 'title', sortable: true, resizable: true},
-  {colId: 'original_title', headerName: 'Название', field: 'original_title', sortable: true, resizable: true},
+  {
+    colId: 'original_title',
+    headerName: 'Оригинальное название',
+    field: 'original_title',
+    sortable: true,
+    resizable: true,
+  },
+  {colId: 'title', headerName: 'Название', field: 'title', sortable: true, resizable: true},
   {colId: 'date', headerName: 'Дата выхода', field: 'date', sortable: true, resizable: true},
 ];

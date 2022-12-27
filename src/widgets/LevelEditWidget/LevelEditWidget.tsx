@@ -1,6 +1,6 @@
 import React, {FC, useCallback, useEffect} from 'react';
 import {observer} from 'mobx-react';
-import {Box, Fab, FormControl, TextField} from '@mui/material';
+import {Accordion, AccordionDetails, AccordionSummary, Box, Fab, FormControl, TextField} from '@mui/material';
 import {Save} from '@mui/icons-material';
 
 import {LevelEditWidgetModel} from './level-edit-widget.model';
@@ -8,7 +8,8 @@ import {ImageUpload} from 'src/components/ImageUpload/ImageUpload';
 import {Image} from 'src/components/Image/Image';
 import {QuestionEdit} from './components/QuestionEdit/QuestionEdit';
 import {ArrayInput} from 'src/components/ArrayInput/ArrayInput';
-import {IEditedLevelQuestion} from './types';
+import {IEditedLevelInfo, IEditedLevelQuestion} from './types';
+import {DescriptionForm} from 'src/components/MultiLangForm/MultiLangForm';
 
 import css from './LevelEditWidget.module.scss';
 
@@ -16,8 +17,6 @@ const levelEditPageModel = new LevelEditWidgetModel();
 
 const stringFields = [
   {key: 'id', title: 'Id'},
-  {key: 'title', title: 'Название'},
-  {key: 'description', title: 'Описание'},
   {
     key: 'type',
     title: 'Тип',
@@ -40,6 +39,13 @@ export const LevelEditWidget: FC<Props> = observer(({levelId}) => {
   const updateField = useCallback(
     (id: string, value: any) => {
       updateLevel({...levelInfo, [id]: value});
+    },
+    [levelInfo, updateLevel]
+  );
+
+  const onDescriptionsChanged = useCallback(
+    (values: IEditedLevelInfo['descriptions']) => {
+      updateLevel({...levelInfo, descriptions: values});
     },
     [levelInfo, updateLevel]
   );
@@ -74,6 +80,12 @@ export const LevelEditWidget: FC<Props> = observer(({levelId}) => {
             />
           </FormControl>
         ))}
+        <ArrayInput
+          inputRender={DescriptionArrayAdapter}
+          defaultValue={{lang: 'ru', title: '', description: ''}}
+          value={levelInfo.descriptions}
+          onChange={onDescriptionsChanged}
+        />
         <div>
           <div>Картинка</div>
           <label>
@@ -97,13 +109,7 @@ export const LevelEditWidget: FC<Props> = observer(({levelId}) => {
             />
           </div>
         </div>
-        <Fab
-          onClick={save}
-          className={css.SaveBtn}
-          variant="extended"
-          color="primary"
-          disabled={isLoading}
-        >
+        <Fab onClick={save} className={css.SaveBtn} variant="extended" color="primary" disabled={isLoading}>
           <Save /> Сохранить
         </Fab>
       </Box>
@@ -113,4 +119,22 @@ export const LevelEditWidget: FC<Props> = observer(({levelId}) => {
 
 function questionKeyGetter(v: IEditedLevelQuestion, index: number) {
   return v.id || v.image.id || String(index);
+}
+
+const _DESCRIPTION_STRING_FIELDS = [
+  {key: 'title', title: 'Название'},
+  {key: 'description', title: 'Описание'},
+];
+
+function DescriptionArrayAdapter({value, onChange}) {
+  return (
+    <Accordion className={css.Description}>
+      <AccordionSummary>{[value.lang, value.title].join(': ')}</AccordionSummary>
+      <AccordionDetails>
+        <Box flexDirection="column" display="flex">
+          <DescriptionForm info={value} onChange={onChange} stringFields={_DESCRIPTION_STRING_FIELDS} />
+        </Box>
+      </AccordionDetails>
+    </Accordion>
+  );
 }

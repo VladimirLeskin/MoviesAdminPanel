@@ -36,6 +36,7 @@ export function getMoviePickerColumns(
       sortable: false,
       resizable: true,
       width: 300,
+      minWidth: 300,
       flex: 1,
       cellRenderer: (params: ICellRendererParams<IMovieDto>) => {
         return <>{params.data && <ImagesCellRenderer movie={params.data} onSelectImage={pickImage} />}</>;

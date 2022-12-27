@@ -17,3 +17,13 @@ export interface ILevelDto {
   totalTime?: number;
   previewImageName?: string;
 }
+
+export interface ILevelInfoDto {
+  id: string;
+  descriptions?: Record<string, {title: string; description: string}>;
+  questions: QuestionDTO[];
+  type: ELevelType;
+  timeForEach?: number;
+  totalTime?: number;
+  previewImageName?: string;
+}

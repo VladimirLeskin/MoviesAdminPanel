@@ -1,7 +1,5 @@
 const {merge} = require('webpack-merge');
-const webpack = require('webpack');
 const common = require('./webpack.common');
-const path = require('path');
 
 // style files regexes
 const cssRegex = /\.css$/;
@@ -75,14 +73,9 @@ const config = merge(common, {
         secure: false,
         changeOrigin: true,
       },
-      '/web': {
-        target: process.env.API_HOST,
-        secure: false,
-        changeOrigin: true,
-      },
       '/images': {
         target: process.env.IMG_PATH,
-        secure: true,
+        secure: false,
         changeOrigin: true,
       },
     },

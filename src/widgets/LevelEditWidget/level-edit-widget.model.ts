@@ -1,14 +1,13 @@
 import {makeAutoObservable} from 'mobx';
 import LevelsApi from 'src/api/Levels';
-import {ELevelType, ILevelDto} from 'src/api/dto/LevelDto';
+import {ELevelType, ILevelInfoDto} from 'src/api/dto/LevelDto';
 import {IEditedLevelInfo} from './types';
 
 const emptyLevel: IEditedLevelInfo = {
   type: ELevelType.TIME,
   questions: [],
   previewImagePath: '',
-  title: '',
-  description: '',
+  descriptions: [{lang: 'ru', title: '', description: ''}],
   totalTime: 200,
   isNewImage: false,
 };
@@ -50,8 +49,10 @@ export class LevelEditWidgetModel {
     try {
       const response = await LevelsApi.createLevelInfo({
         id: levelInfo.id,
-        title: levelInfo.title,
-        description: levelInfo.description,
+        descriptions: levelInfo.descriptions.reduce((acc, d) => {
+          acc[d.lang] = d;
+          return acc;
+        }, {}),
         totalTime: levelInfo.totalTime,
         timeForEach: levelInfo.timeForEach,
         type: levelInfo.type,
@@ -90,13 +91,12 @@ export class LevelEditWidgetModel {
     this._isLoading = value;
   }
 
-  private static levelDtoToLevelInfo(levelInfoDto: ILevelDto): IEditedLevelInfo {
+  private static levelDtoToLevelInfo(levelInfoDto: ILevelInfoDto): IEditedLevelInfo {
     return {
       type: levelInfoDto.type,
       id: levelInfoDto.id,
       previewImagePath: levelInfoDto.previewImageName,
-      title: levelInfoDto.title,
-      description: levelInfoDto.description,
+      descriptions: Object.entries(levelInfoDto.descriptions ?? {}).map(([lang, d]) => ({...d, lang})),
       totalTime: levelInfoDto.totalTime,
       timeForEach: levelInfoDto.timeForEach,
       isNewImage: false,

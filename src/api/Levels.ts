@@ -1,6 +1,6 @@
 import Config from '../entries/Config';
 import axios, {AxiosResponse} from 'axios';
-import {ELevelType, ILevelDto} from './dto/LevelDto';
+import {ELevelType, ILevelDto, ILevelInfoDto} from './dto/LevelDto';
 import {IPagedResponse} from './types';
 
 interface ILevelQuestionRequestion {
@@ -10,8 +10,7 @@ interface ILevelQuestionRequestion {
 
 interface ISaveLevelRequest {
   id?: string;
-  title: string;
-  description?: string;
+  descriptions?: Record<string, {title: string; description: string}>;
   questions: ILevelQuestionRequestion[];
   type: ELevelType;
   timeForEach?: number;
@@ -29,11 +28,11 @@ export default class LevelsApi {
     return axios.get(LevelsApi.baseUrl + '/levels');
   }
 
-  public static getLevelInfo(levelId: string): Promise<AxiosResponse<ILevelDto>> {
+  public static getLevelInfo(levelId: string): Promise<AxiosResponse<ILevelInfoDto>> {
     return axios.get(`${LevelsApi.baseUrl}/levels/view?id=${levelId}`);
   }
 
-  public static createLevelInfo(levelInfo: ISaveLevelRequest): Promise<AxiosResponse<ILevelDto>> {
+  public static createLevelInfo(levelInfo: ISaveLevelRequest): Promise<AxiosResponse<ILevelInfoDto>> {
     return axios.post(`${LevelsApi.baseUrl}/levels/create`, levelInfo);
   }
 }
