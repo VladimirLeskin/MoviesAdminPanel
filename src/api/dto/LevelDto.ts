@@ -16,6 +16,7 @@ export interface ILevelDto {
   timeForEach?: number;
   totalTime?: number;
   previewImageName?: string;
+  active: boolean;
 }
 
 export interface ILevelInfoDto {
@@ -26,4 +27,5 @@ export interface ILevelInfoDto {
   timeForEach?: number;
   totalTime?: number;
   previewImageName?: string;
+  active: boolean;
 }

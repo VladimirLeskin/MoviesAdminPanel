@@ -17,6 +17,7 @@ interface ISaveLevelRequest {
   totalTime?: number;
   previewImage?: string;
   isNewImage: boolean;
+  isActive: boolean;
 }
 
 export default class LevelsApi {
@@ -34,5 +35,9 @@ export default class LevelsApi {
 
   public static createLevelInfo(levelInfo: ISaveLevelRequest): Promise<AxiosResponse<ILevelInfoDto>> {
     return axios.post(`${LevelsApi.baseUrl}/levels/create`, levelInfo);
+  }
+
+  public static publishLevel(id: string, publish: boolean): Promise<AxiosResponse<void>> {
+    return axios.post(`${LevelsApi.baseUrl}/levels/publish`, {id, publish});
   }
 }

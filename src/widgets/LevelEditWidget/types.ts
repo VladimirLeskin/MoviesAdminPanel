@@ -21,4 +21,5 @@ export interface IEditedLevelInfo {
   totalTime?: number;
   previewImagePath?: string;
   isNewImage: boolean;
+  isActive: boolean;
 }

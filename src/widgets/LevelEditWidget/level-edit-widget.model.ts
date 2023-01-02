@@ -10,6 +10,7 @@ const emptyLevel: IEditedLevelInfo = {
   descriptions: [{lang: 'ru', title: '', description: ''}],
   totalTime: 200,
   isNewImage: false,
+  isActive: false,
 };
 
 export class LevelEditWidgetModel {
@@ -58,6 +59,7 @@ export class LevelEditWidgetModel {
         type: levelInfo.type,
         previewImage: levelInfo.previewImagePath,
         isNewImage: levelInfo.isNewImage,
+        isActive: levelInfo.isActive,
         questions: levelInfo.questions
           .map(q => ({
             imageId: q.image.id,
@@ -100,6 +102,7 @@ export class LevelEditWidgetModel {
       totalTime: levelInfoDto.totalTime,
       timeForEach: levelInfoDto.timeForEach,
       isNewImage: false,
+      isActive: levelInfoDto.active,
       questions: levelInfoDto.questions
         .map(q => ({
           id: q.id,

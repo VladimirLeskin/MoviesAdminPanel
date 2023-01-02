@@ -1,6 +1,16 @@
 import React, {FC, useCallback, useEffect} from 'react';
 import {observer} from 'mobx-react';
-import {Accordion, AccordionDetails, AccordionSummary, Box, Fab, FormControl, TextField} from '@mui/material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Fab,
+  FormControl,
+  FormControlLabel,
+  Switch,
+  TextField,
+} from '@mui/material';
 import {Save} from '@mui/icons-material';
 
 import {LevelEditWidgetModel} from './level-edit-widget.model';
@@ -64,9 +74,22 @@ export const LevelEditWidget: FC<Props> = observer(({levelId}) => {
     [levelInfo, updateLevel]
   );
 
+  const onIsActiveChanged = useCallback(
+    (_, value) => {
+      updateLevel({...levelInfo, isActive: value});
+    },
+    [levelInfo, updateLevel]
+  );
+
   return (
     <div className={css.root}>
       <Box component="form" display="flex" flexDirection="column" width="100%">
+        <FormControl className={css.Control} size="small">
+          <FormControlLabel
+            control={<Switch checked={levelInfo.isActive} onChange={onIsActiveChanged} />}
+            label="Опубликован"
+          />
+        </FormControl>
         {stringFields.map(({key, title}) => (
           <FormControl key={key} className={css.Control} size="small">
             <TextField

@@ -1,6 +1,6 @@
-import React, {FC, useCallback, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useMemo, useState} from 'react';
 import {observer} from 'mobx-react';
-import {Button, Drawer, IconButton} from '@mui/material';
+import {Button, Drawer, IconButton, Switch} from '@mui/material';
 import {Close} from '@mui/icons-material';
 import {Link} from 'react-router-dom';
 
@@ -31,6 +31,24 @@ export const LevelsListPage: FC = observer(() => {
     [selectedLevelId, setShowLevelDetails, toggleLevelDetails]
   );
 
+  const columns = useMemo(() => {
+    return LEVELS_LIST_COLUMNS.concat({
+      colId: 'active',
+      headerName: 'Опубл.',
+      field: 'active',
+      width: 80,
+      sortable: true,
+      resizable: false,
+      cellClass: css.CellWithoutPaddings,
+      cellRenderer: params => {
+        const onPublish = () => {
+          model.onPublish(params.data.id, !params.data.active);
+        };
+        return <Switch checked={!!params.data.active} onChange={onPublish} />;
+      },
+    });
+  }, [model]);
+
   useEffect(() => {
     loadItems();
   }, [loadItems]);
@@ -46,7 +64,7 @@ export const LevelsListPage: FC = observer(() => {
         <AgGrid
           rowData={items}
           onShowDetails={onLevelDetailsClicked}
-          columnDefs={LEVELS_LIST_COLUMNS}
+          columnDefs={columns}
           wrapperClassName={css.LevelsList}
           tooltipShowDelay={500}
         />

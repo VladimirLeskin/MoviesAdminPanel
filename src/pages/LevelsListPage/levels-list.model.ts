@@ -4,7 +4,13 @@ import LevelsApi from '../../api/Levels';
 
 export class LevelsListModel extends ItemsListModel<ILevelDto> {
   protected apiEndPoints: IApiEndPoints<ILevelDto> = {
-    load: () => LevelsApi.getLevels().then((resp) => resp.data.items),
+    load: () => LevelsApi.getLevels().then(resp => resp.data.items),
     delete: () => Promise.reject(new Error('not implemented')),
   };
+
+  public onPublish(id: string, publish: boolean) {
+    LevelsApi.publishLevel(id, publish).then(() => {
+      this.loadItems();
+    });
+  }
 }
