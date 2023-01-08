@@ -32,3 +32,13 @@ export interface IMovieInfoDto {
     }
   >;
 }
+
+export interface IMovieListItem {
+  id: string;
+  movie_id: string;
+  original_title: string;
+  title: string;
+  genres: number[];
+  date: Date;
+  images: Array<{id: string; path: string}>;
+}

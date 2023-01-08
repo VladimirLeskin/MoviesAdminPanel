@@ -1,73 +1,73 @@
-import {makeAutoObservable} from 'mobx';
-import {IMovieDto} from '../../api/dto/MovieDto';
+import {action, makeObservable} from 'mobx';
+import {IMovieListItem} from '../../api/dto/MovieDto';
 import MoviesApi from '../../api/Movies';
+import {IApiEndPoints, IListPagination, ItemsListModel} from '../../models/ItemsListModel';
 
 interface IMovieFilter {
   search?: string;
 }
 
-interface IMoviePagination {
-  page?: number; // from 0
-  pageSize: number;
-}
-
-export class MoviesListWidgetModel {
-  private _movies: IMovieDto[] = [];
-  private _moviesLoading = false;
+export class MoviesListWidgetModel extends ItemsListModel<IMovieListItem, IMovieFilter> {
   private inited = false;
 
-  public filter: IMovieFilter = {};
-  public pagination: IMoviePagination = {pageSize: 20};
-  public total: number = 0;
-
   constructor() {
-    makeAutoObservable(this, undefined, {autoBind: true});
+    super();
+    makeObservable(this, MoviesListWidgetModel.getMoviesListMobxAnnotations());
   }
 
-  public get movies() {
-    return this._movies.map(mov => ({
+  public override get items() {
+    return this._items.map(mov => ({
       ...mov,
       images: mov.images.slice(),
     }));
   }
 
-  private lastRequestId?: Symbol;
-
   public init() {
     if (!this.inited) {
-      this.loadMovies();
+      this.loadItems({filter: this.filter, pagination: this.pagination});
     }
     this.inited = true;
   }
 
-  public async loadMovies() {
-    this.moviesLoading = true;
-    const currentRequestId = Symbol();
-    this.lastRequestId = currentRequestId;
-    const response = await MoviesApi.getMovies({search: this.filter.search, ...this.pagination});
-    if (currentRequestId === this.lastRequestId) {
-      this._movies = response.data.items;
-      this.total = response.data.meta.totalCount;
-      this.pagination.pageSize = response.data.meta.perPage;
-      this.moviesLoading = false;
-    }
-  }
-
   public onFilterChanged(filter: IMovieFilter) {
     this.filter = filter;
-    this.loadMovies();
+    this.pagination = {...this.pagination, page: 0};
+    this.loadItems({filter, pagination: this.pagination});
   }
 
-  public onPaginationChanged(pagination: IMoviePagination) {
+  public onPaginationChanged(pagination: IListPagination) {
     this.pagination = pagination;
-    this.loadMovies();
+    this.loadItems({filter: this.filter, pagination});
   }
 
-  public get moviesLoading(): boolean {
-    return this._moviesLoading;
-  }
+  protected apiEndPoints: IApiEndPoints<IMovieListItem, IMovieFilter> = {
+    load: v =>
+      MoviesApi.getMovies({...v?.filter, ...v?.pagination}).then(data => {
+        return {
+          ...data,
+          data: {
+            ...data.data,
+            items: data.data.items.map(dto => ({
+              id: dto.movie_id,
+              movie_id: dto.movie_id,
+              original_title: dto.original_title,
+              title: dto.title,
+              genres: dto.genres,
+              date: new Date(dto.date),
+              images: dto.images,
+            })),
+          },
+        };
+      }),
+    delete: () => Promise.reject(new Error('not implemented')),
+  };
 
-  public set moviesLoading(value: boolean) {
-    this._moviesLoading = value;
+  private static getMoviesListMobxAnnotations() {
+    return {
+      ...MoviesListWidgetModel.getMobxBaseAnnotations(),
+      init: action.bound,
+      onFilterChanged: action.bound,
+      onPaginationChanged: action.bound,
+    };
   }
 }

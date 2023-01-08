@@ -5,7 +5,7 @@ import {Remove} from '@mui/icons-material';
 import {IEditedLevelQuestionVariant} from '../../types';
 import {useBooleanState} from 'src/hooks/useBooleanState';
 import {MoviePicker} from 'src/widgets/MoviesPicker/MoviePicker';
-import {IMovieDto} from 'src/api/dto/MovieDto';
+import {IMovieListItem} from 'src/api/dto/MovieDto';
 import {Image} from 'src/components/Image/Image';
 
 import css from './QuestionEdit.module.scss';
@@ -32,14 +32,14 @@ export const QuestionEdit: FC<QuestionEditProps> = ({value, onChange}) => {
   const {state: pickerOpened, toggleState: togglePicker} = useBooleanState(false);
 
   const onSelectImage = useCallback(
-    (movie: IMovieDto, newImage: Image) => {
+    (movie: IMovieListItem, newImage: Image) => {
       onChange({id, image: newImage, variants, correctVariant: {movie_id: movie.movie_id, title: movie.title}});
     },
     [id, onChange, variants]
   );
 
   const onAddVariant = useCallback(
-    (movie: IMovieDto) => {
+    (movie: IMovieListItem) => {
       if (movie.movie_id !== correctVariant?.movie_id) {
         onChange({
           id,

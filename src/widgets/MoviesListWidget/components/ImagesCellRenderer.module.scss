@@ -7,10 +7,30 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+
+  .NavButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.2);
+
+    &.NavButtonForward {
+      right: 0;
+    }
+
+    &.NavButtonBack {
+      left: 0;
+    }
+  }
 }
 
 .MoviesImagesThumbnails {
   display: flex;
   align-items: flex-start;
   gap: 10px;
+
+  .Selected {
+    border-radius: 4px;
+    border: 2px solid red;
+  }
 }

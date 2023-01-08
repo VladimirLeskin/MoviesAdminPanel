@@ -8,12 +8,12 @@ import {MoviesListFilter} from './MoviesListFilter';
 import {AgGrid} from 'src/components/AgGrid/AgGrid';
 import {Spinner} from 'src/components/Spinner/Spinner';
 import {MoviesListWidgetModel} from './movies-list-widget.model';
-import {IMovieDto} from 'src/api/dto/MovieDto';
+import {IMovieListItem} from 'src/api/dto/MovieDto';
 import {getMoviesListColumns} from './utils';
 
 import css from './MoviesListWidget.module.scss';
 
-type MovieRow = IMovieDto & {id: string};
+type MovieRow = IMovieListItem & {id: string};
 
 interface Props {
   prepareColumns?: (columns: ColDef<MovieRow>[]) => ColDef<MovieRow>[];
@@ -22,7 +22,7 @@ interface Props {
 const model = new MoviesListWidgetModel();
 
 export const MoviesListWidget: FC<Props> = observer(({prepareColumns}) => {
-  const {movies, total, pagination, filter, moviesLoading, onFilterChanged, onPaginationChanged} = model;
+  const {items: movies, total, pagination, filter, isLoading, onFilterChanged, onPaginationChanged} = model;
   const rows = useMemo(() => {
     return movies.map(m => ({...m, id: m.movie_id}));
   }, [movies]);
@@ -33,7 +33,7 @@ export const MoviesListWidget: FC<Props> = observer(({prepareColumns}) => {
 
   const paginationContainer = (
     <div className={css.PaginationContainer}>
-      <Spinner className={!moviesLoading && css.LoaderHidden} />
+      <Spinner className={!isLoading && css.LoaderHidden} />
       <Pagination {...pagination} itemsTotal={total} onChange={onPaginationChanged} />
     </div>
   );

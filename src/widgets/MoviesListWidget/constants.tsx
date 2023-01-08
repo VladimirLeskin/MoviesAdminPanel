@@ -2,17 +2,18 @@ import React from 'react';
 import {ColDef, ICellRendererParams} from 'ag-grid-community';
 import {Link} from 'react-router-dom';
 
-import {IMovieDto} from 'src/api/dto/MovieDto';
+import {IMovieListItem} from 'src/api/dto/MovieDto';
 import {ROUTES} from 'src/constants';
+import {DateUtils} from '../../utils/DateUtils';
 
-export const MOVIES_LIST_COLUMNS: ColDef<IMovieDto & {id: string}>[] = [
+export const MOVIES_LIST_COLUMNS: ColDef<IMovieListItem & {id: string}>[] = [
   {
     colId: 'movie_id',
     width: 100,
     field: 'movie_id',
     headerName: 'id',
     sortable: true,
-    cellRenderer: (params: ICellRendererParams<IMovieDto>) => {
+    cellRenderer: (params: ICellRendererParams<IMovieListItem>) => {
       if (!params.data?.movie_id) {
         return null;
       }
@@ -32,5 +33,12 @@ export const MOVIES_LIST_COLUMNS: ColDef<IMovieDto & {id: string}>[] = [
     resizable: true,
   },
   {colId: 'title', headerName: 'Название', field: 'title', sortable: true, resizable: true},
-  {colId: 'date', headerName: 'Дата выхода', field: 'date', sortable: true, resizable: true},
+  {
+    colId: 'date',
+    headerName: 'Дата выхода',
+    field: 'date',
+    sortable: true,
+    resizable: true,
+    cellRenderer: (params: ICellRendererParams<IMovieListItem>) => <>{DateUtils.dateToString(params.data?.date)}</>,
+  },
 ];
