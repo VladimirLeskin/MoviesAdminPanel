@@ -10,6 +10,7 @@ import {Spinner} from 'src/components/Spinner/Spinner';
 import {MoviesListWidgetModel} from './movies-list-widget.model';
 import {IMovieListItem} from 'src/api/dto/MovieDto';
 import {getMoviesListColumns} from './utils';
+import {COUNTRIES} from '../../models/CountriesModel';
 
 import css from './MoviesListWidget.module.scss';
 
@@ -40,9 +41,9 @@ export const MoviesListWidget: FC<Props> = observer(({prepareColumns}) => {
 
   const columns = useMemo(() => {
     const prepareFunc = prepareColumns || (v => v);
-    return prepareFunc(getMoviesListColumns(MOVIES_GENRES.genres));
+    return prepareFunc(getMoviesListColumns(MOVIES_GENRES.genres, COUNTRIES.countries));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prepareColumns, MOVIES_GENRES.genres]);
+  }, [prepareColumns, MOVIES_GENRES.genres, COUNTRIES.countries]);
 
   return (
     <div className={css.root}>

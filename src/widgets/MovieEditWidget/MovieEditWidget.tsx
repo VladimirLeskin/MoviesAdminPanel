@@ -22,6 +22,7 @@ import {MovieEditWidgetModel} from 'src/widgets/MovieEditWidget/movie-edit-widge
 import {ImageEditor} from 'src/widgets/MovieEditWidget/components/ImageEditor';
 import {DescriptionForm} from 'src/widgets/MovieEditWidget/components/DescriptionForm';
 import {IEditedMovieInfo} from 'src/widgets/MovieEditWidget/types';
+import {COUNTRIES} from '../../models/CountriesModel';
 
 import css from './MovieEditWidget.module.scss';
 
@@ -37,7 +38,6 @@ const stringFields = [
   {key: 'original_title', title: 'Оригинальное название'},
   {key: 'imdb_id', title: 'imdb_id'},
   {key: 'tmdb_id', title: 'tmdb_id'},
-  {key: 'country', title: 'Страна (2-4 символа)'},
 ];
 
 export const MovieEditWidget: FC<Props> = observer(({movieId, onSaved}) => {
@@ -90,6 +90,14 @@ export const MovieEditWidget: FC<Props> = observer(({movieId, onSaved}) => {
     [movieInfo, updateMovie]
   );
 
+  const onCountriesChanged = useCallback(
+    (e: SelectChangeEvent<string[]>) => {
+      const value = e.target.value;
+      updateMovie({...movieInfo, countries: typeof value === 'string' ? value.split(',') : value});
+    },
+    [movieInfo, updateMovie]
+  );
+
   const onImagesChanged = useCallback(
     (images: IEditedMovieInfo['images']) => {
       updateMovie({...movieInfo, images});
@@ -113,6 +121,30 @@ export const MovieEditWidget: FC<Props> = observer(({movieId, onSaved}) => {
               />
             </FormControl>
           ))}
+          <FormControl variant="outlined">
+            <InputLabel>Страны</InputLabel>
+            <Select
+              variant="outlined"
+              label="Страны"
+              value={movieInfo.countries}
+              onChange={onCountriesChanged}
+              multiple
+              multiline
+              renderValue={selected =>
+                Object.values(COUNTRIES.countries)
+                  .filter(c => selected.includes(c.country_code))
+                  .map(c => c.name)
+                  .join(', ')
+              }
+            >
+              {Object.values(COUNTRIES.countries).map(country => (
+                <MenuItem key={country.country_code} value={country.country_code}>
+                  <Checkbox checked={movieInfo.countries.includes(country.country_code)} size="small" />
+                  <ListItemText primary={country.name} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <FormControl variant="outlined">
             <InputLabel>Жанры</InputLabel>
             <Select

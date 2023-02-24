@@ -53,6 +53,7 @@ export class MoviesListWidgetModel extends ItemsListModel<IMovieListItem, IMovie
               original_title: dto.original_title,
               title: dto.title,
               genres: dto.genres,
+              countries: dto.countries,
               date: new Date(dto.date),
               images: dto.images,
             })),

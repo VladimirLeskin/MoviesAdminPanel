@@ -9,7 +9,7 @@ import {getAxiosErrorText} from '../../api/stdAxiosErrorHandler';
 
 const emptyMovie: IEditedMovieInfo = {
   adult: false,
-  country: '',
+  countries: [],
   descriptions: [{lang: 'ru'}],
   images: [],
   genres: [],
@@ -83,7 +83,7 @@ export class MovieEditWidgetModel {
         genres: movieInfo.genres,
         images: movieInfo.images.map(img => ({...img, name: img.src, content: img.content})),
         release_date_ts: movieInfo.release_date && movieInfo.release_date?.getTime() / 1000,
-        country: movieInfo.country,
+        countries: movieInfo.countries,
         tmdb_id: +String(movieInfo.tmdb_id) || undefined,
         imdb_id: movieInfo.imdb_id,
       });
@@ -125,7 +125,7 @@ export class MovieEditWidgetModel {
       original_title: movieInfoDto.original_title,
       imdb_id: movieInfoDto.imdb_id,
       tmdb_id: movieInfoDto.tmdb_id?.toString(),
-      country: movieInfoDto.country,
+      countries: movieInfoDto.countries,
       release_date:
         movieInfoDto.release_date_ts !== undefined ? new Date(movieInfoDto.release_date_ts * 1000) : undefined,
       genres: movieInfoDto.genres ?? [],

@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import {AgGridReact} from 'ag-grid-react';
-import {ColDef} from 'ag-grid-community';
+import {ColDef, ICellRendererParams} from 'ag-grid-community';
 import {AgGridReactProps, AgReactUiProps} from 'ag-grid-react/lib/shared/interfaces';
 import {IconButton} from '@mui/material';
 import {Visibility} from '@mui/icons-material';
@@ -43,7 +43,7 @@ function getDetailsColumn<TData extends TBaseDataType = TBaseDataType>(
     resizable: false,
     sortable: false,
     width: 50,
-    cellRenderer: params => (
+    cellRenderer: (params: ICellRendererParams<TData>) => (
       <IconButton onClick={() => callback(params.data?.id)} size="small">
         <Visibility fontSize="small" />
       </IconButton>

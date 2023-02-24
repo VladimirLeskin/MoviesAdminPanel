@@ -2,7 +2,7 @@ export interface IEditedMovieInfo {
   id?: string;
   imdb_id: string;
   tmdb_id?: string;
-  country: string;
+  countries: string[];
   adult: boolean;
   genres: number[];
   original_title: string;

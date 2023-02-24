@@ -9,6 +9,7 @@ export interface IMovieDto {
   original_title: string;
   title: string;
   genres: number[];
+  countries: string[];
   date: string; // 2014-05-15
   images: Array<{id: string; path: string}>;
 }
@@ -17,7 +18,7 @@ export interface IMovieInfoDto {
   id?: string;
   imdb_id: string;
   tmdb_id?: number;
-  country: string;
+  countries: string[];
   adult: boolean;
   genres: IMovieGenre['genre_id'][];
   original_title: string;
@@ -39,6 +40,7 @@ export interface IMovieListItem {
   original_title: string;
   title: string;
   genres: number[];
+  countries: string[];
   date: Date;
   images: Array<{id: string; path: string}>;
 }

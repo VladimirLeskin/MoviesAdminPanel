@@ -8,7 +8,6 @@ const hashType = '[contenthash:8]';
 
 module.exports = merge(common, {
   mode: 'production',
-  devtool: 'nosources-source-map',
   output: {
     clean: true,
     publicPath: `/admin/`,
@@ -41,6 +40,6 @@ module.exports = merge(common, {
   plugins: [
     new MiniCssExtractPlugin({
       filename: `${staticFilePath}/css/[name].${hashType}.css`,
-    })
+    }),
   ],
 });

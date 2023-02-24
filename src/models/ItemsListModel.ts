@@ -52,7 +52,9 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
         }
       })
       .finally(() => {
-        this.isLoading = false;
+        runInAction(() => {
+          this.isLoading = false;
+        });
       });
   }
 
