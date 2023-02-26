@@ -133,14 +133,14 @@ export const MovieEditWidget: FC<Props> = observer(({movieId, onSaved}) => {
               renderValue={selected =>
                 Object.values(COUNTRIES.countries)
                   .filter(c => selected.includes(c.country_code))
-                  .map(c => c.name)
+                  .map(c => c.name || c.country_code)
                   .join(', ')
               }
             >
               {Object.values(COUNTRIES.countries).map(country => (
                 <MenuItem key={country.country_code} value={country.country_code}>
                   <Checkbox checked={movieInfo.countries.includes(country.country_code)} size="small" />
-                  <ListItemText primary={country.name} />
+                  <ListItemText primary={country.name || country.country_code} />
                 </MenuItem>
               ))}
             </Select>
