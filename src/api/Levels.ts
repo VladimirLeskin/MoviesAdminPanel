@@ -8,6 +8,11 @@ interface ILevelQuestionRequestion {
   variants: string[];
 }
 
+interface IFindRequestParams {
+  pageSize?: number;
+  page?: number;
+}
+
 interface ISaveLevelRequest {
   id?: string;
   descriptions?: Record<string, {title: string; description: string}>;
@@ -25,8 +30,9 @@ export default class LevelsApi {
     return Config.apiUrl;
   }
 
-  public static getLevels(): Promise<AxiosResponse<IPagedResponse<ILevelDto>>> {
-    return axios.get(LevelsApi.baseUrl + '/levels');
+  public static getLevels(payload?: IFindRequestParams): Promise<AxiosResponse<IPagedResponse<ILevelDto>>> {
+    const {page = 0, pageSize} = payload ?? {};
+    return axios.get(LevelsApi.baseUrl + '/levels', {params: {page: page + 1, pageSize}});
   }
 
   public static getLevelInfo(levelId: string): Promise<AxiosResponse<ILevelInfoDto>> {

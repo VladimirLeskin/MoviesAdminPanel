@@ -3,7 +3,10 @@ import {AxiosResponse} from 'axios';
 import {IPagedResponse} from '../api/types';
 
 type TBaseItem = {id: unknown};
-type TMobXAnnotationsMap<T extends TBaseItem, Filters> = AnnotationsMap<ItemsListModel<T, Filters>, '_items'>;
+type TMobXAnnotationsMap<T extends TBaseItem, Filters> = AnnotationsMap<
+  ItemsListModel<T, Filters>,
+  '_items' | 'inited'
+>;
 
 export interface IListPagination {
   page?: number; // from 0
@@ -21,6 +24,7 @@ interface IRequestPayload<Filters> {
 }
 
 export abstract class ItemsListModel<T extends TBaseItem, Filters> {
+  protected inited: boolean = false;
   protected _items: T[] = [];
   protected lastLoadPayload: IRequestPayload<Filters> | undefined = undefined;
 
@@ -33,6 +37,10 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
 
   constructor() {
     makeObservable(this, ItemsListModel.getMobxAnnotations(), {autoBind: true});
+  }
+
+  public reload() {
+    return this.loadItems({filter: this.filter, pagination: this.pagination});
   }
 
   public loadItems(payload?: IRequestPayload<Filters>) {
@@ -58,6 +66,24 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
       });
   }
 
+  public onFilterChanged(filter: Filters) {
+    this.filter = filter;
+    this.pagination = {...this.pagination, page: 0};
+    this.loadItems({filter, pagination: this.pagination});
+  }
+
+  public onPaginationChanged(pagination: IListPagination) {
+    this.pagination = pagination;
+    this.loadItems({filter: this.filter, pagination});
+  }
+
+  public init() {
+    if (!this.inited) {
+      this.loadItems({filter: this.filter, pagination: this.pagination});
+    }
+    this.inited = true;
+  }
+
   public get items(): T[] {
     return this._items;
   }
@@ -79,10 +105,16 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
   private static getMobxAnnotations<T extends TBaseItem, Filters>(): TMobXAnnotationsMap<T, Filters> {
     return {
       loadItems: action.bound,
+      reload: action.bound,
       deleteItem: action.bound,
       setItems: action.bound,
+      onFilterChanged: action.bound,
+      onPaginationChanged: action.bound,
+      init: action.bound,
       items: computed,
       _items: observable,
+      inited: observable,
+      isLoading: observable,
       total: observable,
       filter: observable,
       pagination: observable,

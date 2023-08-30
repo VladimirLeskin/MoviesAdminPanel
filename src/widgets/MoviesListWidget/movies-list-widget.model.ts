@@ -1,15 +1,13 @@
-import {action, makeObservable} from 'mobx';
+import {makeObservable} from 'mobx';
 import {IMovieListItem} from '../../api/dto/MovieDto';
 import MoviesApi from '../../api/Movies';
-import {IApiEndPoints, IListPagination, ItemsListModel} from '../../models/ItemsListModel';
+import {IApiEndPoints, ItemsListModel} from '../../models/ItemsListModel';
 
 interface IMovieFilter {
   search?: string;
 }
 
 export class MoviesListWidgetModel extends ItemsListModel<IMovieListItem, IMovieFilter> {
-  private inited = false;
-
   constructor() {
     super();
     makeObservable(this, MoviesListWidgetModel.getMoviesListMobxAnnotations());
@@ -20,24 +18,6 @@ export class MoviesListWidgetModel extends ItemsListModel<IMovieListItem, IMovie
       ...mov,
       images: mov.images.slice(),
     }));
-  }
-
-  public init() {
-    if (!this.inited) {
-      this.loadItems({filter: this.filter, pagination: this.pagination});
-    }
-    this.inited = true;
-  }
-
-  public onFilterChanged(filter: IMovieFilter) {
-    this.filter = filter;
-    this.pagination = {...this.pagination, page: 0};
-    this.loadItems({filter, pagination: this.pagination});
-  }
-
-  public onPaginationChanged(pagination: IListPagination) {
-    this.pagination = pagination;
-    this.loadItems({filter: this.filter, pagination});
   }
 
   protected apiEndPoints: IApiEndPoints<IMovieListItem, IMovieFilter> = {
@@ -66,9 +46,6 @@ export class MoviesListWidgetModel extends ItemsListModel<IMovieListItem, IMovie
   private static getMoviesListMobxAnnotations() {
     return {
       ...MoviesListWidgetModel.getMobxBaseAnnotations(),
-      init: action.bound,
-      onFilterChanged: action.bound,
-      onPaginationChanged: action.bound,
     };
   }
 }

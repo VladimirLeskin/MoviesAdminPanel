@@ -10,12 +10,14 @@ import {LevelsListModel} from './levels-list.model';
 import {LEVELS_LIST_COLUMNS} from './constants';
 import {LevelEditWidget} from '../../widgets/LevelEditWidget/LevelEditWidget';
 import {ROUTES} from 'src/constants';
+import {Spinner} from '../../components/Spinner/Spinner';
+import {Pagination} from '../../components/Pagination/Pagination';
 
 import css from './LevelsListPage.module.scss';
 
 export const LevelsListPage: FC = observer(() => {
   const [model] = useState(() => new LevelsListModel());
-  const {loadItems, items} = model;
+  const {init, isLoading, total, pagination, items, onPaginationChanged} = model;
   const [selectedLevelId, setSelectedLevelId] = useState<string | undefined>();
   const {state: showLevelDetails, toggleState: toggleLevelDetails, setState: setShowLevelDetails} = useBooleanState();
 
@@ -50,8 +52,15 @@ export const LevelsListPage: FC = observer(() => {
   }, [model]);
 
   useEffect(() => {
-    loadItems();
-  }, [loadItems]);
+    init();
+  }, [init]);
+
+  const paginationContainer = (
+    <div className={css.PaginationContainer}>
+      <Spinner className={!isLoading && css.LoaderHidden} />
+      <Pagination {...pagination} itemsTotal={total} onChange={onPaginationChanged} />
+    </div>
+  );
 
   return (
     <>
@@ -61,6 +70,7 @@ export const LevelsListPage: FC = observer(() => {
             Добавить
           </Button>
         </Link>
+        {paginationContainer}
         <AgGrid
           rowData={items}
           onShowDetails={onLevelDetailsClicked}
@@ -68,6 +78,7 @@ export const LevelsListPage: FC = observer(() => {
           wrapperClassName={css.LevelsList}
           tooltipShowDelay={500}
         />
+        {paginationContainer}
       </div>
       <Drawer open={showLevelDetails} anchor="left" variant="persistent">
         <div className={css.LevelDetails}>
