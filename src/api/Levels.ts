@@ -31,8 +31,8 @@ export default class LevelsApi {
   }
 
   public static getLevels(payload?: IFindRequestParams): Promise<AxiosResponse<IPagedResponse<ILevelDto>>> {
-    const {page = 0, pageSize} = payload ?? {};
-    return axios.get(LevelsApi.baseUrl + '/levels', {params: {page: page + 1, pageSize}});
+    const {page, pageSize} = payload ?? {};
+    return axios.get(LevelsApi.baseUrl + '/levels', {params: {page, pageSize}});
   }
 
   public static getLevelInfo(levelId: string): Promise<AxiosResponse<ILevelInfoDto>> {

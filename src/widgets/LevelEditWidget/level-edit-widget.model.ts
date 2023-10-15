@@ -2,6 +2,8 @@ import {makeAutoObservable} from 'mobx';
 import LevelsApi from 'src/api/Levels';
 import {ELevelType, ILevelInfoDto} from 'src/api/dto/LevelDto';
 import {IEditedLevelInfo} from './types';
+import {toast} from 'react-toastify';
+import {getAxiosErrorText} from '../../api/stdAxiosErrorHandler';
 
 const emptyLevel: IEditedLevelInfo = {
   type: ELevelType.TIME,
@@ -32,6 +34,8 @@ export class LevelEditWidgetModel {
           const levelInfoDto = data.data;
           this.levelInfo = LevelEditWidgetModel.levelDtoToLevelInfo(levelInfoDto);
         }
+      } catch (err) {
+        toast.error(`Ошибка загрузки\n${getAxiosErrorText(err)}`);
       } finally {
         this.isLoading = false;
       }
@@ -72,6 +76,7 @@ export class LevelEditWidgetModel {
         this.levelInfo = LevelEditWidgetModel.levelDtoToLevelInfo(response.data);
       }
     } catch (err: any) {
+      toast.error(`Ошибка сохранения\n${getAxiosErrorText(err)}`);
     } finally {
       this.isLoading = false;
     }
