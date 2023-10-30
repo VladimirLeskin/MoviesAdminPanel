@@ -37,14 +37,23 @@ const stringFields = [
 
 interface Props {
   levelId?: string;
+  onSaved?: (id: string) => void;
 }
 
-export const LevelEditWidget: FC<Props> = observer(({levelId}) => {
+export const LevelEditWidget: FC<Props> = observer(({levelId, onSaved}) => {
   const {levelInfo, loadLevel, updateLevel, save, defaultQuestion, isLoading} = levelEditPageModel;
 
   useEffect(() => {
     loadLevel(levelId);
   }, [loadLevel, levelId]);
+
+  const onSave = useCallback(() => {
+    save().then(id => {
+      if (id) {
+        onSaved?.(id);
+      }
+    });
+  }, [onSaved, save]);
 
   const updateField = useCallback(
     (id: string, value: any) => {
@@ -132,7 +141,7 @@ export const LevelEditWidget: FC<Props> = observer(({levelId}) => {
             />
           </div>
         </div>
-        <Fab onClick={save} className={css.SaveBtn} variant="extended" color="primary" disabled={isLoading}>
+        <Fab onClick={onSave} className={css.SaveBtn} variant="extended" color="primary" disabled={isLoading}>
           <Save /> Сохранить
         </Fab>
       </Box>

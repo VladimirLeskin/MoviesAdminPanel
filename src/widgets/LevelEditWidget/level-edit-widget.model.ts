@@ -51,7 +51,11 @@ export class LevelEditWidgetModel {
   public async save() {
     const levelInfo = this.levelInfo;
     this.isLoading = true;
+    let toastId;
+    const toastOptions = {isLoading: false, autoClose: 10000, closeButton: true};
+
     try {
+      toastId = toast.loading('Сохраняем');
       const response = await LevelsApi.createLevelInfo({
         id: levelInfo.id,
         descriptions: levelInfo.descriptions.reduce((acc, d) => {
@@ -73,13 +77,20 @@ export class LevelEditWidgetModel {
       });
 
       if (response.data) {
+        toast.update(toastId, {type: 'success', render: 'Сохранено', ...toastOptions});
         this.levelInfo = LevelEditWidgetModel.levelDtoToLevelInfo(response.data);
+        return this.levelInfo.id;
       }
     } catch (err: any) {
-      toast.error(`Ошибка сохранения\n${getAxiosErrorText(err)}`);
+      toast.update(toastId, {
+        type: 'error',
+        render: `Ошибка сохранения\n${getAxiosErrorText(err)}`,
+        ...toastOptions,
+      });
     } finally {
       this.isLoading = false;
     }
+    return;
   }
 
   get levelInfo(): IEditedLevelInfo {
