@@ -1,0 +1,33 @@
+.root {
+  padding: 10px;
+}
+
+.form {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+  margin-bottom: 15px;
+  width: 70%;
+}
+
+.control {
+  margin-bottom: 10px;
+}
+
+.loader {
+  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.1);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}

@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: ['plugin:react/recommended', 'plugin:react-hooks/recommended', 'google'],
+  extends: ['plugin:react/recommended', 'plugin:react-hooks/recommended', 'google', 'plugin:prettier/recommended'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
@@ -12,7 +12,7 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['react', '@typescript-eslint'],
+  plugins: ['react', '@typescript-eslint', 'prettier'],
   rules: {
     'arrow-parens': 'off',
     'comma-dangle': [
@@ -25,9 +25,11 @@ module.exports = {
         functions: 'never',
       },
     ],
-    'indent': ['warn', 2],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['error', {argsIgnorePattern: '^_'}],
     'max-len': ['error', {code: 120}],
     'operator-linebreak': 'off',
+    'react/display-name': 'off',
     'require-jsdoc': 'off',
     'space-before-function-paren': 'off',
   },

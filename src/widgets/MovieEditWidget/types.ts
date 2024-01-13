@@ -7,7 +7,7 @@ export interface IEditedMovieInfo {
   genres: number[];
   original_title: string;
   release_date?: Date;
-  images: Array<{id?: string; src?: string, content?: string}>;
+  images: Array<{id?: string; src?: string; content?: string}>;
   descriptions: Array<{
     lang: string;
     title?: string;

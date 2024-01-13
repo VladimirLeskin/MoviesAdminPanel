@@ -3,7 +3,7 @@ import {useNavigate, useParams} from 'react-router';
 import {observer} from 'mobx-react';
 
 import {ROUTES} from 'src/constants';
-import {MovieEditWidget} from 'src/widgets/MovieEditWidget/MovieEditWidget';
+import {MovieEditWidget} from '../../widgets/MovieEditWidget/MovieEditWidget';
 
 export const MovieEditPage: FC = observer(() => {
   const navigate = useNavigate();

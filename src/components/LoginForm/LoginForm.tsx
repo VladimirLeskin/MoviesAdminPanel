@@ -1,17 +1,14 @@
 import React, {FC, useCallback, useState} from 'react';
 import {Button, FormControl, TextField} from '@mui/material';
-import {makeStyles} from '@mui/styles';
-import {styles} from './styles';
+
+import css from './LoginForm.module.scss';
 
 interface ILoginFormProps {
   onLogin: (login: string, password: string) => Promise<boolean>;
   onSuccess?: () => void;
 }
 
-const useStyles = makeStyles(styles);
-
 export const LoginForm: FC<ILoginFormProps> = props => {
-  const classes = useStyles(props);
   const {onLogin, onSuccess} = props;
 
   const [login, setLogin] = useState('');
@@ -39,11 +36,11 @@ export const LoginForm: FC<ILoginFormProps> = props => {
   );
 
   return (
-    <div className={classes.root}>
-      <form onSubmit={onSubmit} className={classes.form}>
-        {isLoading && <div className={classes.loader}>Загрузка...</div>}
-        <div className={classes.fields}>
-          <FormControl className={classes.control}>
+    <div className={css.root}>
+      <form onSubmit={onSubmit} className={css.form}>
+        {isLoading && <div className={css.loader}>Загрузка...</div>}
+        <div className={css.fields}>
+          <FormControl className={css.control}>
             <TextField
               label="Login"
               name="login"
@@ -56,7 +53,7 @@ export const LoginForm: FC<ILoginFormProps> = props => {
               }}
             />
           </FormControl>
-          <FormControl className={classes.control}>
+          <FormControl className={css.control}>
             <TextField
               label="Password"
               name="password"

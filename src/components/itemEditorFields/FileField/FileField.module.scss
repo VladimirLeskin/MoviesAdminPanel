@@ -1,0 +1,27 @@
+.root {
+  .Control {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+
+    .AttachInput {
+      flex-shrink: 0;
+      input {
+        display: none;
+      }
+    }
+
+    .SelectedFile {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+
+      .SelectedFileName {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+    }
+  }
+}

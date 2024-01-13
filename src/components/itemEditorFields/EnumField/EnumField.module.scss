@@ -1,0 +1,14 @@
+.root {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+
+  &.MultiValue {
+    min-width: 200px;
+  }
+
+  .inputRoot {
+    width: auto !important;
+  }
+}

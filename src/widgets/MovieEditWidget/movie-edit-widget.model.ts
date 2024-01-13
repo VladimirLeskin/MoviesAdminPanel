@@ -1,11 +1,9 @@
-import {makeAutoObservable, runInAction} from 'mobx';
-import {toast} from 'react-toastify';
-
+import {makeObservable} from 'mobx';
 import {IEditedMovieInfo} from './types';
 import MoviesApi from '../../api/Movies';
-import {IMovieGenre, IMovieInfoDto} from '../../api/dto/MovieDto';
+import {IMovieInfoDto} from '../../api/dto/MovieDto';
 import Config from '../../entries/Config';
-import {getAxiosErrorText} from '../../api/stdAxiosErrorHandler';
+import {EntityEditorModel} from '../../models/EntityEditorModel';
 
 const emptyMovie: IEditedMovieInfo = {
   adult: false,
@@ -18,105 +16,11 @@ const emptyMovie: IEditedMovieInfo = {
   original_title: '',
 };
 
-export class MovieEditWidgetModel {
-  private _movieInfo: IEditedMovieInfo = emptyMovie;
-  private _isLoading = false;
-  public genresDescription: IMovieGenre[] = [];
-
+export class MovieEditWidgetModel extends EntityEditorModel<IEditedMovieInfo> {
   constructor() {
-    makeAutoObservable(this, undefined, {autoBind: true});
-  }
-
-  public async load(movieId?: string) {
-    if (!this.genresDescription.length) {
-      MoviesApi.getGenresDescriptions().then(resp => {
-        runInAction(() => {
-          this.genresDescription = resp.data.items.sort((a, b) => a.name.localeCompare(b.name));
-        });
-      });
-    }
-
-    if (movieId) {
-      try {
-        this.isLoading = true;
-        const data = await MoviesApi.getMovieInfo(movieId);
-        if (data.data) {
-          const levelInfoDto = data.data;
-          this.movieInfo = MovieEditWidgetModel.movieDtoToMovieInfo(levelInfoDto);
-        }
-      } finally {
-        this.isLoading = false;
-      }
-    }
-  }
-
-  public updateMovie(info: IEditedMovieInfo) {
-    this.movieInfo = info;
-  }
-
-  public async save() {
-    const validationErrors = this.validate();
-    if (validationErrors.length) {
-      toast.error(validationErrors.join(', '));
-      return;
-    }
-
-    let toastId;
-    const toastOptions = {isLoading: false, autoClose: 10000, closeButton: true};
-
-    try {
-      const movieInfo = this.movieInfo;
-      this.isLoading = true;
-      toastId = toast.loading('Сохраняем');
-
-      const response = await MoviesApi.createMovieInfo({
-        id: movieInfo.id,
-        original_title: movieInfo.original_title,
-        descriptions: movieInfo.descriptions.reduce((acc, d) => {
-          const {lang, ...descr} = d;
-          if (descr.title) {
-            acc[lang] = descr;
-          }
-          return acc;
-        }, {}),
-        adult: movieInfo.adult,
-        genres: movieInfo.genres,
-        images: movieInfo.images.map(img => ({...img, name: img.src, content: img.content})),
-        release_date_ts: movieInfo.release_date && movieInfo.release_date?.getTime() / 1000,
-        countries: movieInfo.countries,
-        tmdb_id: +String(movieInfo.tmdb_id) || undefined,
-        imdb_id: movieInfo.imdb_id,
-      });
-
-      toast.update(toastId, {type: 'success', render: 'Сохранено', ...toastOptions});
-      if (response.data) {
-        this.movieInfo = MovieEditWidgetModel.movieDtoToMovieInfo(response.data);
-      }
-    } catch (err) {
-      toast.update(toastId, {
-        type: 'error',
-        render: `Ошибка сохранения\n${getAxiosErrorText(err)}`,
-        ...toastOptions,
-      });
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  get movieInfo(): IEditedMovieInfo {
-    return this._movieInfo;
-  }
-
-  set movieInfo(value: IEditedMovieInfo) {
-    this._movieInfo = value;
-  }
-
-  get isLoading(): boolean {
-    return this._isLoading;
-  }
-
-  set isLoading(value: boolean) {
-    this._isLoading = value;
+    super();
+    this.data = emptyMovie;
+    makeObservable(this, MovieEditWidgetModel.getMobxBaseAnnotations());
   }
 
   private static movieDtoToMovieInfo(movieInfoDto: IMovieInfoDto): IEditedMovieInfo {
@@ -142,17 +46,55 @@ export class MovieEditWidgetModel {
     };
   }
 
-  private validate(): string[] {
+  protected validate(data: IEditedMovieInfo): string[] {
     const errors: string[] = [];
-    if (!this.movieInfo.imdb_id) {
+    if (!data.imdb_id) {
       errors.push('imdb_id пусто');
     }
-    for (let i = 0; i < this.movieInfo.descriptions.length; i++) {
-      const description = this.movieInfo.descriptions[i];
+    for (let i = 0; i < data.descriptions.length; i++) {
+      const description = data.descriptions[i];
       if (!description.title) {
         errors.push(`Отсутствует название для языка: ${description.lang}`);
       }
     }
     return errors;
+  }
+
+  protected async getDataRequestPromise(id?: IEditedMovieInfo['id']): Promise<IEditedMovieInfo> {
+    if (id) {
+      const data = await MoviesApi.getMovieInfo(id);
+      if (data.data) {
+        const levelInfoDto = data.data;
+        return MovieEditWidgetModel.movieDtoToMovieInfo(levelInfoDto);
+      }
+    }
+    return emptyMovie;
+  }
+
+  protected async getDataSaveRequestPromise(movieInfo: IEditedMovieInfo): Promise<IEditedMovieInfo> {
+    const response = await MoviesApi.createMovieInfo({
+      id: movieInfo.id,
+      original_title: movieInfo.original_title,
+      descriptions: movieInfo.descriptions.reduce((acc, d) => {
+        const {lang, ...descr} = d;
+        if (descr.title) {
+          acc[lang] = descr;
+        }
+        return acc;
+      }, {}),
+      adult: movieInfo.adult,
+      genres: movieInfo.genres,
+      images: movieInfo.images.map(img => ({...img, name: img.src, content: img.content})),
+      release_date_ts: movieInfo.release_date && movieInfo.release_date?.getTime() / 1000,
+      countries: movieInfo.countries,
+      tmdb_id: +String(movieInfo.tmdb_id) || undefined,
+      imdb_id: movieInfo.imdb_id,
+    });
+
+    if (response.data) {
+      return MovieEditWidgetModel.movieDtoToMovieInfo(response.data);
+    } else {
+      throw new Error('response.data is empty');
+    }
   }
 }

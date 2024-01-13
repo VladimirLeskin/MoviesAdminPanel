@@ -5,30 +5,7 @@
 
   .Buttons {
     position: sticky;
-    bottom: 18px;
-    text-align: center;
-    width: 100%;
-  }
-
-  .Images {
-
-  }
-
-  .MovieInfo {
-    min-width: 600px;
-    width: 50%;
-    padding: 0 10px;
-
-    .Control {
-      margin: 10px 0;
-    }
-
-    .Description {
-      margin: 10px 0;
-    }
-  }
-
-  .Images {
-    padding: 0 10px;
+    bottom: 0;
+    margin-right: auto;
   }
 }

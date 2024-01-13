@@ -7,7 +7,7 @@ type TLevelsFilter = undefined;
 
 export class LevelsListModel extends ItemsListModel<ILevelDto, TLevelsFilter> {
   protected apiEndPoints: IApiEndPoints<ILevelDto, TLevelsFilter> = {
-    load: (v) => LevelsApi.getLevels(v?.pagination),
+    load: v => LevelsApi.getLevels(v?.pagination),
     delete: () => Promise.reject(new Error('not implemented')),
   };
 

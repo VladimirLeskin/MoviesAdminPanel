@@ -42,7 +42,7 @@ function getDetailsColumn<TData extends TBaseDataType = TBaseDataType>(
     editable: false,
     resizable: false,
     sortable: false,
-    width: 50,
+    width,
     cellRenderer: (params: ICellRendererParams<TData>) => (
       <IconButton onClick={() => callback(params.data?.id)} size="small">
         <Visibility fontSize="small" />
