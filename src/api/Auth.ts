@@ -1,10 +1,8 @@
 import axios, {AxiosResponse} from 'axios';
-import Config from '../entries/Config';
+import {BaseApi} from './BaseApi';
 
 export enum EUserRoles {
-  // eslint-disable-next-line no-unused-vars
   admin = 'admin',
-  // eslint-disable-next-line no-unused-vars
   operator = 'operator',
 }
 
@@ -35,16 +33,16 @@ export interface IOauthTokensDto {
   refresh_token_expiration_ts: number;
 }
 
-export class AuthApi {
+export class AuthApi extends BaseApi {
   public static login(data: {login: string; password: string}): Promise<AxiosResponse<ILoginResponse>> {
-    return axios.post(Config.apiUrl + '/auth/login', data);
+    return axios.post(this.url('/auth/login'), data);
   }
 
   public static auth() {
-    return axios.get<IUserDto>(Config.apiUrl + '/auth/view');
+    return axios.get<IUserDto>(this.url('/auth/view'));
   }
 
   public static refreshToken(data: {refresh_token: string}) {
-    return axios.post<IOauthTokensDto>(Config.apiUrl + '/auth/refresh_token', data);
+    return axios.post<IOauthTokensDto>(this.url('/auth/refresh_token'), data);
   }
 }

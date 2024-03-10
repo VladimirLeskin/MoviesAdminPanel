@@ -1,7 +1,7 @@
-import Config from '../entries/Config';
 import axios, {AxiosResponse} from 'axios';
 import {ELevelType, ILevelDto, ILevelInfoDto} from './dto/LevelDto';
 import {IPagedResponse} from './types';
+import {BaseApi} from './BaseApi';
 
 interface ILevelQuestionRequestion {
   imageId: string;
@@ -25,25 +25,21 @@ interface ISaveLevelRequest {
   isActive: boolean;
 }
 
-export default class LevelsApi {
-  private static get baseUrl(): string {
-    return Config.apiUrl;
-  }
-
+export default class LevelsApi extends BaseApi {
   public static getLevels(payload?: IFindRequestParams): Promise<AxiosResponse<IPagedResponse<ILevelDto>>> {
     const {page, pageSize} = payload ?? {};
-    return axios.get(LevelsApi.baseUrl + '/levels', {params: {page, pageSize}});
+    return axios.get(this.url('/levels'), {params: {page, pageSize}});
   }
 
   public static getLevelInfo(levelId: string): Promise<AxiosResponse<ILevelInfoDto>> {
-    return axios.get(`${LevelsApi.baseUrl}/levels/view?id=${levelId}`);
+    return axios.get(this.url(`/levels/view?id=${levelId}`));
   }
 
   public static createLevelInfo(levelInfo: ISaveLevelRequest): Promise<AxiosResponse<ILevelInfoDto>> {
-    return axios.post(`${LevelsApi.baseUrl}/levels/create`, levelInfo);
+    return axios.post(this.url('/levels/create'), levelInfo);
   }
 
   public static publishLevel(id: string, publish: boolean): Promise<AxiosResponse<void>> {
-    return axios.post(`${LevelsApi.baseUrl}/levels/publish`, {id, publish});
+    return axios.post(this.url('/levels/publish'), {id, publish});
   }
 }

@@ -37,7 +37,7 @@ export class BaseOAuth2Client {
     }));
   }
 
-  public updateTokens(tokens: {access: IToken; refresh: IToken}) {
+  private updateTokens(tokens: {access: IToken; refresh: IToken}) {
     this.accessToken = tokens.access;
     this.refreshToken = tokens.refresh;
   }
@@ -75,7 +75,16 @@ export class BaseOAuth2Client {
       const timeToUpdateToken = Math.max(0, this._accessToken.expires.getTime() - new Date().getTime() - timeEpsilon);
 
       clearTimeout(this.refreshingAccessTokenTimer);
-      this.refreshingAccessTokenTimer = window.setTimeout(() => this.getAccessTokenByRefresh(), timeToUpdateToken);
+      this.refreshingAccessTokenTimer = window.setTimeout(() => {
+        // Может оказаться так, что токен уже был перезапрошен на другой вкладке
+        const token = this.readTokenFromLocalStorage(ACCESS_TOKEN_STORAGE_KEY);
+        if (this._accessToken?.token === token?.token) {
+          this.getAccessTokenByRefresh();
+        } else {
+          this.accessToken = token;
+          this.refreshToken = this.readTokenFromLocalStorage(REFRESH_TOKEN_STORAGE_KEY);
+        }
+      }, timeToUpdateToken);
     }
     this.onTokensChanged();
   }
