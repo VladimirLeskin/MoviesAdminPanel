@@ -1,6 +1,8 @@
 import {makeAutoObservable, runInAction} from 'mobx';
 import {ICountryListItemDto} from '../api/dto/ICountryDto';
 import CountriesApi from '../api/Countries';
+import {toast} from 'react-toastify';
+import {getAxiosErrorText} from '../api/stdAxiosErrorHandler';
 
 export class CountriesModel {
   private _countries?: ICountryListItemDto[] = undefined;
@@ -17,7 +19,7 @@ export class CountriesModel {
         .then(resp => {
           this._countries = resp.data.items;
         })
-        .catch(() => {})
+        .catch(e => toast.error(`Ошибка загрузки стран\n${getAxiosErrorText(e)}`))
         .finally(() => {
           runInAction(() => {
             this._isLoading = false;

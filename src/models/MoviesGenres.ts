@@ -1,6 +1,8 @@
 import {makeAutoObservable, runInAction} from 'mobx';
 import {IMovieGenre} from '../api/dto/MovieDto';
 import MoviesApi from '../api/Movies';
+import {getAxiosErrorText} from '../api/stdAxiosErrorHandler';
+import {toast} from 'react-toastify';
 
 class MoviesGenres {
   private _genres?: IMovieGenre[] = undefined;
@@ -17,7 +19,7 @@ class MoviesGenres {
         .then(resp => {
           this._genres = resp.data.items;
         })
-        .catch(() => {})
+        .catch(e => toast.error(`Ошибка загрузки жанров\n${getAxiosErrorText(e)}`))
         .finally(() => {
           runInAction(() => {
             this._isLoading = false;

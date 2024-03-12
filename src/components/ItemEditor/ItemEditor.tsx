@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect, useMemo, useRef} from 'react';
-import {Skeleton} from '@mui/material';
 
 import {IFieldRendererProps, ILayoutSettings, IBaseFieldInfo, TDataErrors, TFieldError} from '../../entries/FieldInfo';
 import {Section1VerticalLayout} from '../layouts/Section1VerticalLayout';
@@ -26,7 +25,6 @@ interface Props<TData> {
   defaultValue?: TData;
   onChange: (value: TData) => void;
   layout?: ILayoutSettings<TData>;
-  showSkeletons?: boolean;
   isControlled?: boolean;
   errors?: TDataErrors<TData>;
 }
@@ -37,7 +35,6 @@ export const ItemEditor = <TData extends Record<string, any> = TObject>({
   fields,
   onChange,
   layout,
-  showSkeletons,
   isControlled,
   errors,
 }: Props<TData>) => {
@@ -68,9 +65,7 @@ export const ItemEditor = <TData extends Record<string, any> = TObject>({
           if (!curFieldInfo) {
             return null;
           }
-          return showSkeletons ? (
-            <Skeleton key={String(curField)} variant="rectangular" width="100%" height={40} />
-          ) : (
+          return (
             <FieldRendererWrapper
               key={String(curField)}
               id={curField.toString()}
@@ -85,7 +80,7 @@ export const ItemEditor = <TData extends Record<string, any> = TObject>({
         })
       )
     );
-  }, [defaultValue, errors, fields, isControlled, layout?.fieldsBySections, onFieldChanged, showSkeletons, value]);
+  }, [defaultValue, errors, fields, isControlled, layout?.fieldsBySections, onFieldChanged, value]);
 
   return <Layout sections={sections} className={css.Layout} />;
 };

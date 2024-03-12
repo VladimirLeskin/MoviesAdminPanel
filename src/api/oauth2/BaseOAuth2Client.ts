@@ -48,8 +48,14 @@ export class BaseOAuth2Client {
       this.refreshToken = response.refreshToken;
       this.accessToken = response.accessToken;
     } catch (e) {
-      this.refreshToken = undefined;
-      this.accessToken = undefined;
+      const token = this.readTokenFromLocalStorage(ACCESS_TOKEN_STORAGE_KEY);
+      if (this._accessToken?.token === token?.token) {
+        this.refreshToken = undefined;
+        this.accessToken = undefined;
+      } else {
+        this.accessToken = token;
+        this.refreshToken = this.readTokenFromLocalStorage(REFRESH_TOKEN_STORAGE_KEY);
+      }
     }
   }
 
