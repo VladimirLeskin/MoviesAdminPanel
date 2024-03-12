@@ -28,10 +28,9 @@ const authModel = new AuthModel();
 const ADMIN_ROLES = [EUserRoles.admin, EUserRoles.operator];
 
 export const App: FC = observer(() => {
-  if (!authModel.login || authModel.isLoading) {
-    if (authModel.isLoading) {
-      return <>Загрузка...</>;
-    }
+  if (!authModel.login && authModel.isLoading) {
+    return <>Загрузка...</>;
+  } else if (!authModel.login) {
     return <LoginForm onLogin={authModel.onLogin} />;
   } else if (!ADMIN_ROLES.some(r => !!authModel.roles?.[r])) {
     return null;

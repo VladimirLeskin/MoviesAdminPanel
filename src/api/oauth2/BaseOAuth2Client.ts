@@ -21,11 +21,9 @@ export class BaseOAuth2Client {
 
   constructor(private onTokensChanged: () => void) {
     try {
-      this.accessToken = this.readTokenFromLocalStorage(ACCESS_TOKEN_STORAGE_KEY);
-      this.refreshToken = this.readTokenFromLocalStorage(REFRESH_TOKEN_STORAGE_KEY);
+      this.updateTokensFromLocalStorage();
     } catch (e) {
-      this.accessToken = undefined;
-      this.refreshToken = undefined;
+      this.dropTokens();
       console.error(e);
     }
   }
@@ -48,24 +46,20 @@ export class BaseOAuth2Client {
       this.refreshToken = response.refreshToken;
       this.accessToken = response.accessToken;
     } catch (e) {
-      const token = this.readTokenFromLocalStorage(ACCESS_TOKEN_STORAGE_KEY);
-      if (this._accessToken?.token === token?.token) {
-        this.refreshToken = undefined;
-        this.accessToken = undefined;
-      } else {
-        this.accessToken = token;
-        this.refreshToken = this.readTokenFromLocalStorage(REFRESH_TOKEN_STORAGE_KEY);
-      }
+      // FIXME. Timeout - костыль, который может и не сработает
+      setTimeout(() => {
+        if (this.isTokenOutdated) {
+          this.updateTokensFromLocalStorage();
+        } else {
+          this.dropTokens();
+        }
+      }, 5000);
     }
   }
 
   public set refreshToken(value: IToken | undefined) {
     this.writeTokenToLocalStorage(REFRESH_TOKEN_STORAGE_KEY, value);
     this._refreshToken = value;
-  }
-
-  public get accessToken(): IToken | undefined {
-    return this._accessToken;
   }
 
   public set accessToken(value: IToken | undefined) {
@@ -78,17 +72,14 @@ export class BaseOAuth2Client {
     if (this._accessToken) {
       const timeEpsilon = 1000 * 60 * 5; // 5 минут
       // Запрашиваем новый токен за 5 минут до окончания действия текущего
-      const timeToUpdateToken = Math.max(0, this._accessToken.expires.getTime() - new Date().getTime() - timeEpsilon);
+      const timeToUpdateToken = Math.max(0, this._accessToken.expires.getTime() - Date.now() - timeEpsilon);
 
       clearTimeout(this.refreshingAccessTokenTimer);
       this.refreshingAccessTokenTimer = window.setTimeout(() => {
-        // Может оказаться так, что токен уже был перезапрошен на другой вкладке
-        const token = this.readTokenFromLocalStorage(ACCESS_TOKEN_STORAGE_KEY);
-        if (this._accessToken?.token === token?.token) {
-          this.getAccessTokenByRefresh();
+        if (this.isTokenOutdated) {
+          this.updateTokensFromLocalStorage();
         } else {
-          this.accessToken = token;
-          this.refreshToken = this.readTokenFromLocalStorage(REFRESH_TOKEN_STORAGE_KEY);
+          this.getAccessTokenByRefresh();
         }
       }, timeToUpdateToken);
     }
@@ -135,5 +126,22 @@ export class BaseOAuth2Client {
         expires: new Date(tokens.refresh_token_expiration_ts * 1000),
       },
     });
+  }
+
+  private dropTokens() {
+    this.accessToken = undefined;
+    this.refreshToken = undefined;
+  }
+
+  private updateTokensFromLocalStorage() {
+    this.accessToken = this.readTokenFromLocalStorage(ACCESS_TOKEN_STORAGE_KEY);
+    this.refreshToken = this.readTokenFromLocalStorage(REFRESH_TOKEN_STORAGE_KEY);
+  }
+
+  private get isTokenOutdated() {
+    // Возможно, в localStorage лежит актуальный токен, полученный на другой вкладке, а здесь уже невалидный
+    const tokenFromLs = this.readTokenFromLocalStorage(ACCESS_TOKEN_STORAGE_KEY);
+    console.log(tokenFromLs?.token, this._accessToken?.token);
+    return tokenFromLs?.token && this._accessToken?.token !== tokenFromLs?.token;
   }
 }
