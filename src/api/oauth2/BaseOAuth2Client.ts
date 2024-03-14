@@ -1,15 +1,5 @@
 import axios from 'axios';
-import {AuthApi, IOauthTokensDto} from '../Auth';
-
-interface IToken {
-  token: string;
-  expires: Date;
-}
-
-export interface ITokensResponse {
-  accessToken: IToken;
-  refreshToken: IToken;
-}
+import {AuthApi, IToken, ITokens} from '../Auth';
 
 const ACCESS_TOKEN_STORAGE_KEY = 'MOVIES_ACCESS_TOKENS';
 const REFRESH_TOKEN_STORAGE_KEY = 'MOVIES_REFRESH_TOKENS';
@@ -17,43 +7,32 @@ const REFRESH_TOKEN_STORAGE_KEY = 'MOVIES_REFRESH_TOKENS';
 export class BaseOAuth2Client {
   private _accessToken?: IToken;
   private _refreshToken?: IToken;
-  private refreshingAccessTokenTimer?: number;
 
   constructor(private onTokensChanged: () => void) {
     try {
       this.updateTokensFromLocalStorage();
+      this.keepAccessTokenUpToDate();
     } catch (e) {
       this.dropTokens();
       console.error(e);
     }
   }
 
-  private refreshAccessToken(): Promise<ITokensResponse> {
-    return AuthApi.refreshToken({refresh_token: this._refreshToken?.token ?? ''}).then(({data: r}) => ({
-      accessToken: {token: r.access_token, expires: new Date(r.access_token_expiration_ts * 1000)},
-      refreshToken: {token: r.refresh_token, expires: new Date(r.refresh_token_expiration_ts * 1000)},
-    }));
+  private refreshAccessToken(): Promise<ITokens> {
+    return AuthApi.refreshToken({refresh_token: this._refreshToken?.token ?? ''});
   }
 
-  private updateTokens(tokens: {access: IToken; refresh: IToken}) {
+  private updateTokens(tokens: ITokens) {
     this.accessToken = tokens.access;
     this.refreshToken = tokens.refresh;
   }
 
   public async getAccessTokenByRefresh() {
     try {
-      const response = await this.refreshAccessToken();
-      this.refreshToken = response.refreshToken;
-      this.accessToken = response.accessToken;
+      const tokens = await this.refreshAccessToken();
+      this.updateTokens(tokens);
     } catch (e) {
-      // FIXME. Timeout - костыль, который может и не сработает
-      setTimeout(() => {
-        if (this.isTokenOutdated) {
-          this.updateTokensFromLocalStorage();
-        } else {
-          this.dropTokens();
-        }
-      }, 5000);
+      // TODO понять, что делать в этом случае
     }
   }
 
@@ -68,21 +47,6 @@ export class BaseOAuth2Client {
 
     // TODO перенести в подходящее место
     axios.defaults.headers.common['Authorization'] = `Bearer ${value?.token ?? ''}`;
-
-    if (this._accessToken) {
-      const timeEpsilon = 1000 * 60 * 5; // 5 минут
-      // Запрашиваем новый токен за 5 минут до окончания действия текущего
-      const timeToUpdateToken = Math.max(0, this._accessToken.expires.getTime() - Date.now() - timeEpsilon);
-
-      clearTimeout(this.refreshingAccessTokenTimer);
-      this.refreshingAccessTokenTimer = window.setTimeout(() => {
-        if (this.isTokenOutdated) {
-          this.updateTokensFromLocalStorage();
-        } else {
-          this.getAccessTokenByRefresh();
-        }
-      }, timeToUpdateToken);
-    }
     this.onTokensChanged();
   }
 
@@ -107,26 +71,38 @@ export class BaseOAuth2Client {
 
   public login = async (login: string, password: string) => {
     try {
-      const response = await AuthApi.login({login, password});
-      this.processTokens(response.data.tokens);
+      const tokens = await AuthApi.login({login, password});
+      this.updateTokens(tokens);
       return true;
     } catch {
       return false;
     }
   };
 
-  private processTokens(tokens: IOauthTokensDto) {
-    this.updateTokens({
-      access: {
-        token: tokens.access_token,
-        expires: new Date(tokens.access_token_expiration_ts * 1000),
-      },
-      refresh: {
-        token: tokens.refresh_token,
-        expires: new Date(tokens.refresh_token_expiration_ts * 1000),
-      },
-    });
+  private keepAccessTokenUpToDate() {
+    window.removeEventListener('storage', this.onStorageChanged);
+    window.addEventListener('storage', this.onStorageChanged);
+
+    setInterval(() => {
+      // Проверяем каждые 2 минуты, и если до конца жизни токена осталось меньше 5 минут, то обновляем его
+      const timeEpsilon = 1000 * 60 * 5; // 5 минут
+
+      if (
+        this._refreshToken &&
+        (!this._accessToken || this._accessToken.expires.getTime() - Date.now() < timeEpsilon)
+      ) {
+        this.getAccessTokenByRefresh();
+      }
+    }, 120_000);
   }
+
+  private onStorageChanged = (event: StorageEvent) => {
+    if (event.key === ACCESS_TOKEN_STORAGE_KEY) {
+      this.accessToken = this.readTokenFromLocalStorage(ACCESS_TOKEN_STORAGE_KEY);
+    } else if (event.key === REFRESH_TOKEN_STORAGE_KEY) {
+      this.refreshToken = this.readTokenFromLocalStorage(REFRESH_TOKEN_STORAGE_KEY);
+    }
+  };
 
   private dropTokens() {
     this.accessToken = undefined;
@@ -136,12 +112,5 @@ export class BaseOAuth2Client {
   private updateTokensFromLocalStorage() {
     this.accessToken = this.readTokenFromLocalStorage(ACCESS_TOKEN_STORAGE_KEY);
     this.refreshToken = this.readTokenFromLocalStorage(REFRESH_TOKEN_STORAGE_KEY);
-  }
-
-  private get isTokenOutdated() {
-    // Возможно, в localStorage лежит актуальный токен, полученный на другой вкладке, а здесь уже невалидный
-    const tokenFromLs = this.readTokenFromLocalStorage(ACCESS_TOKEN_STORAGE_KEY);
-    console.log(tokenFromLs?.token, this._accessToken?.token);
-    return tokenFromLs?.token && this._accessToken?.token !== tokenFromLs?.token;
   }
 }
