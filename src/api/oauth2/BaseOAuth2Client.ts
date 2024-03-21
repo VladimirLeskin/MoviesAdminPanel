@@ -79,11 +79,13 @@ export class BaseOAuth2Client {
     }
   };
 
+  private intervalId;
+
   private keepAccessTokenUpToDate() {
     window.removeEventListener('storage', this.onStorageChanged);
     window.addEventListener('storage', this.onStorageChanged);
 
-    setInterval(() => {
+    const refreshIfNeeded = () => {
       // Проверяем каждые 2 минуты, и если до конца жизни токена осталось меньше 5 минут, то обновляем его
       const timeEpsilon = 1000 * 60 * 5; // 5 минут
 
@@ -93,7 +95,11 @@ export class BaseOAuth2Client {
       ) {
         this.getAccessTokenByRefresh();
       }
-    }, 120_000);
+    };
+
+    clearInterval(this.intervalId);
+    refreshIfNeeded();
+    this.intervalId = setInterval(refreshIfNeeded, 120_000);
   }
 
   private onStorageChanged = (event: StorageEvent) => {
