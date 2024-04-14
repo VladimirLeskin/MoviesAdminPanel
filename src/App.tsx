@@ -3,6 +3,8 @@ import {Route, Routes} from 'react-router';
 import {BrowserRouter} from 'react-router-dom';
 import {observer} from 'mobx-react';
 import {ToastContainer} from 'react-toastify';
+import {QueryParamProvider} from 'use-query-params';
+import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
 
 import {Header} from './components/Header/Header';
 import {ROUTES} from './constants';
@@ -41,19 +43,21 @@ export const App: FC = observer(() => {
         <ToastContainer theme="colored" autoClose={10000} closeButton />
       </div>
       <BrowserRouter basename={`/${process.env.ROUTER_BASENAME}`}>
-        <Header title="админка" items={HEADER_ITEMS} />
-        <div className={css.Content}>
-          <Suspense fallback={<>Загрузка...</>}>
-            <Routes>
-              <Route path={ROUTES.LEVELS.DETAILS} element={<LevelEditPage />} />
-              <Route path={ROUTES.LEVELS.CREATE} element={<LevelEditPage />} />
-              <Route path={ROUTES.LEVELS.LIST} element={<LevelsListPage />} />
-              <Route path={ROUTES.MOVIES.DETAILS} element={<MovieEditPage />} />
-              <Route path={ROUTES.MOVIES.CREATE} element={<MovieEditPage />} />
-              <Route path={ROUTES.MOVIES.LIST} element={<MoviesListPage />} />
-            </Routes>
-          </Suspense>
-        </div>
+        <QueryParamProvider adapter={ReactRouter6Adapter}>
+          <Header title="админка" items={HEADER_ITEMS} />
+          <div className={css.Content}>
+            <Suspense fallback={<>Загрузка...</>}>
+              <Routes>
+                <Route path={ROUTES.LEVELS.DETAILS} element={<LevelEditPage />} />
+                <Route path={ROUTES.LEVELS.CREATE} element={<LevelEditPage />} />
+                <Route path={ROUTES.LEVELS.LIST} element={<LevelsListPage />} />
+                <Route path={ROUTES.MOVIES.DETAILS} element={<MovieEditPage />} />
+                <Route path={ROUTES.MOVIES.CREATE} element={<MovieEditPage />} />
+                <Route path={ROUTES.MOVIES.LIST} element={<MoviesListPage />} />
+              </Routes>
+            </Suspense>
+          </div>
+        </QueryParamProvider>
       </BrowserRouter>
     </div>
   );

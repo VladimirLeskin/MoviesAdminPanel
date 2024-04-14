@@ -14,6 +14,8 @@ import {Spinner} from '../../components/Spinner/Spinner';
 import {Pagination} from '../../components/Pagination/Pagination';
 
 import css from './LevelsListPage.module.scss';
+import {CustomCellRendererProps} from 'ag-grid-react';
+import {ILevelListItemDto} from '../../api/dto/LevelDto';
 
 export const LevelsListPage: FC = observer(() => {
   const [model] = useState(() => new LevelsListModel());
@@ -42,11 +44,14 @@ export const LevelsListPage: FC = observer(() => {
       sortable: true,
       resizable: false,
       cellClass: css.CellWithoutPaddings,
-      cellRenderer: params => {
-        const onPublish = () => {
-          model.onPublish(params.data.id, !params.data.active);
-        };
-        return <Switch checked={!!params.data.active} onChange={onPublish} />;
+      cellRenderer: ({data}: CustomCellRendererProps<ILevelListItemDto>) => {
+        if (data) {
+          const onPublish = () => {
+            model.onPublish(data.id, !data.active);
+          };
+          return <Switch checked={data.active} onChange={onPublish} />;
+        }
+        return null;
       },
     });
   }, [model]);
@@ -75,7 +80,7 @@ export const LevelsListPage: FC = observer(() => {
           rowData={items}
           onShowDetails={onLevelDetailsClicked}
           columnDefs={columns}
-          wrapperClassName={css.LevelsList}
+          className={css.LevelsList}
           tooltipShowDelay={500}
         />
         {paginationContainer}

@@ -28,14 +28,21 @@ export const Pagination: FC<Props> = props => {
     pageSize: initPageSize,
     ...others
   } = props;
-  const pageSize = initPageSize ?? pageSizeOptions[0];
+  const pageSize = initPageSize ?? pageSizeOptions[0] ?? 0;
 
-  const onPageChange = useCallback((_, newPage) => onChange({pageSize, page: newPage}), [onChange, pageSize]);
+  const onPageChange = useCallback(
+    (_: unknown, newPage: number) =>
+      onChange({
+        pageSize,
+        page: newPage,
+      }),
+    [onChange, pageSize]
+  );
   const onRowsPerPageChange = useCallback(
-    e =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
       onChange({
         page: 0,
-        pageSize: parseInt(e.target.value, 10),
+        pageSize: +e.target.value,
       }),
     [onChange]
   );
@@ -48,7 +55,7 @@ export const Pagination: FC<Props> = props => {
       showLastButton
       page={page}
       rowsPerPageOptions={pageSizeOptions}
-      rowsPerPage={pageSize}
+      rowsPerPage={pageSize ?? -1}
       count={itemsTotal}
       onRowsPerPageChange={onRowsPerPageChange}
       onPageChange={onPageChange}

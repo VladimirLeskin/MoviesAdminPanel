@@ -1,13 +1,37 @@
-import React, {FC} from 'react';
+import React, {FC, useCallback, useMemo} from 'react';
 import {Link} from 'react-router-dom';
 import {Button} from '@mui/material';
 
-import {MoviesListWidget} from 'src/widgets/MoviesListWidget/MoviesListWidget';
+import {MoviesListWidget, MoviesListWidgetParams} from 'src/widgets/MoviesListWidget/models';
 import {ROUTES} from 'src/constants';
+import {moviesListFiltersQueryConfig, moviesListPaginationQueryConfig, moviesListSortQueryConfig} from './constants';
+import {useQueryParams} from 'src/hooks/useQueryParams';
 
 import css from './MoviesListPage.module.scss';
 
 export const MoviesListPage: FC = () => {
+  const [pagination, setPagination] = useQueryParams(moviesListPaginationQueryConfig);
+  const [filter, setFilter] = useQueryParams(moviesListFiltersQueryConfig);
+  const [sortState, setSortState] = useQueryParams(moviesListSortQueryConfig);
+
+  const params: MoviesListWidgetParams = useMemo(
+    () => ({
+      pagination,
+      filter,
+      sortState: sortState.sort,
+    }),
+    [filter, pagination, sortState]
+  );
+
+  const handleParamsChange = useCallback(
+    (newParams: MoviesListWidgetParams) => {
+      setFilter(newParams.filter ?? {});
+      setPagination(newParams.pagination ?? {}, 'replaceIn');
+      setSortState({sort: newParams.sortState}, 'replaceIn');
+    },
+    [setFilter, setPagination, setSortState]
+  );
+
   return (
     <div className={css.root}>
       <Link to={ROUTES.MOVIES.CREATE} target="_blank" className={css.AddButton}>
@@ -15,7 +39,7 @@ export const MoviesListPage: FC = () => {
           Добавить
         </Button>
       </Link>
-      <MoviesListWidget />
+      <MoviesListWidget params={params} onParamsChanged={handleParamsChange} />
     </div>
   );
 };

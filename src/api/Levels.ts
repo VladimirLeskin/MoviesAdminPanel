@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from 'axios';
-import {ELevelType, ILevelDto, ILevelInfoDto} from './dto/LevelDto';
+import {ELevelType, ILevelInfoDto, ILevelListItemDto} from './dto/LevelDto';
 import {IPagedResponse} from './types';
 import {BaseApi} from './BaseApi';
 
@@ -26,7 +26,7 @@ interface ISaveLevelRequest {
 }
 
 export default class LevelsApi extends BaseApi {
-  public static getLevels(payload?: IFindRequestParams): Promise<AxiosResponse<IPagedResponse<ILevelDto>>> {
+  public static getLevels(payload?: IFindRequestParams): Promise<AxiosResponse<IPagedResponse<ILevelListItemDto>>> {
     const {page, pageSize} = payload ?? {};
     return axios.get(this.url('/levels'), {params: {page, pageSize}});
   }

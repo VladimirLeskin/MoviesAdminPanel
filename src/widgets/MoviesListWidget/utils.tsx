@@ -3,7 +3,7 @@ import {ColDef, ICellRendererParams} from 'ag-grid-community';
 
 import {MOVIES_LIST_COLUMNS} from './constants';
 import {IMovieListItem, IMovieGenre} from '../../api/dto/MovieDto';
-import {ImagesCellRenderer} from './components/ImagesCellRenderer';
+import {ImagesCellRenderer} from '../../components/gridRenderers';
 import {ICountryListItemDto} from '../../api/dto/ICountryDto';
 
 function genresIdsToString(genresIds?: number[], genresDescriptions?: Record<number, IMovieGenre>) {
@@ -45,6 +45,7 @@ export function getMoviesListColumns(
       sortable: false,
       resizable: true,
       flex: 1,
+      valueFormatter: params => params.data?.images.map(img => img.path).join(', ') ?? '',
       cellRenderer: (params: ICellRendererParams<IMovieListItem>) => {
         return <>{params.data && <ImagesCellRenderer movie={params.data} />}</>;
       },

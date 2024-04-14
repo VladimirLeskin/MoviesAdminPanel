@@ -51,11 +51,10 @@ export class LevelEditWidgetModel {
   public async save() {
     const levelInfo = this.levelInfo;
     this.isLoading = true;
-    let toastId;
+    const toastId = toast.loading('Сохраняем');
     const toastOptions = {isLoading: false, autoClose: 10000, closeButton: true};
 
     try {
-      toastId = toast.loading('Сохраняем');
       const response = await LevelsApi.createLevelInfo({
         id: levelInfo.id,
         descriptions: levelInfo.descriptions.reduce((acc, d) => {

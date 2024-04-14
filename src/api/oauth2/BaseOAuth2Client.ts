@@ -79,7 +79,7 @@ export class BaseOAuth2Client {
     }
   };
 
-  private intervalId;
+  private intervalId?: number;
 
   private keepAccessTokenUpToDate() {
     window.removeEventListener('storage', this.onStorageChanged);
@@ -99,7 +99,7 @@ export class BaseOAuth2Client {
 
     clearInterval(this.intervalId);
     refreshIfNeeded();
-    this.intervalId = setInterval(refreshIfNeeded, 120_000);
+    this.intervalId = window.setInterval(refreshIfNeeded, 120_000);
   }
 
   private onStorageChanged = (event: StorageEvent) => {

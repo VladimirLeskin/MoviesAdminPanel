@@ -17,7 +17,7 @@ export const Section1HorizontalLayout = React.forwardRef<HTMLDivElement, TLayout
         {...otherProps}
         ref={ref}
       >
-        {sections[0].map(elm => elm)}
+        {sections[0]?.map(elm => elm)}
       </Box>
     );
   }

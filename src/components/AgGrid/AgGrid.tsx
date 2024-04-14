@@ -1,43 +1,42 @@
-import React, {useMemo} from 'react';
-import {AgGridReact} from 'ag-grid-react';
+import React, {ForwardedRef, useMemo} from 'react';
+import {AgGridReact, AgGridReactProps} from 'ag-grid-react';
 import {ColDef, ICellRendererParams} from 'ag-grid-community';
-import {AgGridReactProps, AgReactUiProps} from 'ag-grid-react/lib/shared/interfaces';
 import {IconButton} from '@mui/material';
 import {Visibility} from '@mui/icons-material';
+import cn from 'classnames';
 
 import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
-import 'ag-grid-community/styles/ag-theme-material.min.css'; // Optional theme CSS
+import 'ag-grid-community/styles/ag-theme-material.css'; // Optional theme CSS
 
 import css from './AgGrid.module.scss';
 
 type TBaseDataType = {id: unknown};
 
-interface Props {
+interface Props<TData> extends AgGridReactProps<TData> {
   onShowDetails?: (id: unknown) => void;
-  wrapperClassName?: string;
 }
 
-export const AgGrid = <TData extends TBaseDataType = TBaseDataType>(
-  props: Props & (AgGridReactProps<TData> | AgReactUiProps<TData>)
-) => {
-  const {wrapperClassName, columnDefs, onShowDetails, ...otherProps} = props;
-  const columns = useMemo(() => {
-    return onShowDetails ? [getDetailsColumn(onShowDetails)].concat(columnDefs ?? []) : columnDefs;
-  }, [columnDefs, onShowDetails]);
+export const AgGrid = React.forwardRef(
+  <TData extends TBaseDataType>(props: Props<TData>, ref: ForwardedRef<AgGridReact<TData>>) => {
+    const {className, columnDefs, onShowDetails, ...otherProps} = props;
+    const columns = useMemo(() => {
+      return onShowDetails ? [getDetailsColumn(onShowDetails)].concat(columnDefs ?? []) : columnDefs;
+    }, [columnDefs, onShowDetails]);
 
-  return (
-    <div className={`ag-theme-material ${wrapperClassName ?? ''}`}>
-      <AgGridReact columnDefs={columns} {...otherProps} />
-    </div>
-  );
-};
+    return (
+      <AgGridReact ref={ref} columnDefs={columns} className={cn('ag-theme-material', className)} {...otherProps} />
+    );
+  }
+) as <TData extends TBaseDataType>(
+  props: Props<TData> & {ref?: ForwardedRef<AgGridReact<TData>>}
+) => React.ReactElement;
 
 function getDetailsColumn<TData extends TBaseDataType = TBaseDataType>(
   callback: (id: unknown) => void,
   width = 50
 ): ColDef<TData> {
   return {
-    colId: '__level_details__',
+    colId: '__details__',
     cellClass: css.CellWithoutPaddings,
     editable: false,
     resizable: false,

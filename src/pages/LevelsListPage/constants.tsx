@@ -1,11 +1,12 @@
 import React from 'react';
 import {ColDef} from 'ag-grid-community';
+import {CustomCellRendererProps} from 'ag-grid-react';
 
-import {ILevelDto} from 'src/api/dto/LevelDto';
+import {ILevelListItemDto} from 'src/api/dto/LevelDto';
 import {IdCellRenderer} from './cellRenderers/IdCellRenderer';
 import {Image} from 'src/components/Image/Image';
 
-export const LEVELS_LIST_COLUMNS: ColDef<ILevelDto>[] = [
+export const LEVELS_LIST_COLUMNS: ColDef<ILevelListItemDto>[] = [
   {
     colId: 'id',
     width: 75,
@@ -35,6 +36,6 @@ export const LEVELS_LIST_COLUMNS: ColDef<ILevelDto>[] = [
     field: 'previewImageName',
     sortable: true,
     resizable: true,
-    cellRenderer: params => <Image src={params.data.previewImageName} />,
+    cellRenderer: ({data}: CustomCellRendererProps<ILevelListItemDto>) => <Image src={data?.previewImageName} />,
   },
 ];

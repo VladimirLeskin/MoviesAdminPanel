@@ -7,7 +7,7 @@ export const Section1VerticalLayout = React.forwardRef<HTMLDivElement, TLayoutCo
   ({sections, ...otherProps}, ref) => {
     return (
       <Box display="flex" flexDirection="column" gap={1} padding={1} {...otherProps} ref={ref}>
-        {sections[0].map(elm => elm)}
+        {sections[0]?.map(elm => elm)}
       </Box>
     );
   }

@@ -13,16 +13,9 @@ export class MoviesListWidgetModel extends ItemsListModel<IMovieListItem, IMovie
     makeObservable(this, MoviesListWidgetModel.getMoviesListMobxAnnotations());
   }
 
-  public override get items() {
-    return this._items.map(mov => ({
-      ...mov,
-      images: mov.images.slice(),
-    }));
-  }
-
   protected apiEndPoints: IApiEndPoints<IMovieListItem, IMovieFilter> = {
     load: v =>
-      MoviesApi.getMovies({...v?.filter, ...v?.pagination}).then(data => {
+      MoviesApi.getMovies({...v?.filter, ...v?.pagination, sort: v?.sortState}).then(data => {
         return {
           ...data,
           data: {

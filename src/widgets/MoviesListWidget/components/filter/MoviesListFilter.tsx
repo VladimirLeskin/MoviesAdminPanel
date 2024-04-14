@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import {Button, TextField} from '@mui/material';
 
 export interface IMovieFilter {
@@ -6,12 +6,18 @@ export interface IMovieFilter {
 }
 
 interface MoviesPickerFilterProps {
-  search?: string;
+  values?: IMovieFilter;
   onChange: (filter: IMovieFilter) => void;
 }
 
-export const MoviesListFilter: FC<MoviesPickerFilterProps> = ({onChange, ...filter}) => {
-  const [filterState, setFilterState] = useState(filter);
+const EMPTY_VALUES: IMovieFilter = {};
+
+export const MoviesListFilter: FC<MoviesPickerFilterProps> = ({onChange, values = EMPTY_VALUES}) => {
+  const [filterState, setFilterState] = useState(values);
+
+  useEffect(() => {
+    setFilterState(values);
+  }, [values]);
 
   const onSearchChanged = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

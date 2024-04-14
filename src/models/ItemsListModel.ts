@@ -1,6 +1,7 @@
 import {action, AnnotationsMap, computed, makeObservable, observable, override, runInAction} from 'mobx';
 import {AxiosResponse} from 'axios';
 import {IPagedResponse} from '../api/types';
+import {ISortState} from '../type';
 
 type TBaseItem = {id: unknown};
 type TMobXAnnotationsMap<T extends TBaseItem, Filters> = AnnotationsMap<
@@ -21,6 +22,7 @@ export interface IApiEndPoints<T extends TBaseItem, Filters> {
 interface IRequestPayload<Filters> {
   filter?: Filters;
   pagination?: IListPagination;
+  sortState?: ISortState[];
 }
 
 export abstract class ItemsListModel<T extends TBaseItem, Filters> {
@@ -29,18 +31,19 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
   protected lastLoadPayload: IRequestPayload<Filters> | undefined = undefined;
 
   public filter: Filters | undefined = undefined;
-  public pagination: IListPagination = {pageSize: 20};
+  public pagination: IListPagination = {pageSize: 50};
+  public sortState: ISortState[] = [];
   public total: number = 0;
   public isLoading = false;
 
   private lastRequestId?: Symbol;
 
   constructor() {
-    makeObservable(this, ItemsListModel.getMobxAnnotations(), {autoBind: true});
+    makeObservable(this, ItemsListModel.getMobxAnnotations(), {autoBind: true, deep: false});
   }
 
   public reload() {
-    return this.loadItems({filter: this.filter, pagination: this.pagination});
+    return this.loadItems({filter: this.filter, pagination: this.pagination, sortState: this.sortState});
   }
 
   public loadItems(payload?: IRequestPayload<Filters>) {
@@ -69,17 +72,22 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
   public onFilterChanged(filter: Filters) {
     this.filter = filter;
     this.pagination = {...this.pagination, page: 0};
-    this.loadItems({filter, pagination: this.pagination});
+    this.reload();
   }
 
   public onPaginationChanged(pagination: IListPagination) {
     this.pagination = pagination;
-    this.loadItems({filter: this.filter, pagination});
+    this.reload();
+  }
+
+  public onSortChanged(sortState: ISortState[]) {
+    this.sortState = sortState;
+    this.reload();
   }
 
   public init() {
     if (!this.inited) {
-      this.loadItems({filter: this.filter, pagination: this.pagination});
+      this.reload();
     }
     this.inited = true;
   }
@@ -104,12 +112,12 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
 
   private static getMobxAnnotations<T extends TBaseItem, Filters>(): TMobXAnnotationsMap<T, Filters> {
     return {
-      loadItems: action.bound,
       reload: action.bound,
       deleteItem: action.bound,
       setItems: action.bound,
       onFilterChanged: action.bound,
       onPaginationChanged: action.bound,
+      onSortChanged: action.bound,
       init: action.bound,
       items: computed,
       _items: observable,
@@ -118,6 +126,7 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
       total: observable,
       filter: observable,
       pagination: observable,
+      sortState: observable,
     };
   }
 

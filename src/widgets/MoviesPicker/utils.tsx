@@ -3,7 +3,7 @@ import {ColDef, ICellRendererParams} from 'ag-grid-community';
 import {Button} from '@mui/material';
 
 import {IMovieListItem} from '../../api/dto/MovieDto';
-import {ImagesCellRenderer} from '../MoviesListWidget/components/ImagesCellRenderer';
+import {ImagesCellRenderer} from '../../components/gridRenderers';
 
 import css from './MoviesPicker.module.scss';
 

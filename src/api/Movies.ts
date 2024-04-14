@@ -7,6 +7,7 @@ interface IFindRequestParams {
   pageSize?: number;
   page?: number;
   search?: string;
+  sort?: Array<{field: string; order: 'asc' | 'desc'}>;
 }
 
 export default class MoviesApi extends BaseApi {
@@ -14,10 +15,15 @@ export default class MoviesApi extends BaseApi {
     return axios.get(this.url(`/movies/view?id=${movieId}`));
   }
 
-  public static getMovies(params: IFindRequestParams): Promise<AxiosResponse<IPagedResponse<IMovieDto>>> {
+  public static getMovies({sort, ...params}: IFindRequestParams): Promise<AxiosResponse<IPagedResponse<IMovieDto>>> {
     const paramsParts = Object.entries(params)
       .filter(([, value]) => value != null)
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`);
+
+    if (sort?.length) {
+      paramsParts.push('sort=' + [sort?.map(({field, order}) => `${order === 'desc' ? '-' : ''}${field}`).join(',')]);
+    }
+
     return axios.get(this.url(`/movies?${paramsParts.join('&')}`));
   }
 

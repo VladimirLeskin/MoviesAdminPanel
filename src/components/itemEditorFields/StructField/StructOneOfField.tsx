@@ -30,14 +30,14 @@ export const StructOneOfField = <T extends Record<string, unknown>>({
   }
 
   const [selectedField, setSelectedField] = useState<keyof T>(
-    () => getInitialSelectedField(value, defaultValue, isControlled) ?? Object.keys(fieldInfo.subFields)[0]
+    () => getInitialSelectedField(value, defaultValue, isControlled) ?? Object.keys(fieldInfo.subFields)[0] ?? ''
   );
   const savedValues = useRef<Partial<T>>(value ?? (isControlled ? {} : defaultValue) ?? {});
 
   const selectedOption = FIELD_OPTIONS.find(opt => opt.value === selectedField) ?? null;
 
   const onSelectedFieldChanged = useCallback(
-    (_, opt: TSelectOption<keyof T>) => {
+    (_: unknown, opt: TSelectOption<keyof T>) => {
       setSelectedField(opt.value);
       const cureValue = {[opt.value]: savedValues.current[opt.value]} as Partial<T>;
       setStateValue(cureValue);

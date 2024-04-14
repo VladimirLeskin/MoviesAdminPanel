@@ -51,8 +51,7 @@ export class MovieEditWidgetModel extends EntityEditorModel<IEditedMovieInfo> {
     if (!data.imdb_id) {
       errors.push('imdb_id пусто');
     }
-    for (let i = 0; i < data.descriptions.length; i++) {
-      const description = data.descriptions[i];
+    for (const description of data.descriptions) {
       if (!description.title) {
         errors.push(`Отсутствует название для языка: ${description.lang}`);
       }

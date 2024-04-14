@@ -84,8 +84,8 @@ export const LevelEditWidget: FC<Props> = observer(({levelId, onSaved}) => {
   );
 
   const onIsActiveChanged = useCallback(
-    (_, value) => {
-      updateLevel({...levelInfo, isActive: value});
+    (_: unknown, isActive: boolean) => {
+      updateLevel({...levelInfo, isActive});
     },
     [levelInfo, updateLevel]
   );

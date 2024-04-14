@@ -24,11 +24,14 @@
     "sourceMap": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noImplicitAny": false,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "strictFunctionTypes": false,
-    "preserveSymlinks": true
+    "importHelpers": true,
+    "noImplicitAny": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "noUncheckedIndexedAccess": true
   },
   "exclude": [
     "node_modules",

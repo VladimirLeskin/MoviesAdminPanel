@@ -37,11 +37,10 @@ export abstract class EntityEditorModel<T extends TBaseEntity> {
       return;
     }
 
-    let toastId;
+    const toastId = toast.loading('Сохраняем');
     const toastOptions = {isLoading: false, autoClose: 10000, closeButton: true};
     try {
       this._isSaving = true;
-      toastId = toast.loading('Сохраняем');
       const newData = await this.getDataSaveRequestPromise(data);
       toast.update(toastId, {type: 'success', render: 'Сохранено', ...toastOptions});
       this.data = newData;
