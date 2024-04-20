@@ -43,7 +43,11 @@ export const MoviesListWidget: FC<Props> = observer(({prepareColumns, params, on
   const gridRef = useRef<AgGridReact>(null);
 
   useEffect(() => {
-    model.loadItems(params);
+    if (params) {
+      model.loadItems(params);
+    } else {
+      model.init();
+    }
   }, [params]);
 
   const columns = useMemo(() => {
