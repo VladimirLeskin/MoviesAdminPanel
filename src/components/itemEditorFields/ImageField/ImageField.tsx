@@ -13,7 +13,8 @@ interface Data {
 }
 
 export const ImageField: FC<IFieldRendererProps<Data>> = props => {
-  const {value, defaultValue, isControlled, onChange} = props;
+  const {value, defaultValue, isControlled: _isControlled, onChange} = props;
+  const [isControlled] = useState(_isControlled || !!value);
   const [state, setState] = useState(value || defaultValue);
 
   const onFileChange = useCallback(
