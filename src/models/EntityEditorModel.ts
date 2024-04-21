@@ -8,6 +8,7 @@ export abstract class EntityEditorModel<T extends TBaseEntity> {
   private _isSaving = false;
   private _data?: T = undefined;
   private _editedData?: T = undefined;
+  private _revision: number = Date.now();
 
   constructor() {
     makeObservable(this, EntityEditorModel.getMobxAnnotations(), {autoBind: true, deep: false});
@@ -17,6 +18,7 @@ export abstract class EntityEditorModel<T extends TBaseEntity> {
     this.isLoading = true;
     try {
       this.data = await this.getDataRequestPromise(id);
+      this.revision = Date.now();
     } catch (e) {
       toast.error(`Ошибка загрузки\n${getAxiosErrorText(e)}`);
       this.data = undefined;
@@ -44,18 +46,22 @@ export abstract class EntityEditorModel<T extends TBaseEntity> {
       const newData = await this.getDataSaveRequestPromise(data);
       toast.update(toastId, {type: 'success', render: 'Сохранено', ...toastOptions});
       this.data = newData;
+      this.revision = Date.now();
+      return this.data;
     } catch (e) {
       toast.update(toastId, {
         type: 'error',
         render: `Ошибка сохранения\n${getAxiosErrorText(e)}`,
         ...toastOptions,
       });
+      throw e;
     } finally {
       this._isSaving = false;
     }
   }
 
   public editData(data: T) {
+    window.addEventListener('beforeunload', EntityEditorModel.confirmExit);
     this._editedData = data;
   }
 
@@ -66,6 +72,13 @@ export abstract class EntityEditorModel<T extends TBaseEntity> {
   protected abstract getDataRequestPromise(id: T['id']): Promise<T>;
 
   protected abstract getDataSaveRequestPromise(data: T): Promise<T>;
+
+  private static confirmExit(event: BeforeUnloadEvent) {
+    if (!confirm('Есть несохранённые данные. Точно выйти?')) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
 
   // setters/getters
   public get data(): T | undefined {
@@ -83,6 +96,15 @@ export abstract class EntityEditorModel<T extends TBaseEntity> {
 
   public set isLoading(value: boolean) {
     this._isLoading = value;
+  }
+
+  public get revision(): number {
+    return this._revision;
+  }
+
+  public set revision(value: number) {
+    window.removeEventListener('beforeunload', EntityEditorModel.confirmExit);
+    this._revision = value;
   }
 
   // mobx stuff

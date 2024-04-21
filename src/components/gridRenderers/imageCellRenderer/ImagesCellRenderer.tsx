@@ -2,7 +2,7 @@ import React, {FC, useCallback, useState} from 'react';
 import {Button, Modal} from '@mui/material';
 import {ArrowBackIos, ArrowForwardIos} from '@mui/icons-material';
 
-import {Image} from 'src/components/Image/Image';
+import {Image} from 'src/components/Image';
 import {IMovieListItem} from 'src/api/dto/MovieDto';
 
 import css from './ImagesCellRenderer.module.scss';

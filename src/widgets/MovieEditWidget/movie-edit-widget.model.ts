@@ -2,7 +2,6 @@ import {makeObservable} from 'mobx';
 import {IEditedMovieInfo} from './types';
 import MoviesApi from '../../api/Movies';
 import {IMovieInfoDto} from '../../api/dto/MovieDto';
-import Config from '../../entries/Config';
 import {EntityEditorModel} from '../../models/EntityEditorModel';
 
 const emptyMovie: IEditedMovieInfo = {
@@ -36,7 +35,7 @@ export class MovieEditWidgetModel extends EntityEditorModel<IEditedMovieInfo> {
       adult: movieInfoDto.adult ?? false,
       images: movieInfoDto.images.map(img => ({
         ...img,
-        src: `${Config.imagesUrl}/${img.name}`,
+        src: img.name,
         content: undefined,
       })),
       descriptions: Object.entries(movieInfoDto.descriptions).map(([lang, description]) => ({
@@ -46,7 +45,7 @@ export class MovieEditWidgetModel extends EntityEditorModel<IEditedMovieInfo> {
     };
   }
 
-  protected validate(data: IEditedMovieInfo): string[] {
+  protected override validate(data: IEditedMovieInfo): string[] {
     const errors: string[] = [];
     if (!data.imdb_id) {
       errors.push('imdb_id пусто');

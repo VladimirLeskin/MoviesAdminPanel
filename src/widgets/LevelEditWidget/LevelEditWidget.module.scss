@@ -1,12 +1,16 @@
 .root {
   padding: 20px;
   display: flex;
+  max-width: 800px;
+  flex-direction: column;
 
-  .SaveBtn {
+  .SaveButton {
     position: sticky;
     bottom: 16px;
     right: 16px;
     align-self: flex-end;
+    display: flex;
+    gap: 6px;
   }
 
   .SingleQuestion {

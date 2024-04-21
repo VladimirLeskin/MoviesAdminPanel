@@ -44,7 +44,6 @@ export function getMoviesListColumns(
       field: 'images',
       sortable: false,
       resizable: true,
-      flex: 1,
       valueFormatter: params => params.data?.images.map(img => img.path).join(', ') ?? '',
       cellRenderer: (params: ICellRendererParams<IMovieListItem>) => {
         return <>{params.data && <ImagesCellRenderer movie={params.data} />}</>;
