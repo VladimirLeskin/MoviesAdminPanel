@@ -30,6 +30,7 @@ module.exports = {
     'max-len': ['error', {code: 120}],
     'operator-linebreak': 'off',
     'react/display-name': 'off',
+    'react/prop-types': 'off',
     'require-jsdoc': 'off',
     'space-before-function-paren': 'off',
   },

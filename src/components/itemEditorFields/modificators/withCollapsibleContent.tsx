@@ -1,6 +1,6 @@
 import React from 'react';
 import {Accordion, AccordionDetails, AccordionSummary} from '@mui/material';
-import {IFieldRendererProps} from 'src/entries/FieldInfo';
+import {IFieldInfo, IFieldRendererProps} from 'src/entries/FieldInfo';
 
 interface Config<T> {
   defaultExpanded?: boolean;
@@ -12,11 +12,11 @@ const defaultConfig: Config<any> = {
   title: ({fieldInfo}) => fieldInfo.title ?? '',
 };
 
-export function withCollapsibleContent<T>(
-  Renderer: React.ComponentType<IFieldRendererProps<T>>,
+export function withCollapsibleContent<T, TFieldInfo extends IFieldInfo<T>>(
+  Renderer: React.ComponentType<IFieldRendererProps<T, TFieldInfo>>,
   config: Config<T> = defaultConfig
-): React.ComponentType<IFieldRendererProps<T>> {
-  return (props: IFieldRendererProps<T>) => {
+): React.ComponentType<IFieldRendererProps<T, TFieldInfo>> {
+  return (props: IFieldRendererProps<T, TFieldInfo>) => {
     return (
       <Accordion defaultExpanded={config.defaultExpanded}>
         <AccordionSummary>{typeof config.title === 'string' ? config.title : config.title(props)}</AccordionSummary>

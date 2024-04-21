@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {FormControl, FormLabel} from '@mui/material';
+import {FormLabel, Stack} from '@mui/material';
 
 import {ArrayInput, InputProps} from 'src/components/ArrayInput';
 import {IFieldRendererProps} from 'src/entries/FieldInfo';
@@ -8,7 +8,6 @@ export function withArrayInput<T>(
   renderer: React.ComponentType<IFieldRendererProps<T>>,
   inputDefaultValue: T
 ): React.ComponentType<IFieldRendererProps<T[]>> {
-  // eslint-disable-next-line react/display-name
   return (props: IFieldRendererProps<T[]>) => {
     const {fieldInfo, onChange} = props;
     const [value, setValue] = useState<T[]>(() => getValueStateFromProps(props));
@@ -28,7 +27,7 @@ export function withArrayInput<T>(
     }, [props]);
 
     return (
-      <FormControl required={fieldInfo.required}>
+      <Stack direction="column">
         <FormLabel>{fieldInfo.title}</FormLabel>
         <ArrayInput
           value={value}
@@ -37,7 +36,7 @@ export function withArrayInput<T>(
           onChange={onArrayInputChanged}
           inputRender={InputComponent}
         />
-      </FormControl>
+      </Stack>
     );
   };
 }

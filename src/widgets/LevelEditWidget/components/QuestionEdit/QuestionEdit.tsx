@@ -1,12 +1,12 @@
 import React, {FC, useCallback} from 'react';
-import {Drawer, IconButton} from '@mui/material';
-import {Remove} from '@mui/icons-material';
+import {Button, Drawer, IconButton, Table, TableBody, TableCell, TableRow} from '@mui/material';
+import {Delete} from '@mui/icons-material';
 
 import {IEditedLevelQuestionVariant} from '../../types';
 import {useBooleanState} from 'src/hooks/useBooleanState';
 import {MoviePicker} from 'src/widgets/MoviesPicker/MoviePicker';
 import {IMovieListItem} from 'src/api/dto/MovieDto';
-import {Image} from 'src/components/Image/Image';
+import {Image} from 'src/components/Image';
 
 import css from './QuestionEdit.module.scss';
 
@@ -23,13 +23,16 @@ interface QuestionEditValue {
 }
 
 interface QuestionEditProps {
-  value: QuestionEditValue;
+  value?: QuestionEditValue;
   onChange: (q: QuestionEditValue) => void;
 }
 
-export const QuestionEdit: FC<QuestionEditProps> = ({value, onChange}) => {
+const defaultQuestion: QuestionEditValue = {variants: [], image: {id: '', path: ''}};
+
+export const QuestionEdit: FC<QuestionEditProps> = ({value = defaultQuestion, onChange}) => {
   const {id, image, correctVariant, variants} = value;
-  const {state: pickerOpened, toggleState: togglePicker} = useBooleanState(false);
+  const {state: imagesPickerOpened, toggleState: toggleImagesPicker} = useBooleanState(false);
+  const {state: moviesPickerOpened, toggleState: toggleMoviesPicker} = useBooleanState(false);
 
   const onSelectImage = useCallback(
     (movie: IMovieListItem, newImage: Image) => {
@@ -54,37 +57,48 @@ export const QuestionEdit: FC<QuestionEditProps> = ({value, onChange}) => {
 
   const onRemoveVariant = useCallback(
     (index: number) => {
-      onChange({id, image, variants: variants.filter((_, i) => index !== i)});
+      onChange({id, image, correctVariant, variants: variants.filter((_, i) => index !== i)});
     },
-    [id, image, onChange, variants]
+    [correctVariant, id, image, onChange, variants]
   );
 
   return (
     <div className={css.root}>
-      <div onClick={togglePicker}>
-        {image.path ? <Image src={image.path} className={css.image} /> : <span>Выберите кадр</span>}
+      <div onClick={toggleImagesPicker}>
+        {image.path ? <Image src={image.path} className={css.image} /> : <Button variant="text">Выбрать кадр</Button>}
       </div>
       <div>
         <div>
           <div>
-            <span>
-              <b>{correctVariant?.title}</b>
-            </span>
+            <b>{correctVariant?.title}</b>
           </div>
-          {variants.map((v, index) => (
-            <div key={v.movie_id}>
-              <IconButton onClick={() => onRemoveVariant(index)}>
-                <Remove />
-              </IconButton>
-              <span>{v.title}</span>
-            </div>
-          ))}
+          <Table size="small">
+            <TableBody>
+              {variants.map((v, index) => (
+                <TableRow key={v.movie_id}>
+                  <TableCell>
+                    <IconButton onClick={() => onRemoveVariant(index)} size="small">
+                      <Delete fontSize="small" />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>{v.title}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
-        <span onClick={togglePicker}>Добавить вариант</span>
+        <Button variant="text" onClick={toggleMoviesPicker}>
+          Добавить вариант
+        </Button>
       </div>
-      <Drawer open={pickerOpened} anchor="right" variant="persistent" onClose={togglePicker}>
+      <Drawer open={imagesPickerOpened} anchor="right" variant="temporary" onClose={toggleImagesPicker}>
         <div className={css.moviePicker}>
-          <MoviePicker onSelectImage={onSelectImage} onSelectMovie={onAddVariant} />
+          <MoviePicker onSelectImage={onSelectImage} />
+        </div>
+      </Drawer>
+      <Drawer open={moviesPickerOpened} anchor="right" variant="temporary" onClose={toggleMoviesPicker}>
+        <div className={css.moviePicker}>
+          <MoviePicker onSelectMovie={onAddVariant} />
         </div>
       </Drawer>
     </div>

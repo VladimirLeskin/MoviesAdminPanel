@@ -19,7 +19,10 @@ export interface IEditedLevelInfo {
   type: ELevelType;
   timeForEach?: number;
   totalTime?: number;
-  previewImagePath?: string;
+  image: {
+    src?: string;
+    content?: string;
+  };
   isNewImage: boolean;
   isActive: boolean;
 }

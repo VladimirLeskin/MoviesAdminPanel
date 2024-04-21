@@ -13,7 +13,7 @@ interface IFindRequestParams {
   page?: number;
 }
 
-interface ISaveLevelRequest {
+export interface ISaveLevelRequest {
   id?: string;
   descriptions?: Record<string, {title: string; description: string}>;
   questions: ILevelQuestionRequestion[];

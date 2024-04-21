@@ -9,14 +9,16 @@ import css from './MoviesPicker.module.scss';
 
 export function getMoviePickerColumns(
   initialColumns: ColDef<IMovieListItem>[],
-  pickImage: (movie: IMovieListItem, image: {id: string; path: string}) => void,
-  pickMovie: (movie: IMovieListItem) => void
-): ColDef<IMovieListItem & {id: string}>[] {
-  return [
-    {
+  pickImage?: (movie: IMovieListItem, image: {id: string; path: string}) => void,
+  pickMovie?: (movie: IMovieListItem) => void
+): ColDef<IMovieListItem>[] {
+  let columns = initialColumns.slice();
+
+  if (pickMovie) {
+    columns.unshift({
       colId: '__select_movie__',
       headerName: '',
-      width: 80,
+      width: 92,
       resizable: false,
       pinned: true,
       cellClass: css.CellWithoutPadding,
@@ -27,9 +29,12 @@ export function getMoviePickerColumns(
           </Button>
         );
       },
-    },
-    ...initialColumns.filter(c => c.field !== 'images'),
-    {
+    });
+  }
+
+  if (pickImage) {
+    columns = columns.filter(col => col.field !== 'images');
+    columns.unshift({
       colId: 'images',
       headerName: 'Картинки',
       field: 'images',
@@ -38,9 +43,12 @@ export function getMoviePickerColumns(
       width: 300,
       minWidth: 300,
       flex: 1,
+      valueFormatter: params => params.data?.images.map(img => img.path).join(', ') ?? '',
       cellRenderer: (params: ICellRendererParams<IMovieListItem>) => {
         return <>{params.data && <ImagesCellRenderer movie={params.data} onSelectImage={pickImage} />}</>;
       },
-    },
-  ];
+    });
+  }
+
+  return columns;
 }

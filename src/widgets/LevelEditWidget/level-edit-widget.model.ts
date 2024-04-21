@@ -1,118 +1,69 @@
-import {makeAutoObservable} from 'mobx';
-import LevelsApi from 'src/api/Levels';
+import {makeObservable} from 'mobx';
+import LevelsApi, {ISaveLevelRequest} from 'src/api/Levels';
 import {ELevelType, ILevelInfoDto} from 'src/api/dto/LevelDto';
 import {IEditedLevelInfo} from './types';
-import {toast} from 'react-toastify';
-import {getAxiosErrorText} from '../../api/stdAxiosErrorHandler';
+import {EntityEditorModel} from '../../models/EntityEditorModel';
 
 const emptyLevel: IEditedLevelInfo = {
   type: ELevelType.TIME,
   questions: [],
-  previewImagePath: '',
+  image: {},
   descriptions: [{lang: 'ru', title: '', description: ''}],
   totalTime: 200,
   isNewImage: false,
   isActive: false,
 };
 
-export class LevelEditWidgetModel {
-  private _levelInfo: IEditedLevelInfo = emptyLevel;
-  private _isLoading = false;
-
-  public readonly defaultQuestion = {variants: [], image: {id: '', path: ''}};
-
+export class LevelEditWidgetModel extends EntityEditorModel<IEditedLevelInfo> {
   constructor() {
-    makeAutoObservable(this, undefined, {autoBind: true});
+    super();
+    this.data = emptyLevel;
+    makeObservable(this, LevelEditWidgetModel.getMobxBaseAnnotations());
   }
 
-  public async loadLevel(levelId?: string) {
-    if (levelId) {
-      try {
-        this.isLoading = true;
-        const data = await LevelsApi.getLevelInfo(levelId);
-        if (data.data) {
-          const levelInfoDto = data.data;
-          this.levelInfo = LevelEditWidgetModel.levelDtoToLevelInfo(levelInfoDto);
-        }
-      } catch (err) {
-        toast.error(`Ошибка загрузки\n${getAxiosErrorText(err)}`);
-      } finally {
-        this.isLoading = false;
+  protected async getDataRequestPromise(id: string | undefined): Promise<IEditedLevelInfo> {
+    if (id) {
+      const data = await LevelsApi.getLevelInfo(id);
+      if (data.data) {
+        return LevelEditWidgetModel.levelDtoToLevelInfo(data.data);
       }
+    }
+    return emptyLevel;
+  }
+
+  public override validate(data: IEditedLevelInfo): string[] {
+    const errors: string[] = [];
+    if (!data.questions.length) {
+      errors.push('Список вопросов пуст');
+    }
+
+    if (!data.descriptions.length) {
+      errors.push('Описание пусто');
+    }
+
+    for (const description of data.descriptions) {
+      if (!description.title) {
+        errors.push(`Отсутствует название для языка: ${description.lang}`);
+      }
+    }
+    return errors;
+  }
+
+  protected async getDataSaveRequestPromise(data: IEditedLevelInfo): Promise<IEditedLevelInfo> {
+    const response = await LevelsApi.createLevelInfo(LevelEditWidgetModel.levelInfoToDto(data));
+
+    if (response.data) {
+      return LevelEditWidgetModel.levelDtoToLevelInfo(response.data);
     } else {
-      this.levelInfo = emptyLevel;
+      throw new Error('response.data is empty');
     }
-  }
-
-  public updateLevel(info: IEditedLevelInfo) {
-    this.levelInfo = info;
-  }
-
-  public async save() {
-    const levelInfo = this.levelInfo;
-    this.isLoading = true;
-    const toastId = toast.loading('Сохраняем');
-    const toastOptions = {isLoading: false, autoClose: 10000, closeButton: true};
-
-    try {
-      const response = await LevelsApi.createLevelInfo({
-        id: levelInfo.id,
-        descriptions: levelInfo.descriptions.reduce((acc, d) => {
-          acc[d.lang] = d;
-          return acc;
-        }, {}),
-        totalTime: levelInfo.totalTime,
-        timeForEach: levelInfo.timeForEach,
-        type: levelInfo.type,
-        previewImage: levelInfo.previewImagePath,
-        isNewImage: levelInfo.isNewImage,
-        isActive: levelInfo.isActive,
-        questions: levelInfo.questions
-          .map(q => ({
-            imageId: q.image.id,
-            variants: q.variants.map(v => v.movie_id).filter(movieId => movieId),
-          }))
-          .filter(q => q.imageId),
-      });
-
-      if (response.data) {
-        toast.update(toastId, {type: 'success', render: 'Сохранено', ...toastOptions});
-        this.levelInfo = LevelEditWidgetModel.levelDtoToLevelInfo(response.data);
-        return this.levelInfo.id;
-      }
-    } catch (err: any) {
-      toast.update(toastId, {
-        type: 'error',
-        render: `Ошибка сохранения\n${getAxiosErrorText(err)}`,
-        ...toastOptions,
-      });
-    } finally {
-      this.isLoading = false;
-    }
-    return;
-  }
-
-  get levelInfo(): IEditedLevelInfo {
-    return this._levelInfo;
-  }
-
-  set levelInfo(value: IEditedLevelInfo) {
-    this._levelInfo = value;
-  }
-
-  get isLoading(): boolean {
-    return this._isLoading;
-  }
-
-  set isLoading(value: boolean) {
-    this._isLoading = value;
   }
 
   private static levelDtoToLevelInfo(levelInfoDto: ILevelInfoDto): IEditedLevelInfo {
     return {
       type: levelInfoDto.type,
       id: levelInfoDto.id,
-      previewImagePath: levelInfoDto.previewImageName,
+      image: {src: levelInfoDto.previewImageName},
       descriptions: Object.entries(levelInfoDto.descriptions ?? {}).map(([lang, d]) => ({...d, lang})),
       totalTime: levelInfoDto.totalTime,
       timeForEach: levelInfoDto.timeForEach,
@@ -126,6 +77,28 @@ export class LevelEditWidgetModel {
           correctVariant: q.variants.find(v => v.movie_id === q.correctId),
         }))
         .sort((a, b) => +a.id - +b.id),
+    };
+  }
+
+  private static levelInfoToDto(levelInfo: IEditedLevelInfo): ISaveLevelRequest {
+    return {
+      id: levelInfo.id,
+      descriptions: levelInfo.descriptions.reduce((acc, d) => {
+        acc[d.lang] = d;
+        return acc;
+      }, {}),
+      totalTime: levelInfo.totalTime,
+      timeForEach: levelInfo.timeForEach,
+      type: levelInfo.type,
+      previewImage: levelInfo.image.content ?? levelInfo.image.src,
+      isNewImage: !!levelInfo.image.content,
+      isActive: levelInfo.isActive,
+      questions: levelInfo.questions
+        .map(q => ({
+          imageId: q.image.id,
+          variants: q.variants.map(v => v.movie_id).filter(movieId => movieId),
+        }))
+        .filter(q => q.imageId),
     };
   }
 }

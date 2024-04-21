@@ -74,7 +74,7 @@ export type TFieldError<T> = {
   subFields?: T extends object ? TDataErrors<T> : never;
 };
 
-export function getMultiFieldInfo<T>(f: IBaseFieldInfo<T>, defValue: T): IBaseFieldInfo<T[]>;
+export function getMultiFieldInfo<T>(f: ISimpleFieldInfo<T>, defValue: T): IBaseFieldInfo<T[]>;
 export function getMultiFieldInfo<T>(f: IStructFieldInfo<T>, defValue: T): IBaseFieldInfo<T[]>;
 export function getMultiFieldInfo<T>(f: IBaseFieldInfo<T>, defValue: T): IBaseFieldInfo<T[]> {
   return {

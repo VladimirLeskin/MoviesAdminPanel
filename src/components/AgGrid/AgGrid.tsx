@@ -1,6 +1,6 @@
 import React, {ForwardedRef, useMemo} from 'react';
 import {AgGridReact, AgGridReactProps} from 'ag-grid-react';
-import {ColDef, ICellRendererParams} from 'ag-grid-community';
+import {ColDef, ICellRendererParams, GetRowIdParams} from 'ag-grid-community';
 import {IconButton} from '@mui/material';
 import {Visibility} from '@mui/icons-material';
 import cn from 'classnames';
@@ -24,12 +24,22 @@ export const AgGrid = React.forwardRef(
     }, [columnDefs, onShowDetails]);
 
     return (
-      <AgGridReact ref={ref} columnDefs={columns} className={cn('ag-theme-material', className)} {...otherProps} />
+      <AgGridReact
+        ref={ref}
+        columnDefs={columns}
+        getRowId={getRowId}
+        className={cn('ag-theme-material', css.AgGrid, className)}
+        {...otherProps}
+      />
     );
   }
 ) as <TData extends TBaseDataType>(
   props: Props<TData> & {ref?: ForwardedRef<AgGridReact<TData>>}
 ) => React.ReactElement;
+
+function getRowId<TData extends TBaseDataType>(params: GetRowIdParams<TData>) {
+  return params.data.id?.toString() || '';
+}
 
 function getDetailsColumn<TData extends TBaseDataType = TBaseDataType>(
   callback: (id: unknown) => void,
