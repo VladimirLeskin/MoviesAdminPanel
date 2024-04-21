@@ -14,7 +14,7 @@ export abstract class EntityEditorModel<T extends TBaseEntity> {
     makeObservable(this, EntityEditorModel.getMobxAnnotations(), {autoBind: true, deep: false});
   }
 
-  public async load(id: T['id']) {
+  public async load(id?: T['id']) {
     this.isLoading = true;
     try {
       this.data = await this.getDataRequestPromise(id);
@@ -69,7 +69,7 @@ export abstract class EntityEditorModel<T extends TBaseEntity> {
     return [];
   }
 
-  protected abstract getDataRequestPromise(id: T['id']): Promise<T>;
+  protected abstract getDataRequestPromise(id?: T['id']): Promise<T>;
 
   protected abstract getDataSaveRequestPromise(data: T): Promise<T>;
 

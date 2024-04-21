@@ -19,10 +19,14 @@ const LevelsListPage = React.lazy(() => import('./pages/LevelsListPage').then(m 
 const MovieEditPage = React.lazy(() => import('./pages/MovieEditPage').then(m => ({default: m.MovieEditPage})));
 const LevelEditPage = React.lazy(() => import('./pages/LevelEditPage').then(m => ({default: m.LevelEditPage})));
 const MoviesListPage = React.lazy(() => import('./pages/MoviesListPage').then(m => ({default: m.MoviesListPage})));
+const CountriesListPage = React.lazy(() =>
+  import('./pages/CountriesListPage').then(m => ({default: m.CountriesListPage}))
+);
 
 const HEADER_ITEMS = [
   {title: 'Фильмы', href: ROUTES.MOVIES.LIST},
   {title: 'Уровни', href: ROUTES.LEVELS.LIST},
+  {title: 'Страны', href: ROUTES.COUNTRIES.LIST},
 ];
 
 const authModel = new AuthModel();
@@ -54,6 +58,7 @@ export const App: FC = observer(() => {
                 <Route path={ROUTES.MOVIES.DETAILS} element={<MovieEditPage />} />
                 <Route path={ROUTES.MOVIES.CREATE} element={<MovieEditPage />} />
                 <Route path={ROUTES.MOVIES.LIST} element={<MoviesListPage />} />
+                <Route path={ROUTES.COUNTRIES.LIST} element={<CountriesListPage />} />
               </Routes>
             </Suspense>
           </div>

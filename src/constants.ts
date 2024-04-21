@@ -9,4 +9,7 @@ export const ROUTES = {
     CREATE: '/levels/create',
     DETAILS: '/levels/:levelId',
   },
+  COUNTRIES: {
+    LIST: '/countries',
+  },
 };

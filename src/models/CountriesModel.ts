@@ -4,7 +4,7 @@ import CountriesApi from '../api/Countries';
 import {toast} from 'react-toastify';
 import {getAxiosErrorText} from '../api/stdAxiosErrorHandler';
 
-export class CountriesModel {
+class CountriesModel {
   private _countries?: ICountryListItemDto[] = undefined;
   private _isLoading = false;
 
@@ -12,19 +12,13 @@ export class CountriesModel {
     makeAutoObservable(this, undefined, {autoBind: true});
   }
 
+  public invalidate() {
+    this.loadCountries();
+  }
+
   public get countries(): Record<string, ICountryListItemDto> {
     if (!this._countries && !this._isLoading) {
-      this._isLoading = true;
-      CountriesApi.getCountries()
-        .then(resp => {
-          this._countries = resp.data.items;
-        })
-        .catch(e => toast.error(`Ошибка загрузки стран\n${getAxiosErrorText(e)}`))
-        .finally(() => {
-          runInAction(() => {
-            this._isLoading = false;
-          });
-        });
+      this.loadCountries();
       return {};
     } else {
       return (
@@ -34,6 +28,20 @@ export class CountriesModel {
         }, {}) ?? {}
       );
     }
+  }
+
+  private loadCountries() {
+    this._isLoading = true;
+    CountriesApi.getCountries()
+      .then(resp => {
+        this._countries = resp.data.items;
+      })
+      .catch(e => toast.error(`Ошибка загрузки стран\n${getAxiosErrorText(e)}`))
+      .finally(() => {
+        runInAction(() => {
+          this._isLoading = false;
+        });
+      });
   }
 }
 

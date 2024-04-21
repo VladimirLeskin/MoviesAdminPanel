@@ -3,3 +3,8 @@ export interface ICountryListItemDto {
   name: string;
   lang: string;
 }
+
+export interface CountryInfoDto {
+  code: string;
+  names: Array<{lang: string; name: string}>;
+}
