@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {BaseApi} from './BaseApi';
 
 export enum EUserRoles {
