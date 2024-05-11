@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from 'axios';
+import {AxiosResponse} from 'axios';
 import {ELevelType, ILevelInfoDto, ILevelListItemDto} from './dto/LevelDto';
 import {IPagedResponse} from './types';
 import {BaseApi} from './BaseApi';
@@ -28,18 +28,18 @@ export interface ISaveLevelRequest {
 export default class LevelsApi extends BaseApi {
   public static getLevels(payload?: IFindRequestParams): Promise<AxiosResponse<IPagedResponse<ILevelListItemDto>>> {
     const {page, pageSize} = payload ?? {};
-    return axios.get(this.url('/levels'), {params: {page, pageSize}});
+    return this.transport.get(this.url('/levels'), {params: {page, pageSize}});
   }
 
   public static getLevelInfo(levelId: string): Promise<AxiosResponse<ILevelInfoDto>> {
-    return axios.get(this.url(`/levels/view?id=${levelId}`));
+    return this.transport.get(this.url(`/levels/view?id=${levelId}`));
   }
 
   public static createLevelInfo(levelInfo: ISaveLevelRequest): Promise<AxiosResponse<ILevelInfoDto>> {
-    return axios.post(this.url('/levels/create'), levelInfo);
+    return this.transport.post(this.url('/levels/create'), levelInfo);
   }
 
   public static publishLevel(id: string, publish: boolean): Promise<AxiosResponse<void>> {
-    return axios.post(this.url('/levels/publish'), {id, publish});
+    return this.transport.post(this.url('/levels/publish'), {id, publish});
   }
 }

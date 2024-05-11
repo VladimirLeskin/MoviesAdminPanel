@@ -26,6 +26,7 @@ export function getMoviesListColumns(
       field: 'genres',
       sortable: false,
       resizable: true,
+      minWidth: 100,
       tooltipValueGetter: params => genresIdsToString(params.data?.genres, genresDescriptions),
       valueFormatter: params => genresIdsToString(params.data?.genres, genresDescriptions),
     },
@@ -35,6 +36,7 @@ export function getMoviesListColumns(
       field: 'countries',
       sortable: false,
       resizable: true,
+      minWidth: 100,
       tooltipValueGetter: params => countriesCodesToString(params.data?.countries, countries),
       valueFormatter: params => countriesCodesToString(params.data?.countries, countries),
     },
@@ -44,6 +46,8 @@ export function getMoviesListColumns(
       field: 'images',
       sortable: false,
       resizable: true,
+      flex: 1,
+      minWidth: 150,
       valueFormatter: params => params.data?.images.map(img => img.path).join(', ') ?? '',
       cellRenderer: (params: ICellRendererParams<IMovieListItem>) => {
         return <>{params.data && <ImagesCellRenderer movie={params.data} />}</>;

@@ -3,6 +3,7 @@ import {observer} from 'mobx-react';
 import {Button, Drawer, IconButton, Switch} from '@mui/material';
 import {Close} from '@mui/icons-material';
 import {Link} from 'react-router-dom';
+import {CustomCellRendererProps} from 'ag-grid-react';
 
 import {AgGrid} from 'src/components/AgGrid/AgGrid';
 import {useBooleanState} from 'src/hooks/useBooleanState';
@@ -12,10 +13,9 @@ import {LevelEditWidget} from '../../widgets/LevelEditWidget/LevelEditWidget';
 import {ROUTES} from 'src/constants';
 import {Spinner} from '../../components/Spinner/Spinner';
 import {Pagination} from '../../components/Pagination/Pagination';
+import {ILevelListItemDto} from '../../api/dto/LevelDto';
 
 import css from './LevelsListPage.module.scss';
-import {CustomCellRendererProps} from 'ag-grid-react';
-import {ILevelListItemDto} from '../../api/dto/LevelDto';
 
 export const LevelsListPage: FC = observer(() => {
   const [model] = useState(() => new LevelsListModel());

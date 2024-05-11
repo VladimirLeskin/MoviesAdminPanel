@@ -1,6 +1,7 @@
 import React, {FC, useEffect, useMemo, useRef} from 'react';
 import {ColDef} from 'ag-grid-community';
 import {AgGridReact} from 'ag-grid-react';
+import {GridReadyEvent} from 'ag-grid-community/dist/types/core/events';
 import {observer} from 'mobx-react';
 
 import {Pagination} from 'src/components/Pagination/Pagination';
@@ -25,7 +26,7 @@ interface Props {
 }
 
 const model = new MoviesListWidgetModel();
-const defaultColDef = {
+const defaultColDef: ColDef = {
   comparator: () => 0, // убираем клиентскую сортировку
 };
 
@@ -70,6 +71,8 @@ export const MoviesListWidget: FC<Props> = observer(({prepareColumns, params, on
         <MoviesListFilter values={filter} onChange={onFilterChanged} />
         {paginationContainer}
         <AgGrid
+          onGridReady={onGridReady}
+          suppressDragLeaveHidesColumns
           ref={gridRef}
           rowData={rows}
           defaultColDef={defaultColDef}
@@ -82,3 +85,7 @@ export const MoviesListWidget: FC<Props> = observer(({prepareColumns, params, on
     </div>
   );
 });
+
+function onGridReady(event: GridReadyEvent) {
+  event.api.sizeColumnsToFit();
+}

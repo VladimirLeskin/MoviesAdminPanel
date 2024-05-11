@@ -16,7 +16,7 @@ export const LEVELS_LIST_COLUMNS: ColDef<ILevelListItemDto>[] = [
     sortable: true,
     resizable: true,
   },
-  {colId: 'title', headerName: 'Название', field: 'title', flex: 1, sortable: true, resizable: true},
+  {colId: 'title', headerName: 'Название', field: 'title', flex: 1, minWidth: 100, sortable: true, resizable: true},
   {
     colId: 'description',
     headerName: 'Описание',
@@ -25,6 +25,7 @@ export const LEVELS_LIST_COLUMNS: ColDef<ILevelListItemDto>[] = [
     resizable: true,
     tooltipField: 'description',
     flex: 1,
+    minWidth: 100,
   },
   {colId: 'questions', headerName: 'Кол-во вопросов', field: 'questions_count', sortable: true, resizable: true},
   {colId: 'type', headerName: 'Тип', field: 'type', sortable: true, resizable: true},

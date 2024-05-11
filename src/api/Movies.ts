@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from 'axios';
+import {AxiosResponse} from 'axios';
 import {IPagedResponse} from './types';
 import {IMovieDto, IMovieGenre, IMovieInfoDto} from './dto/MovieDto';
 import {BaseApi} from './BaseApi';
@@ -12,7 +12,7 @@ interface IFindRequestParams {
 
 export default class MoviesApi extends BaseApi {
   public static getMovieInfo(movieId: string): Promise<AxiosResponse<IMovieInfoDto>> {
-    return axios.get(this.url(`/movies/view?id=${movieId}`));
+    return this.transport.get(this.url(`/movies/view?id=${movieId}`));
   }
 
   public static getMovies({sort, ...params}: IFindRequestParams): Promise<AxiosResponse<IPagedResponse<IMovieDto>>> {
@@ -24,14 +24,14 @@ export default class MoviesApi extends BaseApi {
       paramsParts.push('sort=' + [sort?.map(({field, order}) => `${order === 'desc' ? '-' : ''}${field}`).join(',')]);
     }
 
-    return axios.get(this.url(`/movies?${paramsParts.join('&')}`));
+    return this.transport.get(this.url(`/movies?${paramsParts.join('&')}`));
   }
 
   public static getGenresDescriptions(): Promise<AxiosResponse<IPagedResponse<IMovieGenre>>> {
-    return axios.get(this.url('/genres'));
+    return this.transport.get(this.url('/genres'));
   }
 
   public static createMovieInfo(movieInfoDto: IMovieInfoDto): Promise<AxiosResponse<IMovieInfoDto>> {
-    return axios.post(this.url('/movies/create'), movieInfoDto);
+    return this.transport.post(this.url('/movies/create'), movieInfoDto);
   }
 }

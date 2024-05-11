@@ -45,17 +45,17 @@ export interface IToken {
 
 export class AuthApi extends BaseApi {
   public static login(data: {login: string; password: string}) {
-    return axios
+    return this.transport
       .post<ILoginResponse>(this.url('/auth/login'), data)
       .then(resp => this.oauthTokensDtoToToken(resp.data.tokens));
   }
 
   public static auth() {
-    return axios.get<IUserDto>(this.url('/auth/view'));
+    return this.transport.get<IUserDto>(this.url('/auth/view'));
   }
 
   public static refreshToken(data: {refresh_token: string}) {
-    return axios
+    return this.transport
       .post<IOauthTokensDto>(this.url('/auth/refresh_token'), data)
       .then(resp => this.oauthTokensDtoToToken(resp.data));
   }
