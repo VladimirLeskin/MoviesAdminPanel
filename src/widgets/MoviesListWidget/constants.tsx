@@ -10,6 +10,8 @@ export const MOVIES_LIST_COLUMNS: ColDef<IMovieListItem & {id: string}>[] = [
   {
     colId: 'movie_id',
     width: 100,
+    minWidth: 50,
+    flex: 1,
     field: 'movie_id',
     headerName: 'id',
     sortable: true,

@@ -19,6 +19,8 @@ export function getMoviePickerColumns(
       colId: '__select_movie__',
       headerName: '',
       width: 92,
+      maxWidth: 92,
+      minWidth: 92,
       resizable: false,
       pinned: true,
       cellClass: css.CellWithoutPadding,
