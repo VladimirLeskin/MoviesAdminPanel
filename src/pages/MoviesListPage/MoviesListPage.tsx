@@ -6,10 +6,12 @@ import {MoviesListWidget, MoviesListWidgetParams} from 'src/widgets/MoviesListWi
 import {ROUTES} from 'src/constants';
 import {moviesListFiltersQueryConfig, moviesListPaginationQueryConfig, moviesListSortQueryConfig} from './constants';
 import {useQueryParams} from 'src/hooks/useQueryParams';
+import {useTitleUpdate} from 'src/hooks/useTitleUpdate';
 
 import css from './MoviesListPage.module.scss';
 
 export const MoviesListPage: FC = () => {
+  useTitleUpdate('Список фильмов');
   const [pagination, setPagination] = useQueryParams(moviesListPaginationQueryConfig);
   const [filter, setFilter] = useQueryParams(moviesListFiltersQueryConfig);
   const [sortState, setSortState] = useQueryParams(moviesListSortQueryConfig);

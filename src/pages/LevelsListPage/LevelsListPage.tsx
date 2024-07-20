@@ -7,6 +7,7 @@ import {CustomCellRendererProps} from 'ag-grid-react';
 
 import {AgGrid} from 'src/components/AgGrid/AgGrid';
 import {useBooleanState} from 'src/hooks/useBooleanState';
+import {useTitleUpdate} from 'src/hooks/useTitleUpdate';
 import {LevelsListModel} from './levels-list.model';
 import {LEVELS_LIST_COLUMNS} from './constants';
 import {LevelEditWidget} from '../../widgets/LevelEditWidget/LevelEditWidget';
@@ -18,6 +19,7 @@ import {ILevelListItemDto} from '../../api/dto/LevelDto';
 import css from './LevelsListPage.module.scss';
 
 export const LevelsListPage: FC = observer(() => {
+  useTitleUpdate('Список уровней');
   const [model] = useState(() => new LevelsListModel());
   const {init, isLoading, total, pagination, items, onPaginationChanged} = model;
   const [selectedLevelId, setSelectedLevelId] = useState<string | undefined>();

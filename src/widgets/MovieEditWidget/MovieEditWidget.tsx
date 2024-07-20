@@ -7,6 +7,8 @@ import {ItemEditor} from '../../components/ItemEditor/ItemEditor';
 import {IEditedMovieInfo} from './types';
 import {MovieEditWidgetModel} from './movie-edit-widget.model';
 import {layoutSettings, schema} from './constants';
+import {useTitleUpdate} from '../../hooks/useTitleUpdate';
+import {getMovieTitle} from './libs';
 
 import css from './MovieEditWidget.module.scss';
 
@@ -19,6 +21,7 @@ interface Props {
 
 export const MovieEditWidget = observer(({movieId, onSaved}: Props) => {
   const {data: movieInfo, editData, isLoading, load, save} = movieEditPageModel;
+  useTitleUpdate(getMovieTitle(movieInfo));
 
   useEffect(() => {
     load(movieId);
@@ -40,7 +43,6 @@ export const MovieEditWidget = observer(({movieId, onSaved}: Props) => {
     <div className={css.root}>
       <ItemEditor<IEditedMovieInfo>
         key={movieInfo.id}
-        // Вспомнить бы, зачем через observable сделано. Скорее всего артефакт, стоит переделать на простую константу
         fields={schema.value}
         onChange={editData}
         defaultValue={movieInfo}

@@ -8,6 +8,7 @@ import {COUNTRIES} from '../../models/CountriesModel';
 import {ICountryListItemDto} from '../../api/dto/ICountryDto';
 import {useBooleanState} from '../../hooks/useBooleanState';
 import {CountryEditWidget} from '../../widgets/CountryEditWidget/CountryEditWidget';
+import {useTitleUpdate} from '../../hooks/useTitleUpdate';
 
 const columns: ColDef<ICountryListItemDto & {id: string}>[] = [
   {colId: 'id', field: 'id', headerName: 'Код'},
@@ -15,6 +16,7 @@ const columns: ColDef<ICountryListItemDto & {id: string}>[] = [
 ];
 
 export const CountriesListPage = observer(() => {
+  useTitleUpdate('Список стран');
   const {countries, invalidate} = COUNTRIES;
   const {state: drawerVisible, toggleState: toggleDrawer, setState: setDrawerState} = useBooleanState();
   const [selectedId, setSelectedId] = useState<string | undefined>();
