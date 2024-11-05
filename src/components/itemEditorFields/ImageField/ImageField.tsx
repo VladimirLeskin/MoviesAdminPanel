@@ -1,10 +1,10 @@
 import React, {ChangeEvent, FC, useCallback, useEffect, useState} from 'react';
-import {Button, IconButton} from '@mui/material';
+import {Button, CircularProgress, IconButton} from '@mui/material';
 import {Cancel, Forward} from '@mui/icons-material';
 
 import {Image} from '../../Image';
 import {IFieldRendererProps} from 'src/entries/FieldInfo';
-import css from '../../ImageUpload/ImageUpload.module.scss';
+import css from './ImageUpload.module.scss';
 
 interface Data {
   id?: string;
@@ -13,6 +13,7 @@ interface Data {
 }
 
 export const ImageField: FC<IFieldRendererProps<Data>> = props => {
+  const [loading, setLoading] = useState(false);
   const {value, defaultValue, isControlled: _isControlled, onChange} = props;
   const [isControlled] = useState(_isControlled || !!value);
   const [state, setState] = useState(value || defaultValue);
@@ -22,6 +23,7 @@ export const ImageField: FC<IFieldRendererProps<Data>> = props => {
       const file = e.target.files?.[0];
       if (file) {
         const reader = new FileReader();
+        setLoading(true);
         reader.onloadend = function () {
           const content = reader.result;
           if (typeof content === 'string') {
@@ -32,6 +34,7 @@ export const ImageField: FC<IFieldRendererProps<Data>> = props => {
             console.error('unexpected image content');
             return;
           }
+          setLoading(false);
         };
         reader.readAsDataURL(file);
       }
@@ -56,13 +59,18 @@ export const ImageField: FC<IFieldRendererProps<Data>> = props => {
     <div className={css.root}>
       <label>
         <input accept="image/*" type="file" style={{display: 'none'}} onChange={onFileChange} />
-        <Button variant="contained" component="span">
+        <Button variant="contained" component="span" disabled={loading}>
           Загрузить
         </Button>
       </label>
       <div className={css.images}>
         {state?.src && (
           <div className={css.imagePreview}>
+            {loading && (
+              <div className={css.loader}>
+                <CircularProgress size={24} variant="indeterminate" color="primary" className={css.circularProgress} />
+              </div>
+            )}
             <Image className={css.img} src={state.src} />
           </div>
         )}

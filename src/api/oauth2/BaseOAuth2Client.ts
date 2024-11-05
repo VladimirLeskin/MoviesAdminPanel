@@ -1,8 +1,9 @@
 import axios from 'axios';
 import {AuthApi, IToken, ITokens} from '../Auth';
+import {TokenStorage} from './TokenStorage';
 
-const ACCESS_TOKEN_STORAGE_KEY = 'MOVIES_ACCESS_TOKENS';
-const REFRESH_TOKEN_STORAGE_KEY = 'MOVIES_REFRESH_TOKENS';
+const ACCESS_TOKEN_STORAGE = new TokenStorage('MOVIES_ACCESS_TOKENS');
+const REFRESH_TOKEN_STORAGE = new TokenStorage('MOVIES_REFRESH_TOKENS');
 
 export class BaseOAuth2Client {
   private _accessToken?: IToken;
@@ -37,12 +38,12 @@ export class BaseOAuth2Client {
   }
 
   public set refreshToken(value: IToken | undefined) {
-    this.writeTokenToLocalStorage(REFRESH_TOKEN_STORAGE_KEY, value);
+    this.writeTokenToLocalStorage(REFRESH_TOKEN_STORAGE, value);
     this._refreshToken = value;
   }
 
   public set accessToken(value: IToken | undefined) {
-    this.writeTokenToLocalStorage(ACCESS_TOKEN_STORAGE_KEY, value);
+    this.writeTokenToLocalStorage(ACCESS_TOKEN_STORAGE, value);
     this._accessToken = value;
 
     // TODO перенести в подходящее место
@@ -50,23 +51,12 @@ export class BaseOAuth2Client {
     this.onTokensChanged();
   }
 
-  private writeTokenToLocalStorage(key: string, token: IToken | undefined) {
+  private writeTokenToLocalStorage(storage: TokenStorage, token: IToken | undefined) {
     if (token) {
-      localStorage.setItem(key, JSON.stringify(token));
+      storage.setData(token);
     } else {
-      localStorage.removeItem(key);
+      storage.delete();
     }
-  }
-
-  private readTokenFromLocalStorage(key: string): IToken | undefined {
-    const savedValue = JSON.parse(localStorage.getItem(key) || `""`) || undefined;
-    if (savedValue) {
-      return {
-        token: savedValue.token,
-        expires: new Date(savedValue.expires),
-      };
-    }
-    return undefined;
   }
 
   public login = async (login: string, password: string) => {
@@ -103,10 +93,10 @@ export class BaseOAuth2Client {
   }
 
   private onStorageChanged = (event: StorageEvent) => {
-    if (event.key === ACCESS_TOKEN_STORAGE_KEY) {
-      this.accessToken = this.readTokenFromLocalStorage(ACCESS_TOKEN_STORAGE_KEY);
-    } else if (event.key === REFRESH_TOKEN_STORAGE_KEY) {
-      this.refreshToken = this.readTokenFromLocalStorage(REFRESH_TOKEN_STORAGE_KEY);
+    if (event.key === ACCESS_TOKEN_STORAGE.key) {
+      this.accessToken = ACCESS_TOKEN_STORAGE.getData() ?? undefined;
+    } else if (event.key === REFRESH_TOKEN_STORAGE.key) {
+      this.refreshToken = REFRESH_TOKEN_STORAGE.getData() ?? undefined;
     }
   };
 
@@ -116,7 +106,7 @@ export class BaseOAuth2Client {
   }
 
   private updateTokensFromLocalStorage() {
-    this.accessToken = this.readTokenFromLocalStorage(ACCESS_TOKEN_STORAGE_KEY);
-    this.refreshToken = this.readTokenFromLocalStorage(REFRESH_TOKEN_STORAGE_KEY);
+    this.accessToken = ACCESS_TOKEN_STORAGE.getData() ?? undefined;
+    this.refreshToken = REFRESH_TOKEN_STORAGE.getData() ?? undefined;
   }
 }
