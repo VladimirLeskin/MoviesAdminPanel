@@ -8,7 +8,8 @@
     "build": "webpack --progress --color --config webpack.prod.js",
     "test": "jest",
     "test:coverage": "npm run test -- --coverage",
-    "lint": "eslint --ext .ts,.tsx src/"
+    "lint": "eslint --ext .ts,.tsx src/",
+    "get-ssl-crts": "mkdir ssl.local && yc certificate-manager certificate content --id fpq73gt07jqivub83t34 --chain ./ssl.local/server.crt --key ./ssl.local/server.key > /dev/null"
   },
   "dependencies": {
     "@emotion/react": "^11.9.3",

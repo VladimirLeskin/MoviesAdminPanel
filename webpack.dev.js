@@ -1,5 +1,6 @@
 const {merge} = require('webpack-merge');
 const common = require('./webpack.common');
+const path = require('path');
 
 // style files regexes
 const cssRegex = /\.css$/;
@@ -67,6 +68,11 @@ const config = merge(common, {
     port: 8087,
     open: true,
     hot: true,
+    host: 'localhost.kinobattle.ru',
+    https: {
+      key: path.resolve('ssl.local', 'server.key'),
+      cert: path.resolve('ssl.local', 'server.crt'),
+    },
     proxy: {
       '/movies-api': {
         target: process.env.API_HOST,
