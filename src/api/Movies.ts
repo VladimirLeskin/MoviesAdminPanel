@@ -34,4 +34,12 @@ export default class MoviesApi extends BaseApi {
   public static createMovieInfo(movieInfoDto: IMovieInfoDto): Promise<AxiosResponse<IMovieInfoDto>> {
     return this.transport.post(this.url('/movies/create'), movieInfoDto);
   }
+
+  public static createMoviesFromFile(file: File): Promise<AxiosResponse<number>> {
+    return this.transport.post(
+      this.url('/v2/movies/upload'),
+      {file},
+      {headers: {'Content-Type': 'multipart/form-data'}}
+    );
+  }
 }

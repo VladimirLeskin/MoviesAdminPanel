@@ -22,6 +22,7 @@ import css from './MoviesListWidget.module.scss';
 interface Props {
   prepareColumns?: (columns: ColDef<IMovieListItem>[]) => ColDef<IMovieListItem>[];
   params?: MoviesListWidgetParams;
+  actions?: React.ReactNode;
   onParamsChanged?: (params: MoviesListWidgetParams) => void;
 }
 
@@ -30,7 +31,7 @@ const defaultColDef: ColDef = {
   comparator: () => 0, // убираем клиентскую сортировку
 };
 
-export const MoviesListWidget: FC<Props> = observer(({prepareColumns, params, onParamsChanged}) => {
+export const MoviesListWidget: FC<Props> = observer(({actions, prepareColumns, params, onParamsChanged}) => {
   const {genres} = MOVIES_GENRES;
   const {countries} = COUNTRIES;
   const {items: rows, total, isLoading} = model;
@@ -68,7 +69,10 @@ export const MoviesListWidget: FC<Props> = observer(({prepareColumns, params, on
   return (
     <div className={css.root}>
       <div className={css.GridWithControls}>
-        <MoviesListFilter values={filter} onChange={onFilterChanged} />
+        <div className={css.TopBar}>
+          <MoviesListFilter values={filter} onChange={onFilterChanged} />
+          {actions}
+        </div>
         {paginationContainer}
         <AgGrid
           onGridReady={onGridReady}

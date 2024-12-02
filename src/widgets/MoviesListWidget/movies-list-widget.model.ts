@@ -1,7 +1,7 @@
 import {makeObservable} from 'mobx';
 import {IMovieListItem} from '../../api/dto/MovieDto';
-import MoviesApi from '../../api/Movies';
 import {IApiEndPoints, ItemsListModel} from '../../models/ItemsListModel';
+import {TypesafeMovies} from '../../api/TypesafeMovies';
 
 interface IMovieFilter {
   search?: string;
@@ -15,20 +15,25 @@ export class MoviesListWidgetModel extends ItemsListModel<IMovieListItem, IMovie
 
   protected apiEndPoints: IApiEndPoints<IMovieListItem, IMovieFilter> = {
     load: v =>
-      MoviesApi.getMovies({...v?.filter, ...v?.pagination, sort: v?.sortState}).then(data => {
+      TypesafeMovies.getMovies({...v?.filter, ...v?.pagination, sort: v?.sortState}).then(response => {
         return {
-          ...data,
+          ...response,
           data: {
-            ...data.data,
-            items: data.data.items.map(dto => ({
-              id: dto.movie_id,
+            meta: {
+              totalCount: response.data.total,
+              pageCount: Math.ceil(response.data.total / (v?.pagination?.pageSize ?? 50)),
+              currentPage: v?.pagination?.page ?? 0,
+              perPage: v?.pagination?.pageSize ?? 50,
+            },
+            items: response.data.items.map(dto => ({
+              id: dto.movie_id.toString(),
               movie_id: dto.movie_id,
               original_title: dto.original_title,
-              title: dto.title,
+              title: dto.descriptions.find(d => d.lang === 'ru')?.title ?? '',
               genres: dto.genres,
               countries: dto.countries,
-              date: new Date(dto.date),
-              images: dto.images,
+              date: dto.date ? new Date(dto.date) : undefined,
+              images: dto.images.map(img => ({...img, id: img.id.toString()})),
             })),
           },
         };

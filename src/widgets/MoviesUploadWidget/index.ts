@@ -1,0 +1,1 @@
+export {MoviesUploadWidget} from './MoviesUploadWidget';

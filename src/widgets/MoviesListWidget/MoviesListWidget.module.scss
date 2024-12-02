@@ -6,6 +6,10 @@
     display: flex;
     flex-direction: column;
 
+    .TopBar {
+      display: flex;
+    }
+
     .MoviesGrid {
       height: 100%;
     }

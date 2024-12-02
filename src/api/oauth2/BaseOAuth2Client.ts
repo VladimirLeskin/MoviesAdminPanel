@@ -2,7 +2,7 @@ import axios from 'axios';
 import {AuthApi, IToken, ITokens} from '../Auth';
 import {TokenStorage} from './TokenStorage';
 
-const ACCESS_TOKEN_STORAGE = new TokenStorage('MOVIES_ACCESS_TOKENS');
+export const ACCESS_TOKEN_STORAGE = new TokenStorage('MOVIES_ACCESS_TOKENS');
 const REFRESH_TOKEN_STORAGE = new TokenStorage('MOVIES_REFRESH_TOKENS');
 
 export class BaseOAuth2Client {

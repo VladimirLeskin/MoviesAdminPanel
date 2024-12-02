@@ -2,7 +2,8 @@ import React, {FC, useCallback, useMemo} from 'react';
 import {Link} from 'react-router-dom';
 import {Button} from '@mui/material';
 
-import {MoviesListWidget, MoviesListWidgetParams} from 'src/widgets/MoviesListWidget/models';
+import {MoviesListWidget, MoviesListWidgetParams} from 'src/widgets/MoviesListWidget';
+import {MoviesUploadWidget} from 'src/widgets/MoviesUploadWidget';
 import {ROUTES} from 'src/constants';
 import {moviesListFiltersQueryConfig, moviesListPaginationQueryConfig, moviesListSortQueryConfig} from './constants';
 import {useQueryParams} from 'src/hooks/useQueryParams';
@@ -36,12 +37,20 @@ export const MoviesListPage: FC = () => {
 
   return (
     <div className={css.root}>
-      <Link to={ROUTES.MOVIES.CREATE} target="_blank" className={css.AddButton}>
-        <Button variant="contained" fullWidth>
-          Добавить
-        </Button>
-      </Link>
-      <MoviesListWidget params={params} onParamsChanged={handleParamsChange} />
+      <MoviesListWidget
+        params={params}
+        actions={
+          <div className={css.Actions}>
+            <Link to={ROUTES.MOVIES.CREATE} target="_blank" className={css.AddButton}>
+              <Button variant="contained" fullWidth>
+                Добавить
+              </Button>
+            </Link>
+            <MoviesUploadWidget />
+          </div>
+        }
+        onParamsChanged={handleParamsChange}
+      />
     </div>
   );
 };

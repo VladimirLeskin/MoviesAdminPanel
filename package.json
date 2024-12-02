@@ -9,7 +9,8 @@
     "test": "jest",
     "test:coverage": "npm run test -- --coverage",
     "lint": "eslint --ext .ts,.tsx src/",
-    "get-ssl-crts": "mkdir ssl.local && yc certificate-manager certificate content --id fpq73gt07jqivub83t34 --chain ./ssl.local/server.crt --key ./ssl.local/server.key > /dev/null"
+    "get-ssl-crts": "mkdir ssl.local && yc certificate-manager certificate content --id fpq73gt07jqivub83t34 --chain ./ssl.local/server.crt --key ./ssl.local/server.key > /dev/null",
+    "generate:api": "swagger-typescript-api -o ./src/api -p https://localhost.kinobattle.ru:8082/swagger-docs/v3/api-docs  --module-name-first-tag -t ./api-templates/ --axios"
   },
   "dependencies": {
     "@emotion/react": "^11.9.3",
@@ -61,6 +62,7 @@
     "sass": "^1.53.0",
     "sass-loader": "^13.0.2",
     "style-loader": "^3.3.1",
+    "swagger-typescript-api": "13.0.23",
     "terser-webpack-plugin": "^5.3.9",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5",
