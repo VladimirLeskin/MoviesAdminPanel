@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect} from 'react';
 import {observer} from 'mobx-react';
-import {Box, Button, Fab, Paper} from '@mui/material';
+import {Button, Paper} from '@mui/material';
 import {Save} from '@mui/icons-material';
 
 import {ItemEditor} from '../../components/ItemEditor/ItemEditor';
