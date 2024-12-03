@@ -40,7 +40,7 @@ export class TypesafeBaseApi {
           method: 'GET',
           path: url,
           query: params.query,
-          headers: params.headers,
+          headers: {'Content-Type': 'application/json', ...params.headers},
         })
         .catch(TypesafeBaseApi.processError);
     },
@@ -51,7 +51,7 @@ export class TypesafeBaseApi {
           path: url,
           query: params.query,
           body: params.data,
-          headers: params.headers,
+          headers: {'Content-Type': 'application/json', ...params.headers},
         })
         .catch(TypesafeBaseApi.processError);
     },
@@ -62,7 +62,7 @@ export class TypesafeBaseApi {
           path: url,
           query: params.query,
           body: params.data,
-          headers: params.headers,
+          headers: {'Content-Type': 'application/json', ...params.headers},
         })
         .catch(TypesafeBaseApi.processError);
     },
@@ -73,7 +73,7 @@ export class TypesafeBaseApi {
           path: url,
           query: params.query,
           body: params.data,
-          headers: params.headers,
+          headers: {'Content-Type': 'application/json', ...params.headers},
         })
         .catch(TypesafeBaseApi.processError);
     },
@@ -83,7 +83,7 @@ export class TypesafeBaseApi {
           method: 'DELETE',
           path: url,
           query: params.query,
-          headers: params.headers,
+          headers: {'Content-Type': 'application/json', ...params.headers},
         })
         .catch(TypesafeBaseApi.processError);
     },

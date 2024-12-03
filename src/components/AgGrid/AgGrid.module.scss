@@ -5,4 +5,7 @@
 
 .AgGrid {
   --ag-cell-horizontal-padding: 8px;
+  --ag-material-primary-color: #8b6ac6;
+  --ag-material-accent-color: #2962ff;
+  --ag-checkbox-indeterminate-color: var(--ag-material-accent-color);
 }
