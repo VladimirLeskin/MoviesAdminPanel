@@ -1,0 +1,27 @@
+<%
+const {utils, routes: {combined}, config, modelTypes} = it;
+const {_, pascalCase, require} = utils;
+%>
+
+export type ApiControllers = <% ~ combined.map(({moduleName}) => moduleName).join('&') %>;
+
+<% for (const {moduleName, routes} of combined) { %>
+    <%
+        const routesByPath = routes.reduce((acc, currentValue) => {
+            const path = currentValue.request.path.replaceAll('$', '');
+            (acc[path] ??= []).push(currentValue);
+            return acc;
+        }, {})
+    %>
+    type <% ~moduleName %> = {
+    <% for (const [path, routes] of Object.entries(routesByPath)) { %>
+
+        "<% ~path %>": {
+        <% for (const route of routes) { %>
+            <% ~includeFile('./procedure-call.ejs', {...it, route}) %>
+        <% } %>
+        }
+
+    <% } %>
+    }
+<% } %>

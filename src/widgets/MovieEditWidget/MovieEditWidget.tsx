@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect} from 'react';
 import {observer} from 'mobx-react';
-import {Fab} from '@mui/material';
+import {Box, Button, Fab, Paper} from '@mui/material';
 import {Save} from '@mui/icons-material';
 
 import {ItemEditor} from '../../components/ItemEditor/ItemEditor';
@@ -11,6 +11,7 @@ import {useTitleUpdate} from '../../hooks/useTitleUpdate';
 import {getMovieTitle} from './libs';
 
 import css from './MovieEditWidget.module.scss';
+import {MoviesImagesLoadButton} from '../MoviesImagesLoadButton';
 
 const movieEditPageModel = new MovieEditWidgetModel();
 
@@ -48,9 +49,12 @@ export const MovieEditWidget = observer(({movieId, onSaved}: Props) => {
         defaultValue={movieInfo}
         layout={layoutSettings}
       />
-      <Fab onClick={handleSave} variant="extended" color="primary" disabled={isLoading} className={css.Buttons}>
-        <Save /> Сохранить
-      </Fab>
+      <Paper className={css.footer}>
+        <Button onClick={handleSave} variant="contained" color="primary" disabled={isLoading}>
+          <Save /> Сохранить
+        </Button>
+        {movieId && <MoviesImagesLoadButton ids={[movieId]} onSuccess={() => load(movieId)} />}
+      </Paper>
     </div>
   );
 });

@@ -41,6 +41,6 @@ export interface IMovieListItem {
   title: string;
   genres: number[];
   countries: string[];
-  date: Date;
+  date?: Date;
   images: Array<{id: string; path: string}>;
 }

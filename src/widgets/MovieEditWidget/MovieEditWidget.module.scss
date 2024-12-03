@@ -8,4 +8,13 @@
     bottom: 0;
     margin-right: auto;
   }
+
+  .footer {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    width: 100%;
+  }
 }

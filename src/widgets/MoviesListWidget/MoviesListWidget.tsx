@@ -18,11 +18,15 @@ import {useParams} from './hooks/useParams';
 import {MoviesListWidgetParams} from './types';
 
 import css from './MoviesListWidget.module.scss';
+import {useGridSelection} from '../../hooks/useGridSelection';
 
 interface Props {
   prepareColumns?: (columns: ColDef<IMovieListItem>[]) => ColDef<IMovieListItem>[];
   params?: MoviesListWidgetParams;
+  actions?: React.ReactNode;
+  revision?: number;
   onParamsChanged?: (params: MoviesListWidgetParams) => void;
+  onSelect?: (rows: IMovieListItem[]) => void;
 }
 
 const model = new MoviesListWidgetModel();
@@ -30,61 +34,68 @@ const defaultColDef: ColDef = {
   comparator: () => 0, // убираем клиентскую сортировку
 };
 
-export const MoviesListWidget: FC<Props> = observer(({prepareColumns, params, onParamsChanged}) => {
-  const {genres} = MOVIES_GENRES;
-  const {countries} = COUNTRIES;
-  const {items: rows, total, isLoading} = model;
+export const MoviesListWidget: FC<Props> = observer(
+  ({revision, actions, prepareColumns, params, onSelect, onParamsChanged}) => {
+    const {genres} = MOVIES_GENRES;
+    const {countries} = COUNTRIES;
+    const {items: rows, total, isLoading} = model;
 
-  const {
-    sortState: [sortState, onSortChanged],
-    filter: [filter, onFilterChanged],
-    pagination: [pagination, onPaginationChanged],
-  } = useParams(model, params, onParamsChanged);
+    const {
+      sortState: [sortState, onSortChanged],
+      filter: [filter, onFilterChanged],
+      pagination: [pagination, onPaginationChanged],
+    } = useParams(model, params, onParamsChanged);
 
-  const gridRef = useRef<AgGridReact>(null);
+    const gridRef = useRef<AgGridReact>(null);
 
-  useEffect(() => {
-    if (params) {
-      model.loadItems(params);
-    } else {
-      model.init();
-    }
-  }, [params]);
+    useEffect(() => {
+      if (params) {
+        model.loadItems(params);
+      } else {
+        model.init();
+      }
+    }, [params, revision]);
 
-  const columns = useMemo(() => {
-    const prepareFunc = prepareColumns || (v => v);
-    return prepareFunc(getMoviesListColumns(genres, countries));
-  }, [prepareColumns, genres, countries]);
+    const columns = useMemo(() => {
+      const prepareFunc = prepareColumns || (v => v);
+      return prepareFunc(getMoviesListColumns(genres, countries));
+    }, [prepareColumns, genres, countries]);
 
-  const handleSortChange = useGridSort(gridRef.current, sortState ?? [], onSortChanged);
+    const handleSortChange = useGridSort(gridRef.current, sortState ?? [], onSortChanged);
+    const selectionProps = useGridSelection(onSelect);
 
-  const paginationContainer = (
-    <div className={css.PaginationContainer}>
-      <Spinner className={!isLoading && css.LoaderHidden} />
-      <Pagination {...pagination} itemsTotal={total} onChange={onPaginationChanged} />
-    </div>
-  );
-
-  return (
-    <div className={css.root}>
-      <div className={css.GridWithControls}>
-        <MoviesListFilter values={filter} onChange={onFilterChanged} />
-        {paginationContainer}
-        <AgGrid
-          onGridReady={onGridReady}
-          suppressDragLeaveHidesColumns
-          ref={gridRef}
-          rowData={rows}
-          defaultColDef={defaultColDef}
-          columnDefs={columns}
-          className={css.MoviesGrid}
-          onSortChanged={handleSortChange}
-        />
-        {paginationContainer}
+    const paginationContainer = (
+      <div className={css.PaginationContainer}>
+        <Spinner className={!isLoading && css.LoaderHidden} />
+        <Pagination {...pagination} itemsTotal={total} onChange={onPaginationChanged} />
       </div>
-    </div>
-  );
-});
+    );
+
+    return (
+      <div className={css.root}>
+        <div className={css.GridWithControls}>
+          <div className={css.TopBar}>
+            <MoviesListFilter values={filter} onChange={onFilterChanged} />
+            {actions}
+          </div>
+          {paginationContainer}
+          <AgGrid
+            {...selectionProps}
+            onGridReady={onGridReady}
+            suppressDragLeaveHidesColumns
+            ref={gridRef}
+            rowData={rows}
+            defaultColDef={defaultColDef}
+            columnDefs={columns}
+            className={css.MoviesGrid}
+            onSortChanged={handleSortChange}
+          />
+          {paginationContainer}
+        </div>
+      </div>
+    );
+  }
+);
 
 function onGridReady(event: GridReadyEvent) {
   event.api.sizeColumnsToFit();
