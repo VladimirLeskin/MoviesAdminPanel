@@ -47,7 +47,7 @@ export const App: FC = observer(() => {
         <ToastContainer theme="colored" autoClose={10000} closeButton />
       </div>
       <BrowserRouter basename={`/${process.env.ROUTER_BASENAME}`}>
-        <QueryParamProvider adapter={ReactRouter6Adapter}>
+        <QueryParamProvider adapter={ReactRouter6Adapter} options={{}}>
           <Header title="админка" items={HEADER_ITEMS} />
           <div className={css.Content}>
             <Suspense fallback={<>Загрузка...</>}>

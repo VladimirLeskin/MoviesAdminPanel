@@ -1,18 +1,22 @@
-import React, {FC, useCallback, useEffect, useState} from 'react';
+import React, {FC, FormEvent, useCallback, useEffect, useState} from 'react';
 import {Button, TextField} from '@mui/material';
+import {Filters} from './Filters';
 
 export interface IMovieFilter {
   search?: string;
+  tvSeries?: boolean;
+  genres?: number[];
+  countries?: string[];
 }
 
-interface MoviesPickerFilterProps {
+interface MoviesFilterProps {
   values?: IMovieFilter;
   onChange: (filter: IMovieFilter) => void;
 }
 
 const EMPTY_VALUES: IMovieFilter = {};
 
-export const MoviesListFilter: FC<MoviesPickerFilterProps> = ({onChange, values = EMPTY_VALUES}) => {
+export const MoviesListFilter: FC<MoviesFilterProps> = ({onChange, values = EMPTY_VALUES}) => {
   const [filterState, setFilterState] = useState(values);
 
   useEffect(() => {
@@ -26,30 +30,34 @@ export const MoviesListFilter: FC<MoviesPickerFilterProps> = ({onChange, values 
     [filterState]
   );
 
-  const onSubmit = useCallback(() => {
-    onChange(filterState);
-  }, [filterState, onChange]);
-
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        onSubmit();
-      }
+  const handleFiltersChange = useCallback(
+    (newValues: IMovieFilter) => {
+      const newFiltersState = {...filterState, ...newValues};
+      setFilterState(newFiltersState);
+      onChange(newFiltersState);
     },
-    [onSubmit]
+    [filterState, onChange]
+  );
+
+  const onSubmit = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+      onChange(filterState);
+    },
+    [filterState, onChange]
   );
 
   return (
-    <div>
+    <form onSubmit={onSubmit}>
       <TextField
         size="small"
         value={filterState.search ?? ''}
         label="Поиск"
         onChange={onSearchChanged}
-        onKeyDown={onKeyDown}
         placeholder="Название, imdb_id"
       />
-      <Button onClick={onSubmit}>Применить</Button>
-    </div>
+      <Filters filters={filterState} onChange={handleFiltersChange} />
+      <Button type="submit">Применить</Button>
+    </form>
   );
 };

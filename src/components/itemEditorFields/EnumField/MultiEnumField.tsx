@@ -33,6 +33,7 @@ export const MultiEnumField = <T,>(props: IFieldRendererProps<T[], IEnumMultiFie
   return (
     <Autocomplete<TOption<T>, true>
       key={defaultValue?.length}
+      disableCloseOnSelect
       size="small"
       className={cn(css.root, css.MultiValue)}
       onChange={handleChange}

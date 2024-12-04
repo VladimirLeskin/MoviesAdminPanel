@@ -1,5 +1,6 @@
 import {AxiosResponse} from 'axios';
 import {toast} from 'react-toastify';
+import qs from 'query-string';
 import {ApiControllers, HttpClient} from './Api';
 import {getAxiosErrorText} from './stdAxiosErrorHandler';
 
@@ -32,7 +33,14 @@ type Transport<TController extends Controller> = {
 };
 
 export class TypesafeBaseApi {
-  private static httpClient: HttpClient = new HttpClient({format: 'json', baseURL: '/'});
+  private static httpClient: HttpClient = new HttpClient({
+    format: 'json',
+    baseURL: '/',
+    paramsSerializer: params => {
+      return qs.stringify(params, {arrayFormat: 'comma'});
+    },
+  });
+
   protected static transport: Transport<ApiControllers> = {
     get: (url, params: Payload) => {
       return TypesafeBaseApi.httpClient

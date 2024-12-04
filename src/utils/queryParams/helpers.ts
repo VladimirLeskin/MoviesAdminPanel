@@ -1,5 +1,6 @@
 import {ParamConfig} from './types';
 import {ISortState} from '../../type';
+import {encodeDelimitedArray} from 'use-query-params';
 
 function numeric(): ParamConfig<number | undefined>;
 function numeric(defaultValue: number): ParamConfig<number>;
@@ -16,6 +17,15 @@ function string(defaultValue?: string): ParamConfig<string | undefined> {
   return {
     decode: str => (str != null ? str || undefined : defaultValue),
     encode: str => str,
+  };
+}
+
+function boolean(): ParamConfig<boolean | undefined>;
+function boolean(defaultValue: boolean): ParamConfig<boolean>;
+function boolean(defaultValue?: boolean): ParamConfig<boolean | undefined> {
+  return {
+    decode: str => (str != null ? str === 'true' : defaultValue),
+    encode: str => (str == null ? undefined : str.toString()),
   };
 }
 
@@ -36,8 +46,38 @@ function sort(): ParamConfig<ISortState[] | undefined> {
   };
 }
 
+function arrayOfString(): ParamConfig<string[] | undefined> {
+  return {
+    decode: (str: string | string[] | undefined) => {
+      if (!str) {
+        return undefined;
+      }
+      return ([] as string[]).concat(str.toString().split(','));
+    },
+    encode: strings => (strings ? (encodeDelimitedArray(strings, ',') ?? undefined) : undefined),
+  };
+}
+
+function arrayOfNumbers(): ParamConfig<number[] | undefined> {
+  return {
+    decode: (str: string | string[] | undefined) => {
+      if (!str) {
+        return undefined;
+      }
+      return ([] as string[])
+        .concat(str.toString().split(','))
+        .map(Number)
+        .filter(v => !Number.isNaN(v));
+    },
+    encode: numbers => (numbers ? (encodeDelimitedArray(numbers.map(String), ',') ?? undefined) : undefined),
+  };
+}
+
 export const QueryParams = {
   string,
   numeric,
+  boolean,
+  arrayOfString,
+  arrayOfNumbers,
   sort,
 };

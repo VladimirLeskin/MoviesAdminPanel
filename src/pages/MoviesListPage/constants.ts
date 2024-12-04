@@ -14,4 +14,7 @@ export const moviesListSortQueryConfig: IQueryConfig<{sort?: ISortState[]}> = {
 
 export const moviesListFiltersQueryConfig: IQueryConfig<IMovieFilter> = {
   search: QueryParams.string(),
+  tvSeries: QueryParams.boolean(),
+  genres: QueryParams.arrayOfNumbers(),
+  countries: QueryParams.arrayOfString(),
 };

@@ -9,9 +9,9 @@ import {MovieEditWidgetModel} from './movie-edit-widget.model';
 import {layoutSettings, schema} from './constants';
 import {useTitleUpdate} from '../../hooks/useTitleUpdate';
 import {getMovieTitle} from './libs';
+import {MoviesImagesLoadButton} from '../MoviesImagesLoadButton';
 
 import css from './MovieEditWidget.module.scss';
-import {MoviesImagesLoadButton} from '../MoviesImagesLoadButton';
 
 const movieEditPageModel = new MovieEditWidgetModel();
 
@@ -50,8 +50,8 @@ export const MovieEditWidget = observer(({movieId, onSaved}: Props) => {
         layout={layoutSettings}
       />
       <Paper className={css.footer}>
-        <Button onClick={handleSave} variant="contained" color="primary" disabled={isLoading}>
-          <Save /> Сохранить
+        <Button onClick={handleSave} variant="contained" color="primary" disabled={isLoading} startIcon={<Save />}>
+          Сохранить
         </Button>
         {movieId && <MoviesImagesLoadButton ids={[movieId]} onSuccess={() => load(movieId)} />}
       </Paper>

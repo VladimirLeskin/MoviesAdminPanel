@@ -251,6 +251,9 @@ type moviesController = {
           pageSize?: number;
           sort?: string[];
           sortLang?: string;
+          tvSeries?: boolean;
+          genres?: number[];
+          countries?: string[];
         };
         headers: {
           /** Bearer {access_token} */

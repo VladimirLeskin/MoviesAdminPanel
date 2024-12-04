@@ -12,9 +12,7 @@ export class TypesafeMovies extends TypesafeBaseApi {
   public static getMovies(params: IFindRequestParams) {
     return this.transport.get('/movies-api/v2/movies', {
       query: {
-        search: params.search,
-        page: params.page,
-        pageSize: params.pageSize,
+        ...params,
         sort: params.sort?.map(({field, order}) => `${order === 'desc' ? '-' : ''}${field}`),
         sortLang: 'ru',
       },
