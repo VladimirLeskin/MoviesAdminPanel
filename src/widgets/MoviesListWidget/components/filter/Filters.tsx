@@ -49,7 +49,7 @@ export const Filters = observer(({filters, onChange}: Props) => {
           <FilterAlt fontSize="medium" />
         </Badge>
       </IconButton>
-      <Drawer open={open} anchor="right" hideBackdrop onClose={toggleOpen}>
+      <Drawer open={open} anchor="right" hideBackdrop>
         <ClickAwayListener onClickAway={toggleOpen}>
           <Stack className={css.drawerContent}>
             <Typography variant="h5">Фильтры</Typography>
