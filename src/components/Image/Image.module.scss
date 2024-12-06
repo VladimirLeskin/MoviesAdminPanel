@@ -1,0 +1,14 @@
+.root {
+  display: block;
+  position: relative;
+
+  .sizes {
+    pointer-events: none;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 12px;
+    color: white;
+    text-shadow: 1px 1px 1px #000, -1px -1px 1px #000;
+  }
+}

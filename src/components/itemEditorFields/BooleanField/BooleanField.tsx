@@ -17,13 +17,13 @@ export const BooleanField: FC<IFieldRendererProps<boolean>> = props => {
 
   return (
     <FormControl className={css.root} required={fieldInfo.required}>
-      <FormLabel>{fieldInfo.title}</FormLabel>
       <Checkbox
         disabled={fieldInfo.disabled}
         onChange={handleCheckBoxChanged}
         checked={value}
         defaultChecked={defaultValue}
       />
+      <FormLabel>{fieldInfo.title}</FormLabel>
     </FormControl>
   );
 };

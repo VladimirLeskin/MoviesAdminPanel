@@ -7,8 +7,10 @@
     flex-direction: column;
 
     .TopBar {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       justify-content: space-between;
+      align-items: flex-start;
     }
 
     .MoviesGrid {

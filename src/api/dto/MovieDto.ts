@@ -16,20 +16,21 @@ export interface IMovieDto {
 
 export interface IMovieInfoDto {
   id?: string;
+  tv_series: boolean;
   imdb_id: string;
   tmdb_id?: number;
   countries: string[];
-  adult: boolean;
   genres: IMovieGenre['genre_id'][];
   original_title: string;
   release_date_ts?: number; // seconds, not milliseconds
+  end_date_ts?: number; // seconds, not milliseconds
   images: Array<{id?: string; name?: string; content?: string}>;
   descriptions: Record<
     string,
     {
       title: string;
-      description: string;
-      tagline: string;
+      description?: string;
+      tagline?: string;
     }
   >;
 }

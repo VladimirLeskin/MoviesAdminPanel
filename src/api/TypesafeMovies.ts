@@ -38,4 +38,13 @@ export class TypesafeMovies extends TypesafeBaseApi {
       },
     });
   }
+
+  public static getMovieInfo(movieId: number) {
+    return this.transport.get('/movies-api/v2/movies/{id}', {
+      route: {id: movieId.toString()},
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN_STORAGE.getData()?.token}`,
+      },
+    });
+  }
 }

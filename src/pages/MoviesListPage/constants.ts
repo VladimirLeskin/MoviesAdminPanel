@@ -12,9 +12,17 @@ export const moviesListSortQueryConfig: IQueryConfig<{sort?: ISortState[]}> = {
   sort: QueryParams.sort(),
 };
 
+function ensureMovieStatus(str?: string): str is IMovieFilter['status'] {
+  return new Set<string | undefined>(['ACTIVE', 'MODERATION']).has(str);
+}
+
 export const moviesListFiltersQueryConfig: IQueryConfig<IMovieFilter> = {
   search: QueryParams.string(),
   tvSeries: QueryParams.boolean(),
   genres: QueryParams.arrayOfNumbers(),
   countries: QueryParams.arrayOfString(),
+  status: {
+    decode: str => (ensureMovieStatus(str) ? str : undefined),
+    encode: str => str,
+  },
 };

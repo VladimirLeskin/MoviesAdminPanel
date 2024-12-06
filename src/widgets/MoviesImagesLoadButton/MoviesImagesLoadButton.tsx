@@ -5,7 +5,7 @@ import {MoviesImagesLoadButtonModel} from './model';
 import {observer} from 'mobx-react';
 
 interface Props {
-  ids: string[];
+  ids: number[];
   Component?: ComponentType<Pick<ButtonProps, 'disabled' | 'color' | 'variant' | 'onClick' | 'children'>>;
   onSuccess?: () => void;
 }
@@ -14,7 +14,7 @@ const model = new MoviesImagesLoadButtonModel();
 
 export const MoviesImagesLoadButton = observer(({ids, Component = Button, onSuccess}: Props) => {
   const handleClick = useCallback(() => {
-    model.loadImages(ids.map(Number)).then(result => result && onSuccess?.());
+    model.loadImages(ids).then(result => result && onSuccess?.());
   }, [ids, onSuccess]);
 
   return (

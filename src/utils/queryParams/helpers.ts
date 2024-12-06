@@ -1,6 +1,5 @@
 import {ParamConfig} from './types';
 import {ISortState} from '../../type';
-import {encodeDelimitedArray} from 'use-query-params';
 
 function numeric(): ParamConfig<number | undefined>;
 function numeric(defaultValue: number): ParamConfig<number>;
@@ -54,7 +53,7 @@ function arrayOfString(): ParamConfig<string[] | undefined> {
       }
       return ([] as string[]).concat(str.toString().split(','));
     },
-    encode: strings => (strings ? (encodeDelimitedArray(strings, ',') ?? undefined) : undefined),
+    encode: strings => (strings ? strings.join(',') || undefined : undefined),
   };
 }
 
@@ -69,7 +68,7 @@ function arrayOfNumbers(): ParamConfig<number[] | undefined> {
         .map(Number)
         .filter(v => !Number.isNaN(v));
     },
-    encode: numbers => (numbers ? (encodeDelimitedArray(numbers.map(String), ',') ?? undefined) : undefined),
+    encode: numbers => (numbers ? numbers.map(String).join(',') || undefined : undefined),
   };
 }
 

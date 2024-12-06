@@ -16,13 +16,13 @@ class CountriesModel {
     this.loadCountries();
   }
 
-  public get countries(): Record<string, ICountryListItemDto> {
+  public get countries() {
     if (!this._countries && !this._isLoading) {
       this.loadCountries();
       return {};
     } else {
       return (
-        this._countries?.reduce((acc, cur) => {
+        this._countries?.reduce<Record<string, ICountryListItemDto>>((acc, cur) => {
           acc[cur.country_code] = cur;
           return acc;
         }, {}) ?? {}

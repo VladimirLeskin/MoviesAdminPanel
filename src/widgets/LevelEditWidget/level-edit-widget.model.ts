@@ -83,7 +83,7 @@ export class LevelEditWidgetModel extends EntityEditorModel<IEditedLevelInfo> {
   private static levelInfoToDto(levelInfo: IEditedLevelInfo): ISaveLevelRequest {
     return {
       id: levelInfo.id,
-      descriptions: levelInfo.descriptions.reduce((acc, d) => {
+      descriptions: levelInfo.descriptions.reduce<Exclude<ISaveLevelRequest['descriptions'], undefined>>((acc, d) => {
         acc[d.lang] = d;
         return acc;
       }, {}),

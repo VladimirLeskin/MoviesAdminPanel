@@ -21,7 +21,7 @@ export const MOVIES_LIST_COLUMNS: ColDef<IMovieListItem & {id: string}>[] = [
       }
 
       return (
-        <Link to={ROUTES.MOVIES.DETAILS.replace(':movieId', params.data.movie_id)} target="_blank">
+        <Link to={ROUTES.MOVIES.DETAILS.replace(':movieId', params.data.movie_id.toString())} target="_blank">
           {params.data.movie_id}
         </Link>
       );

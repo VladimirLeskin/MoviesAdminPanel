@@ -6,7 +6,7 @@ import {Save} from '@mui/icons-material';
 import {ItemEditor} from '../../components/ItemEditor/ItemEditor';
 import {IEditedMovieInfo} from './types';
 import {MovieEditWidgetModel} from './movie-edit-widget.model';
-import {layoutSettings, schema} from './constants';
+import {getlayoutSettings, schema} from './constants';
 import {useTitleUpdate} from '../../hooks/useTitleUpdate';
 import {getMovieTitle} from './libs';
 import {MoviesImagesLoadButton} from '../MoviesImagesLoadButton';
@@ -16,7 +16,7 @@ import css from './MovieEditWidget.module.scss';
 const movieEditPageModel = new MovieEditWidgetModel();
 
 interface Props {
-  movieId?: string;
+  movieId?: number;
   onSaved?: (id: IEditedMovieInfo['id']) => void;
 }
 
@@ -47,7 +47,7 @@ export const MovieEditWidget = observer(({movieId, onSaved}: Props) => {
         fields={schema.value}
         onChange={editData}
         defaultValue={movieInfo}
-        layout={layoutSettings}
+        layout={getlayoutSettings(movieEditPageModel._editedData)}
       />
       <Paper className={css.footer}>
         <Button onClick={handleSave} variant="contained" color="primary" disabled={isLoading} startIcon={<Save />}>

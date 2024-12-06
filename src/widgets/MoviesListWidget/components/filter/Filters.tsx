@@ -16,17 +16,18 @@ interface Props {
 }
 
 const EMPTY_STATE: IMovieFilter = {
+  status: undefined,
   genres: [],
   countries: [],
   tvSeries: undefined,
 };
 
 export const Filters = observer(({filters, onChange}: Props) => {
-  const {state: open, toggleState: toggleOpen} = useBooleanState(false);
+  const {state: open, setTrue: setOpen, setFalse: setHide} = useBooleanState(false);
   const [values, setValues] = useState<IMovieFilter>(filters);
 
   const appliedValues = Object.keys(EMPTY_STATE).filter(
-    k => filters[k] != null && JSON.stringify(filters[k]) !== JSON.stringify(EMPTY_STATE[k])
+    (k: keyof IMovieFilter) => filters[k] != null && JSON.stringify(filters[k]) !== JSON.stringify(EMPTY_STATE[k])
   );
 
   useEffect(() => {
@@ -35,22 +36,22 @@ export const Filters = observer(({filters, onChange}: Props) => {
 
   const handleSave = () => {
     onChange(values);
-    toggleOpen();
+    setHide();
   };
 
   const handleReset = () => {
-    onChange({...values, ...EMPTY_STATE});
+    setValues({...values, ...EMPTY_STATE});
   };
 
   return (
     <>
-      <IconButton onClick={toggleOpen}>
+      <IconButton onClick={setOpen}>
         <Badge badgeContent={appliedValues.length} variant="dot" color="primary">
           <FilterAlt fontSize="medium" />
         </Badge>
       </IconButton>
       <Drawer open={open} anchor="right" hideBackdrop>
-        <ClickAwayListener onClickAway={toggleOpen}>
+        <ClickAwayListener onClickAway={setHide}>
           <Stack className={css.drawerContent}>
             <Typography variant="h5">Фильтры</Typography>
             <ItemEditor fields={schema.value} onChange={setValues} value={values} isControlled />

@@ -7,7 +7,7 @@ import {IFieldRendererProps} from 'src/entries/FieldInfo';
 import css from './ImageUpload.module.scss';
 
 interface Data {
-  id?: string;
+  id?: number;
   src?: string;
   content?: string;
 }

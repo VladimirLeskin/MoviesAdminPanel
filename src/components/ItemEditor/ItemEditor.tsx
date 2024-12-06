@@ -8,17 +8,6 @@ import {ArrayUtils} from '../../utils/ArrayUtils';
 
 import css from './ItemEditor.module.scss';
 
-// Способ сказать, что обязательно либо defaultValue, либо value (на будущее)
-// interface IValue<TData> extends Props<TData> {
-//   value: TData;
-// }
-//
-// interface IDefaultValue<TData> extends Props<TData> {
-//   defaultValue: TData;
-// }
-//
-// type BaseProps<TData> = IValue<TData> | IDefaultValue<TData> | (IValue<TData> & IDefaultValue<TData>);
-
 interface Props<TData> {
   fields: TItemSchema<TData>;
   value?: TData;

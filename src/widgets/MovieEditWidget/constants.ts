@@ -2,9 +2,11 @@ import {makeAutoObservable} from 'mobx';
 import {TItemSchema} from '../../entries/BaseEntity';
 import {IEditedMovieInfo} from './types';
 import {
+  BooleanField,
   DateField,
   EnumField,
   MultiEnumField,
+  NumericField,
   StringField,
   StructField,
   TextAreaField,
@@ -15,29 +17,39 @@ import {MOVIES_GENRES} from '../../models/MoviesGenres';
 import {withCollapsibleContent} from '../../components/itemEditorFields/modificators';
 import {ImageField} from '../../components/itemEditorFields/ImageField/ImageField';
 import {Section2Horizontal} from '../../components/layouts/Section2Horizontal';
+import {ArrayUtils} from '../../utils/ArrayUtils';
 
-export const schema: {value: TItemSchema<IEditedMovieInfo>} = makeAutoObservable({
+export const schema = makeAutoObservable({
   get value(): TItemSchema<IEditedMovieInfo> {
     return {
-      id: {title: 'ID', disabled: true, renderer: StringField},
+      id: {title: 'ID', disabled: true, renderer: NumericField},
+      tv_series: {title: 'Сериал', renderer: BooleanField},
       original_title: {title: 'Оригинальное название', renderer: StringField},
       tmdb_id: {title: 'tmdb_id', renderer: StringField},
       imdb_id: {title: 'imdb_id', renderer: StringField},
       release_date: {title: 'Дата релиза', renderer: DateField},
+      end_date: {title: 'Дата окончания', renderer: DateField},
       countries: {
         type: EFieldInfoType.ENUM_MULTI,
         title: 'Страны',
         renderer: MultiEnumField,
-        options: Object.values(COUNTRIES.countries).map(c => ({
-          value: c.country_code,
-          label: c.name || c.country_code,
-        })),
+        options: Object.values(COUNTRIES.countries)
+          .sort((a, b) => (a.name || a.country_code).localeCompare(b.name || b.country_code))
+          .map(c => ({
+            value: c.country_code,
+            label: c.name || c.country_code,
+          })),
       },
       genres: {
         type: EFieldInfoType.ENUM_MULTI,
         title: 'Жанры',
         renderer: MultiEnumField,
-        options: Object.values(MOVIES_GENRES.genres).map(g => ({value: g.genre_id, label: g.name})),
+        options: Object.values(MOVIES_GENRES.genres)
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(g => ({
+            value: g.genre_id,
+            label: g.name,
+          })),
       },
       descriptions: getMultiFieldInfo(
         {
@@ -75,10 +87,21 @@ export const schema: {value: TItemSchema<IEditedMovieInfo>} = makeAutoObservable
   },
 });
 
-export const layoutSettings: ILayoutSettings<IEditedMovieInfo> = {
+export const getlayoutSettings = (values?: IEditedMovieInfo): ILayoutSettings<IEditedMovieInfo> => ({
   layoutType: Section2Horizontal,
   fieldsBySections: [
-    ['id', 'original_title', 'tmdb_id', 'imdb_id', 'release_date', 'countries', 'genres', 'descriptions'],
+    ArrayUtils.removeEmpty([
+      'id',
+      'tv_series',
+      'original_title',
+      'tmdb_id',
+      'imdb_id',
+      'release_date',
+      values?.tv_series ? 'end_date' : undefined,
+      'countries',
+      'genres',
+      'descriptions',
+    ]),
     ['images'],
   ],
-};
+});

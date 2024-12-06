@@ -58,7 +58,7 @@ export const MoviesListPage: FC = () => {
             </Link>
             <MoviesUploadWidget />
             {selectedItems.length > 0 && (
-              <MoviesImagesLoadButton ids={selectedItems.map(it => it.id)} onSuccess={forceRecalc} />
+              <MoviesImagesLoadButton ids={selectedItems.map(it => +it.id)} onSuccess={forceRecalc} />
             )}
           </div>
         }

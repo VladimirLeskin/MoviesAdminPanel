@@ -7,7 +7,7 @@ export abstract class EntityEditorModel<T extends TBaseEntity> {
   private _isLoading = false;
   private _isSaving = false;
   private _data?: T = undefined;
-  private _editedData?: T = undefined;
+  public _editedData?: T = undefined;
   private _revision: number = Date.now();
 
   constructor() {
@@ -127,7 +127,7 @@ export abstract class EntityEditorModel<T extends TBaseEntity> {
   }
 
   protected static getMobxBaseAnnotations<T extends TBaseEntity>() {
-    return Object.keys(this.getMobxAnnotations()).reduce((acc, key) => {
+    return Object.keys(this.getMobxAnnotations()).reduce<AnnotationsMap<EntityEditorModel<T>, string>>((acc, key) => {
       acc[key] = override;
       return acc;
     }, {}) as ReturnType<typeof this.getMobxAnnotations<T>>;

@@ -25,10 +25,10 @@ class MoviesGenres {
             this._isLoading = false;
           });
         });
-      return [];
+      return {};
     } else {
       return (
-        this._genres?.reduce((acc, cur) => {
+        this._genres?.reduce<Record<number, IMovieGenre>>((acc, cur) => {
           acc[cur.genre_id] = cur;
           return acc;
         }, {}) ?? {}

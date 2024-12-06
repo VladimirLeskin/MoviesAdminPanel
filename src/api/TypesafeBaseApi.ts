@@ -4,12 +4,13 @@ import qs from 'query-string';
 import {ApiControllers, HttpClient} from './Api';
 import {getAxiosErrorText} from './stdAxiosErrorHandler';
 
-type Method = 'get' | 'delete' | 'post' | 'put' | 'patch' /* | 'head' | 'options' */;
+type Method = 'get' | 'delete' | 'post' | 'put' | 'patch' | 'head' | 'options';
 
 interface Payload {
   headers?: Record<string, string>;
   query?: Record<string, unknown>;
   data?: unknown;
+  route?: Record<string, string>;
 }
 
 type Controller = {
@@ -20,8 +21,21 @@ type ExtractRoutesByMethod<TController extends Controller, TMethod extends Metho
   [TRoute in keyof TController]: TController[TRoute][TMethod] extends Array<unknown> ? TRoute : never;
 }[keyof TController];
 
+type RouteParams<TRoute> = TRoute extends `${string}{${infer TParam}}${infer TRest}`
+  ? {[K in TParam | keyof RouteParams<TRest>]: string}
+  : {};
+
+type RequestRouteParams<TRoute> =
+  {} extends RouteParams<TRoute>
+    ? {}
+    : {
+        route: RouteParams<TRoute>;
+      };
+
 type ExtractRequestType<TController extends Controller, TRoute extends keyof TController, TMethod extends Method> = {
-  request: TController[TRoute][TMethod] extends Array<unknown> ? TController[TRoute][TMethod][0] : never;
+  request: TController[TRoute][TMethod] extends Array<unknown>
+    ? TController[TRoute][TMethod][0] & RequestRouteParams<TRoute>
+    : never;
   response: TController[TRoute][TMethod] extends Array<unknown> ? TController[TRoute][TMethod][1] : never;
 };
 
@@ -41,60 +55,31 @@ export class TypesafeBaseApi {
     },
   });
 
+  private static request(url: string, method: Method, params: Payload) {
+    let preparedUrl = url;
+    url.match(/\{([^}]*)}/g)?.forEach(match => {
+      preparedUrl = preparedUrl.replace(match, params.route?.[match.replace(/{(.*)}/, '$1')] ?? match);
+    });
+
+    return TypesafeBaseApi.httpClient
+      .request({
+        method,
+        path: preparedUrl,
+        query: params.query,
+        body: params.data,
+        headers: {'Content-Type': 'application/json', ...params.headers},
+      })
+      .catch(TypesafeBaseApi.processError);
+  }
+
   protected static transport: Transport<ApiControllers> = {
-    get: (url, params: Payload) => {
-      return TypesafeBaseApi.httpClient
-        .request({
-          method: 'GET',
-          path: url,
-          query: params.query,
-          headers: {'Content-Type': 'application/json', ...params.headers},
-        })
-        .catch(TypesafeBaseApi.processError);
-    },
-    post: (url, params: Payload) => {
-      return TypesafeBaseApi.httpClient
-        .request({
-          method: 'POST',
-          path: url,
-          query: params.query,
-          body: params.data,
-          headers: {'Content-Type': 'application/json', ...params.headers},
-        })
-        .catch(TypesafeBaseApi.processError);
-    },
-    put: (url, params: Payload) => {
-      return TypesafeBaseApi.httpClient
-        .request({
-          method: 'PUT',
-          path: url,
-          query: params.query,
-          body: params.data,
-          headers: {'Content-Type': 'application/json', ...params.headers},
-        })
-        .catch(TypesafeBaseApi.processError);
-    },
-    patch: (url, params: Payload) => {
-      return TypesafeBaseApi.httpClient
-        .request({
-          method: 'PATCH',
-          path: url,
-          query: params.query,
-          body: params.data,
-          headers: {'Content-Type': 'application/json', ...params.headers},
-        })
-        .catch(TypesafeBaseApi.processError);
-    },
-    delete: (url, params: Payload) => {
-      return TypesafeBaseApi.httpClient
-        .request({
-          method: 'DELETE',
-          path: url,
-          query: params.query,
-          headers: {'Content-Type': 'application/json', ...params.headers},
-        })
-        .catch(TypesafeBaseApi.processError);
-    },
+    get: (url, params: Payload) => TypesafeBaseApi.request(url, 'get', params),
+    post: (url, params: Payload) => TypesafeBaseApi.request(url, 'post', params),
+    put: (url, params: Payload) => TypesafeBaseApi.request(url, 'put', params),
+    patch: (url, params: Payload) => TypesafeBaseApi.request(url, 'patch', params),
+    delete: (url, params: Payload) => TypesafeBaseApi.request(url, 'delete', params),
+    options: (url, params: Payload) => TypesafeBaseApi.request(url, 'options', params),
+    head: (url, params: Payload) => TypesafeBaseApi.request(url, 'head', params),
   };
 
   private static processError(err: unknown): never {

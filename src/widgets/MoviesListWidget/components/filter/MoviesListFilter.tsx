@@ -1,12 +1,14 @@
 import React, {FC, FormEvent, useCallback, useEffect, useState} from 'react';
-import {Button, TextField} from '@mui/material';
+import {IconButton, TextField} from '@mui/material';
 import {Filters} from './Filters';
+import {Search} from '@mui/icons-material';
 
 export interface IMovieFilter {
   search?: string;
   tvSeries?: boolean;
   genres?: number[];
   countries?: string[];
+  status?: 'ACTIVE' | 'MODERATION';
 }
 
 interface MoviesFilterProps {
@@ -55,9 +57,15 @@ export const MoviesListFilter: FC<MoviesFilterProps> = ({onChange, values = EMPT
         label="Поиск"
         onChange={onSearchChanged}
         placeholder="Название, imdb_id"
+        InputProps={{
+          endAdornment: (
+            <IconButton type="submit" color="primary">
+              <Search />
+            </IconButton>
+          ),
+        }}
       />
       <Filters filters={filterState} onChange={handleFiltersChange} />
-      <Button type="submit">Применить</Button>
     </form>
   );
 };

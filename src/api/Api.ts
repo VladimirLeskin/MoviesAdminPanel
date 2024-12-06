@@ -74,6 +74,30 @@ export interface MovieListItem {
   images: Image[];
 }
 
+export interface MovieDetails {
+  /** @format int32 */
+  id: number;
+  tv_series: boolean;
+  imdb_id: string;
+  /** @format int32 */
+  tmdb_id?: number;
+  countries: string[];
+  genres: number[];
+  original_title: string;
+  /** @format int64 */
+  release_date_ts?: number;
+  /** @format int64 */
+  end_date_ts?: number;
+  images: MovieDetailsImage[];
+  descriptions: Description[];
+}
+
+export interface MovieDetailsImage {
+  /** @format int32 */
+  id: number;
+  name: string;
+}
+
 import type {AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType} from 'axios';
 import axios from 'axios';
 
@@ -119,7 +143,7 @@ export class HttpClient<SecurityDataType = unknown> {
   private format?: ResponseType;
 
   constructor({securityWorker, secure, format, ...axiosConfig}: ApiConfig<SecurityDataType> = {}) {
-    this.instance = axios.create({...axiosConfig, baseURL: axiosConfig.baseURL || 'http://movies-backend:8080'});
+    this.instance = axios.create({...axiosConfig, baseURL: axiosConfig.baseURL || 'http://localhost:8080'});
     this.secure = secure;
     this.format = format;
     this.securityWorker = securityWorker;
@@ -254,6 +278,7 @@ type moviesController = {
           tvSeries?: boolean;
           genres?: number[];
           countries?: string[];
+          status?: 'ACTIVE' | 'MODERATION';
         };
         headers: {
           /** Bearer {access_token} */
@@ -261,6 +286,18 @@ type moviesController = {
         };
       },
       ListResponseMovieListItem,
+    ];
+  };
+
+  '/movies-api/v2/movies/{id}': {
+    get: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      MovieDetails,
     ];
   };
 };

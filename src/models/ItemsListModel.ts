@@ -132,7 +132,7 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
 
   protected static getMobxBaseAnnotations<T extends TBaseItem, Filters>() {
     return Object.keys(this.getMobxAnnotations()).reduce(
-      (acc, cur) => {
+      (acc, cur: keyof TMobXAnnotationsMap<T, Filters>) => {
         acc[cur] = override;
         return acc;
       },

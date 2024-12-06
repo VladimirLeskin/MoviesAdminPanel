@@ -7,8 +7,18 @@ import {COUNTRIES} from 'src/models/CountriesModel';
 import {MOVIES_GENRES} from 'src/models/MoviesGenres';
 
 export const schema = makeAutoObservable({
-  get value(): TItemSchema<Pick<IMovieFilter, 'tvSeries' | 'genres' | 'countries'>> {
+  get value(): TItemSchema<Pick<IMovieFilter, 'tvSeries' | 'genres' | 'countries' | 'status'>> {
     return {
+      status: {
+        type: EFieldInfoType.ENUM,
+        title: 'Статус',
+        renderer: EnumField,
+        isClearable: true,
+        options: [
+          {value: 'ACTIVE', label: 'Активно'},
+          {value: 'MODERATION', label: 'Модерация'},
+        ],
+      },
       tvSeries: {
         type: EFieldInfoType.ENUM,
         title: 'Тип',
