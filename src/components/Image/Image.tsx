@@ -7,12 +7,12 @@ type Props = ImgHTMLAttributes<HTMLImageElement>;
 
 export const Image: FC<Props> = props => {
   const {src, ...other} = props;
-  const [sizes, setSizes] = useState<number[] | undefined>(undefined);
+  const [sizes, setSizes] = useState<[number, number] | undefined>(undefined);
 
   const handleLoad: ReactEventHandler<HTMLImageElement> = useCallback(e => {
     const imgElm = e.target as HTMLImageElement;
     if (imgElm?.naturalWidth && imgElm?.naturalHeight) {
-      setSizes([imgElm.naturalWidth && imgElm.naturalHeight]);
+      setSizes([imgElm.naturalWidth, imgElm.naturalHeight]);
     }
   }, []);
 
