@@ -48,7 +48,7 @@ export const ImagesCellRenderer: FC<Props> = ({movie, onSelectImage}) => {
   return (
     <div className={css.MoviesImagesThumbnails}>
       {movie.images.map(img => (
-        <Image src={img.path} width={75} key={img.id} onClick={() => setPreviewImg(img)} />
+        <Image key={img.id} src={img.path} width={75} onClick={() => setPreviewImg(img)} />
       ))}
       <Modal
         open={!!previewImg}

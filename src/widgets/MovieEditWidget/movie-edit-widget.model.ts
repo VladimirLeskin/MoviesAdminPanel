@@ -1,13 +1,12 @@
 import {makeObservable} from 'mobx';
 import {IEditedMovieInfo} from './types';
-import MoviesApi from '../../api/Movies';
-import {IMovieInfoDto} from '../../api/dto/MovieDto';
 import {EntityEditorModel} from '../../models/EntityEditorModel';
 import {TypesafeMovies} from '../../api/TypesafeMovies';
-import {MovieDetails} from '../../api/Api';
+import {MovieDetails, MovieSaveInfo} from '../../api/Api';
 
 const emptyMovie: IEditedMovieInfo = {
   tv_series: false,
+  status: 'MODERATION',
   countries: [],
   descriptions: [{lang: 'ru'}],
   images: [],
@@ -27,6 +26,7 @@ export class MovieEditWidgetModel extends EntityEditorModel<IEditedMovieInfo> {
   private static movieDtoToMovieInfo(movieInfoDto: MovieDetails): IEditedMovieInfo {
     return {
       id: movieInfoDto.id,
+      status: movieInfoDto.status,
       tv_series: movieInfoDto.tv_series,
       original_title: movieInfoDto.original_title,
       imdb_id: movieInfoDto.imdb_id,
@@ -69,33 +69,40 @@ export class MovieEditWidgetModel extends EntityEditorModel<IEditedMovieInfo> {
   }
 
   protected async getDataSaveRequestPromise(movieInfo: IEditedMovieInfo): Promise<IEditedMovieInfo> {
-    const response = await MoviesApi.createMovieInfo({
-      id: movieInfo.id?.toString(),
+    const dto: MovieSaveInfo = {
       tv_series: movieInfo.tv_series,
+      status: movieInfo.status,
       original_title: movieInfo.original_title,
-      descriptions: movieInfo.descriptions.reduce<IMovieInfoDto['descriptions']>((acc, {lang, title, ...descr}) => {
-        if (title) {
-          acc[lang] = {...descr, title};
-        }
-        return acc;
-      }, {}),
+      descriptions: movieInfo.descriptions
+        .map(({title, ...descr}) => (title !== undefined ? {title, ...descr} : null))
+        .filter(it => it != null),
       genres: movieInfo.genres,
-      images: movieInfo.images.map(img => ({
-        ...img,
-        id: img.id?.toString(),
-        name: img.src,
-        content: img.content,
-      })),
-      release_date_ts: movieInfo.release_date && movieInfo.release_date?.getTime() / 1000,
-      end_date_ts: movieInfo.end_date && movieInfo.end_date?.getTime() / 1000,
+      images: movieInfo.images
+        .map(({id, src, ...img}) =>
+          id !== undefined && src !== undefined
+            ? {
+                ...img,
+                id,
+                name: src,
+                content: img.content,
+              }
+            : null
+        )
+        .filter(it => it != null),
+      new_images: movieInfo.images.filter(img => !img.id),
+      release_date_ts: movieInfo.release_date && movieInfo.release_date?.getTime(),
+      end_date_ts: movieInfo.end_date && movieInfo.end_date?.getTime(),
       countries: movieInfo.countries,
       tmdb_id: +String(movieInfo.tmdb_id) || undefined,
       imdb_id: movieInfo.imdb_id,
-    });
+    };
+
+    const response = await (movieInfo.id
+      ? TypesafeMovies.updateMovieInfo(movieInfo.id, dto)
+      : TypesafeMovies.createMovieInfo(dto));
 
     if (response.data) {
-      // TODO implement saving in v2 and use response.data instead of new request
-      return this.getDataRequestPromise(Number(response.data.id));
+      return MovieEditWidgetModel.movieDtoToMovieInfo(response.data);
     } else {
       throw new Error('response.data is empty');
     }

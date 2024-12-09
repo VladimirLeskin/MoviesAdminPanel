@@ -1,5 +1,6 @@
 export interface IEditedMovieInfo {
   id?: number;
+  status: 'ACTIVE' | 'MODERATION';
   tv_series: boolean;
   imdb_id: string;
   tmdb_id?: string;

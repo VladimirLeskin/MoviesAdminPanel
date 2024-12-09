@@ -73,13 +73,13 @@ export class TypesafeBaseApi {
   }
 
   protected static transport: Transport<ApiControllers> = {
-    get: (url, params: Payload) => TypesafeBaseApi.request(url, 'get', params),
-    post: (url, params: Payload) => TypesafeBaseApi.request(url, 'post', params),
-    put: (url, params: Payload) => TypesafeBaseApi.request(url, 'put', params),
-    patch: (url, params: Payload) => TypesafeBaseApi.request(url, 'patch', params),
-    delete: (url, params: Payload) => TypesafeBaseApi.request(url, 'delete', params),
-    options: (url, params: Payload) => TypesafeBaseApi.request(url, 'options', params),
-    head: (url, params: Payload) => TypesafeBaseApi.request(url, 'head', params),
+    get: (url, params) => TypesafeBaseApi.request(url, 'get', params),
+    post: (url, params) => TypesafeBaseApi.request(url, 'post', params),
+    put: (url, params) => TypesafeBaseApi.request(url, 'put', params),
+    patch: (url, params) => TypesafeBaseApi.request(url, 'patch', params),
+    delete: (url, params) => TypesafeBaseApi.request(url, 'delete', params),
+    options: (url, params) => TypesafeBaseApi.request(url, 'options', params),
+    head: (url, params) => TypesafeBaseApi.request(url, 'head', params),
   };
 
   private static processError(err: unknown): never {

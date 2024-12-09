@@ -9,6 +9,61 @@
  * ---------------------------------------------------------------
  */
 
+export interface Description {
+  lang: string;
+  title: string;
+  description?: string;
+  tagline?: string;
+}
+
+export interface MovieDetailsImage {
+  /** @format int32 */
+  id: number;
+  name: string;
+  content?: string;
+}
+
+export interface MovieSaveImage {
+  content?: string;
+}
+
+export interface MovieSaveInfo {
+  new_images: MovieSaveImage[];
+  tv_series: boolean;
+  imdb_id: string;
+  /** @format int32 */
+  tmdb_id?: number;
+  countries: string[];
+  genres: number[];
+  original_title: string;
+  /** @format int64 */
+  release_date_ts?: number;
+  /** @format int64 */
+  end_date_ts?: number;
+  status: 'ACTIVE' | 'MODERATION';
+  images: MovieDetailsImage[];
+  descriptions: Description[];
+}
+
+export interface MovieDetails {
+  /** @format int32 */
+  id: number;
+  tv_series: boolean;
+  imdb_id: string;
+  /** @format int32 */
+  tmdb_id?: number;
+  countries: string[];
+  genres: number[];
+  original_title: string;
+  /** @format int64 */
+  release_date_ts?: number;
+  /** @format int64 */
+  end_date_ts?: number;
+  status: 'ACTIVE' | 'MODERATION';
+  images: MovieDetailsImage[];
+  descriptions: Description[];
+}
+
 export interface MoviesImageLoadRequest {
   moviesIds: number[];
   /** @format int32 */
@@ -46,11 +101,6 @@ export interface VariantDescription {
   description: string;
 }
 
-export interface Description {
-  lang: string;
-  title?: string;
-}
-
 export interface Image {
   /** @format int32 */
   id: number;
@@ -72,30 +122,6 @@ export interface MovieListItem {
   /** @format date-time */
   date?: string;
   images: Image[];
-}
-
-export interface MovieDetails {
-  /** @format int32 */
-  id: number;
-  tv_series: boolean;
-  imdb_id: string;
-  /** @format int32 */
-  tmdb_id?: number;
-  countries: string[];
-  genres: number[];
-  original_title: string;
-  /** @format int64 */
-  release_date_ts?: number;
-  /** @format int64 */
-  end_date_ts?: number;
-  images: MovieDetailsImage[];
-  descriptions: Description[];
-}
-
-export interface MovieDetailsImage {
-  /** @format int32 */
-  id: number;
-  name: string;
 }
 
 import type {AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType} from 'axios';
@@ -235,32 +261,25 @@ export class HttpClient<SecurityDataType = unknown> {
 export type ApiControllers = moviesController & questionsController;
 
 type moviesController = {
-  '/movies-api/v2/movies/upload': {
-    post: [
-      {
-        headers: {'Content-Type': 'multipart/form-data'} & {
-          /** Bearer {access_token} */
-          Authorization: string;
-        };
-        data: {
-          /** @format binary */
-          file: File;
-        };
-      },
-      number,
-    ];
-  };
-
-  '/movies-api/v2/movies/load-images': {
-    post: [
+  '/movies-api/v2/movies/{id}': {
+    get: [
       {
         headers: {
           /** Bearer {access_token} */
           Authorization: string;
         };
-        data: MoviesImageLoadRequest;
       },
-      MoviesImageLoadResponse,
+      MovieDetails,
+    ];
+    put: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: MovieSaveInfo;
+      },
+      MovieDetails,
     ];
   };
 
@@ -287,17 +306,44 @@ type moviesController = {
       },
       ListResponseMovieListItem,
     ];
-  };
-
-  '/movies-api/v2/movies/{id}': {
-    get: [
+    post: [
       {
         headers: {
           /** Bearer {access_token} */
           Authorization: string;
         };
+        data: MovieSaveInfo;
       },
       MovieDetails,
+    ];
+  };
+
+  '/movies-api/v2/movies/upload': {
+    post: [
+      {
+        headers: {'Content-Type': 'multipart/form-data'} & {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: {
+          /** @format binary */
+          file: File;
+        };
+      },
+      number,
+    ];
+  };
+
+  '/movies-api/v2/movies/load-images': {
+    post: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: MoviesImageLoadRequest;
+      },
+      MoviesImageLoadResponse,
     ];
   };
 };

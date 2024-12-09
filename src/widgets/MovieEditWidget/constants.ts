@@ -23,6 +23,14 @@ export const schema = makeAutoObservable({
   get value(): TItemSchema<IEditedMovieInfo> {
     return {
       id: {title: 'ID', disabled: true, renderer: NumericField},
+      status: {
+        title: 'Статус',
+        options: [
+          {value: 'ACTIVE', label: 'Активно'},
+          {value: 'MODERATION', label: 'Модерация'},
+        ],
+        renderer: EnumField,
+      },
       tv_series: {title: 'Сериал', renderer: BooleanField},
       original_title: {title: 'Оригинальное название', renderer: StringField},
       tmdb_id: {title: 'tmdb_id', renderer: StringField},
@@ -92,6 +100,7 @@ export const getlayoutSettings = (values?: IEditedMovieInfo): ILayoutSettings<IE
   fieldsBySections: [
     ArrayUtils.removeEmpty([
       'id',
+      'status',
       'tv_series',
       'original_title',
       'tmdb_id',

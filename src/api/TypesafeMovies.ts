@@ -1,5 +1,6 @@
 import {TypesafeBaseApi} from './TypesafeBaseApi';
 import {ACCESS_TOKEN_STORAGE} from './oauth2/BaseOAuth2Client';
+import {MovieSaveInfo} from './Api';
 
 interface IFindRequestParams {
   search?: string;
@@ -45,6 +46,25 @@ export class TypesafeMovies extends TypesafeBaseApi {
       headers: {
         Authorization: `Bearer ${ACCESS_TOKEN_STORAGE.getData()?.token}`,
       },
+    });
+  }
+
+  public static updateMovieInfo(id: number, movieInfoDto: MovieSaveInfo) {
+    return this.transport.put('/movies-api/v2/movies/{id}', {
+      route: {id: id.toString()},
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN_STORAGE.getData()?.token}`,
+      },
+      data: movieInfoDto,
+    });
+  }
+
+  public static createMovieInfo(movieInfoDto: MovieSaveInfo) {
+    return this.transport.post('/movies-api/v2/movies', {
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN_STORAGE.getData()?.token}`,
+      },
+      data: movieInfoDto,
     });
   }
 }
