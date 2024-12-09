@@ -6,6 +6,8 @@ export interface IMovieGenre {
 
 export interface IMovieListItem {
   id: string;
+  tvSeries: boolean;
+  status: 'ACTIVE' | 'MODERATION';
   movie_id: string;
   original_title: string;
   title: string;

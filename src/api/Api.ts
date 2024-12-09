@@ -115,6 +115,8 @@ export interface ListResponseMovieListItem {
 
 export interface MovieListItem {
   movie_id: string;
+  tv_series: boolean;
+  status: 'ACTIVE' | 'MODERATION';
   original_title: string;
   descriptions: Description[];
   genres: number[];

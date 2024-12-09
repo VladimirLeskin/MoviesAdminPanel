@@ -27,6 +27,8 @@ export class MoviesListWidgetModel extends ItemsListModel<IMovieListItem, IMovie
             },
             items: response.data.items.map(dto => ({
               id: dto.movie_id.toString(),
+              tvSeries: dto.tv_series,
+              status: dto.status,
               movie_id: dto.movie_id,
               original_title: dto.original_title,
               title: dto.descriptions.find(d => d.lang === 'ru')?.title ?? '',
