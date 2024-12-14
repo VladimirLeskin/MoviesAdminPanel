@@ -1,3 +1,4 @@
+import React from 'react';
 import {IEditedLevelInfo} from './types';
 import {EFieldInfoType, getMultiFieldInfo, IFieldRendererProps, IStructFieldInfo} from '../../entries/FieldInfo';
 import {withCollapsibleContent} from '../../components/itemEditorFields/modificators';
@@ -10,11 +11,9 @@ import {
   TextAreaField,
 } from '../../components/itemEditorFields';
 import {TItemSchema} from '../../entries/BaseEntity';
-import {ELevelType} from '../../api/dto/LevelDto';
 import {FormControl, FormLabel} from '@mui/material';
 import {ImageField} from '../../components/itemEditorFields/ImageField/ImageField';
 import {QuestionEdit} from './components/QuestionEdit/QuestionEdit';
-import React from 'react';
 
 type Description = IEditedLevelInfo['descriptions'][0];
 
@@ -41,15 +40,15 @@ const descriptionsFieldInfo: IStructFieldInfo<Description> = {
 };
 
 export const schema: TItemSchema<IEditedLevelInfo> = {
-  id: {title: 'ID', disabled: true, renderer: StringField},
+  id: {title: 'ID', disabled: true, renderer: NumericField},
   type: {
     title: 'Тип',
     type: EFieldInfoType.ENUM,
     isClearable: false,
     renderer: EnumField,
     options: [
-      {value: ELevelType.COUNT, label: ELevelType.COUNT},
-      {value: ELevelType.TIME, label: ELevelType.TIME},
+      {value: 'COUNT', label: 'COUNT'},
+      {value: 'TIME', label: 'TIME'},
     ],
   },
   isActive: {title: 'Опубликовано', renderer: BooleanField},
@@ -66,5 +65,5 @@ export const schema: TItemSchema<IEditedLevelInfo> = {
       </FormControl>
     ),
   },
-  questions: getMultiFieldInfo({title: 'Вопросы', renderer: QuestionEdit}, {variants: [], image: {id: '', path: ''}}),
+  questions: getMultiFieldInfo({title: 'Вопросы', renderer: QuestionEdit}, {variants: [], image: {id: 0, path: ''}}),
 };

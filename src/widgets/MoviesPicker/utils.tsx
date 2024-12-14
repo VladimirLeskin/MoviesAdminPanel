@@ -9,7 +9,7 @@ import css from './MoviesPicker.module.scss';
 
 export function getMoviePickerColumns(
   initialColumns: ColDef<IMovieListItem>[],
-  pickImage?: (movie: IMovieListItem, image: {id: string; path: string}) => void,
+  pickImage?: (movie: IMovieListItem, image: {id: number; path: string}) => void,
   pickMovie?: (movie: IMovieListItem) => void
 ): ColDef<IMovieListItem>[] {
   let columns = initialColumns.slice();

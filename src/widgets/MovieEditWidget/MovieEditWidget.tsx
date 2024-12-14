@@ -21,7 +21,7 @@ interface Props {
 }
 
 export const MovieEditWidget = observer(({movieId, onSaved}: Props) => {
-  const {data: movieInfo, editData, isLoading, load, save} = movieEditPageModel;
+  const {data: movieInfo, editData, isLoading, load, revision, save} = movieEditPageModel;
   useTitleUpdate(getMovieTitle(movieInfo));
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export const MovieEditWidget = observer(({movieId, onSaved}: Props) => {
   return (
     <div className={css.root}>
       <ItemEditor<IEditedMovieInfo>
-        key={movieInfo.id}
+        key={revision}
         fields={schema.value}
         onChange={editData}
         defaultValue={movieInfo}

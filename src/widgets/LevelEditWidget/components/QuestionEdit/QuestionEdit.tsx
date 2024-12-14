@@ -11,13 +11,13 @@ import {Image} from 'src/components/Image';
 import css from './QuestionEdit.module.scss';
 
 interface Image {
-  id: string;
+  id: number;
   path: string;
 }
 
 interface QuestionEditValue {
   id?: string;
-  image: {id: string; path: string};
+  image: {id: number; path: string};
   correctVariant?: IEditedLevelQuestionVariant;
   variants: IEditedLevelQuestionVariant[];
 }
@@ -27,7 +27,7 @@ interface QuestionEditProps {
   onChange: (q: QuestionEditValue) => void;
 }
 
-const defaultQuestion: QuestionEditValue = {variants: [], image: {id: '', path: ''}};
+const defaultQuestion: QuestionEditValue = {variants: [], image: {id: 0, path: ''}};
 
 export const QuestionEdit: FC<QuestionEditProps> = ({value = defaultQuestion, onChange}) => {
   const {id, image, correctVariant, variants} = value;

@@ -1,0 +1,80 @@
+<%
+const { apiConfig, generateResponses, config } = it;
+%>
+
+import type { AxiosInstance, AxiosRequestConfig, HeadersDefaults, ResponseType, AxiosResponse } from "axios";
+import axios from "axios";
+
+export type QueryParamsType = Record<string | number, any>;
+
+    export interface FullRequestParams extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
+    /** request path */
+    path: string;
+    /** query params */
+    query?: QueryParamsType;
+    /** format of response (i.e. response.json() -> format: "json") */
+    format?: ResponseType;
+    /** request body */
+    body?: unknown;
+    }
+
+    export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
+
+    export interface ApiConfig extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
+        format?: ResponseType;
+        }
+
+        export class HttpClient {
+        public instance: AxiosInstance;
+            private format?: ResponseType;
+
+            constructor({ format, ...axiosConfig }: ApiConfig = {}) {
+                this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "<%~ apiConfig.baseUrl %>" })
+                this.format = format;
+                }
+
+                protected mergeRequestParams(params1: AxiosRequestConfig, params2?: AxiosRequestConfig): AxiosRequestConfig {
+                const method = params1.method || (params2 && params2.method)
+
+                return {
+                ...this.instance.defaults,
+                ...params1,
+                ...(params2 || {}),
+                headers: {
+                ...((method && this.instance.defaults.headers[method.toLowerCase() as keyof HeadersDefaults]) || {}),
+                ...(params1.headers || {}),
+                ...((params2 && params2.headers) || {}),
+                },
+                };
+                }
+
+                public request = async <T = any, _E = any>({
+                path,
+                query,
+                format,
+                body,
+                ...params
+                <% if (config.unwrapResponseData) { %>
+                    }: FullRequestParams): Promise<T> => {
+                    <% } else { %>
+                        }: FullRequestParams): Promise<AxiosResponse<T>> => {
+                        <% } %>
+                        const requestParams = this.mergeRequestParams(params);
+                        const responseFormat = (format || this.format) || undefined;
+
+                        return this.instance.request({
+                        ...requestParams,
+                        headers: {
+                        ...(requestParams.headers || {}),
+                        },
+                        params: query,
+                        responseType: responseFormat,
+                        data: body,
+                        url: path,
+                        <% if (config.unwrapResponseData) { %>
+                            }).then(response => response.data);
+                        <% } else { %>
+                            });
+                        <% } %>
+                        };
+                        }

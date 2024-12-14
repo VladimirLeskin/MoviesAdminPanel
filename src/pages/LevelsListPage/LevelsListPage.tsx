@@ -22,11 +22,11 @@ export const LevelsListPage: FC = observer(() => {
   useTitleUpdate('Список уровней');
   const [model] = useState(() => new LevelsListModel());
   const {init, isLoading, total, pagination, items, onPaginationChanged} = model;
-  const [selectedLevelId, setSelectedLevelId] = useState<string | undefined>();
+  const [selectedLevelId, setSelectedLevelId] = useState<number | undefined>();
   const {state: showLevelDetails, toggleState: toggleLevelDetails, setState: setShowLevelDetails} = useBooleanState();
 
   const onLevelDetailsClicked = useCallback(
-    (levelId?: string) => {
+    (levelId?: number) => {
       if (selectedLevelId === levelId) {
         toggleLevelDetails();
       } else {
@@ -49,7 +49,7 @@ export const LevelsListPage: FC = observer(() => {
       cellRenderer: ({data}: CustomCellRendererProps<ILevelListItemDto>) => {
         if (data) {
           const onPublish = () => {
-            model.onPublish(data.id, !data.active);
+            model.onPublish(data.id.toString(), !data.active);
           };
           return <Switch checked={data.active} onChange={onPublish} />;
         }

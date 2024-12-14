@@ -12,8 +12,8 @@ import css from './LevelEditWidget.module.scss';
 const levelEditPageModel = new LevelEditWidgetModel();
 
 interface Props {
-  levelId?: string;
-  onSaved?: (id: string) => void;
+  levelId?: number;
+  onSaved?: (id: number) => void;
 }
 
 export const LevelEditWidget: FC<Props> = observer(({levelId, onSaved}) => {

@@ -9,11 +9,11 @@ import css from './ImagesCellRenderer.module.scss';
 
 interface Props {
   movie: IMovieListItem;
-  onSelectImage?: (movie: IMovieListItem, image: {id: string; path: string}) => void;
+  onSelectImage?: (movie: IMovieListItem, image: {id: number; path: string}) => void;
 }
 
 export const ImagesCellRenderer: FC<Props> = ({movie, onSelectImage}) => {
-  const [previewImg, setPreviewImg] = useState<{id: string; path: string} | undefined>();
+  const [previewImg, setPreviewImg] = useState<{id: number; path: string} | undefined>();
 
   const onSelectImageHandler = useCallback(() => {
     if (previewImg) {

@@ -5,14 +5,14 @@ export interface IMovieGenre {
 }
 
 export interface IMovieListItem {
-  id: string;
+  id: number;
   tvSeries: boolean;
   status: 'ACTIVE' | 'MODERATION';
-  movie_id: string;
+  movie_id: number;
   original_title: string;
   title: string;
   genres: number[];
   countries: string[];
   date?: Date;
-  images: Array<{id: string; path: string}>;
+  images: Array<{id: number; path: string}>;
 }

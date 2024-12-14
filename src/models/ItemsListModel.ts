@@ -56,8 +56,7 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
       .then(resp => {
         if (currentRequestId === this.lastRequestId) {
           runInAction(() => {
-            this.total = resp.data.meta.totalCount;
-            this.pagination.pageSize = resp.data.meta.perPage;
+            this.total = resp.data.total;
           });
           this.setItems(resp.data.items);
         }

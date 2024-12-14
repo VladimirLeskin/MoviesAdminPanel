@@ -81,24 +81,27 @@ export interface MoviesImageLoadResponse {
 }
 
 export interface Question {
-  imageId: string;
-  correctId: string;
+  /** @format int32 */
+  correctId: number;
+  /** @format int32 */
+  imageId: number;
   imagePath: string;
   variants: Variant[];
 }
 
 export interface Variant {
-  id: string;
+  /** @format int32 */
+  id: number;
   original_title: string;
   titles: VariantDescription[];
   /** @format date-time */
-  date?: string;
+  date: string;
 }
 
 export interface VariantDescription {
   lang: string;
   title: string;
-  description: string;
+  description?: string;
 }
 
 export interface Image {
@@ -114,7 +117,8 @@ export interface ListResponseMovieListItem {
 }
 
 export interface MovieListItem {
-  movie_id: string;
+  /** @format int32 */
+  movie_id: number;
   tv_series: boolean;
   status: 'ACTIVE' | 'MODERATION';
   original_title: string;
@@ -126,18 +130,61 @@ export interface MovieListItem {
   images: Image[];
 }
 
+export interface LevelListItem {
+  /** @format int32 */
+  id: number;
+  /** @format int32 */
+  timeForEach?: number;
+  /** @format int32 */
+  totalTime?: number;
+  type: 'COUNT' | 'TIME';
+  active: boolean;
+  previewImageName?: string;
+  titles: LevelListItemTitle[];
+  /** @format int32 */
+  questions_count: number;
+}
+
+export interface LevelListItemTitle {
+  lang: string;
+  title: string;
+  description?: string;
+}
+
+export interface ListResponseLevelListItem {
+  /** @format int32 */
+  total: number;
+  items: LevelListItem[];
+}
+
+export interface LevelDescription {
+  lang: string;
+  title: string;
+  description: string;
+}
+
+export interface LevelInfo {
+  /** @format int32 */
+  id: number;
+  descriptions: LevelDescription[];
+  questions: Question[];
+  type: 'COUNT' | 'TIME';
+  /** @format int32 */
+  timeForEach?: number;
+  /** @format int32 */
+  totalTime?: number;
+  previewImageName?: string;
+  active: boolean;
+}
+
 import type {AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType} from 'axios';
 import axios from 'axios';
 
 export type QueryParamsType = Record<string | number, any>;
 
 export interface FullRequestParams extends Omit<AxiosRequestConfig, 'data' | 'params' | 'url' | 'responseType'> {
-  /** set parameter to `true` for call `securityWorker` for this request */
-  secure?: boolean;
   /** request path */
   path: string;
-  /** content type of request body */
-  type?: ContentType;
   /** query params */
   query?: QueryParamsType;
   /** format of response (i.e. response.json() -> format: "json") */
@@ -148,38 +195,18 @@ export interface FullRequestParams extends Omit<AxiosRequestConfig, 'data' | 'pa
 
 export type RequestParams = Omit<FullRequestParams, 'body' | 'method' | 'query' | 'path'>;
 
-export interface ApiConfig<SecurityDataType = unknown> extends Omit<AxiosRequestConfig, 'data' | 'cancelToken'> {
-  securityWorker?: (
-    securityData: SecurityDataType | null
-  ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
-  secure?: boolean;
+export interface ApiConfig extends Omit<AxiosRequestConfig, 'data' | 'cancelToken'> {
   format?: ResponseType;
 }
 
-export enum ContentType {
-  Json = 'application/json',
-  FormData = 'multipart/form-data',
-  UrlEncoded = 'application/x-www-form-urlencoded',
-  Text = 'text/plain',
-}
-
-export class HttpClient<SecurityDataType = unknown> {
+export class HttpClient {
   public instance: AxiosInstance;
-  private securityData: SecurityDataType | null = null;
-  private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
-  private secure?: boolean;
   private format?: ResponseType;
 
-  constructor({securityWorker, secure, format, ...axiosConfig}: ApiConfig<SecurityDataType> = {}) {
+  constructor({format, ...axiosConfig}: ApiConfig = {}) {
     this.instance = axios.create({...axiosConfig, baseURL: axiosConfig.baseURL || 'http://localhost:8080'});
-    this.secure = secure;
     this.format = format;
-    this.securityWorker = securityWorker;
   }
-
-  public setSecurityData = (data: SecurityDataType | null) => {
-    this.securityData = data;
-  };
 
   protected mergeRequestParams(params1: AxiosRequestConfig, params2?: AxiosRequestConfig): AxiosRequestConfig {
     const method = params1.method || (params2 && params2.method);
@@ -196,61 +223,20 @@ export class HttpClient<SecurityDataType = unknown> {
     };
   }
 
-  protected stringifyFormItem(formItem: unknown) {
-    if (typeof formItem === 'object' && formItem !== null) {
-      return JSON.stringify(formItem);
-    } else {
-      return `${formItem}`;
-    }
-  }
-
-  protected createFormData(input: Record<string, unknown>): FormData {
-    if (input instanceof FormData) {
-      return input;
-    }
-    return Object.keys(input || {}).reduce((formData, key) => {
-      const property = input[key];
-      const propertyContent: any[] = property instanceof Array ? property : [property];
-
-      for (const formItem of propertyContent) {
-        const isFileType = formItem instanceof Blob || formItem instanceof File;
-        formData.append(key, isFileType ? formItem : this.stringifyFormItem(formItem));
-      }
-
-      return formData;
-    }, new FormData());
-  }
-
   public request = async <T = any, _E = any>({
-    secure,
     path,
-    type,
     query,
     format,
     body,
     ...params
   }: FullRequestParams): Promise<AxiosResponse<T>> => {
-    const secureParams =
-      ((typeof secure === 'boolean' ? secure : this.secure) &&
-        this.securityWorker &&
-        (await this.securityWorker(this.securityData))) ||
-      {};
-    const requestParams = this.mergeRequestParams(params, secureParams);
+    const requestParams = this.mergeRequestParams(params);
     const responseFormat = format || this.format || undefined;
-
-    if (type === ContentType.FormData && body && body !== null && typeof body === 'object') {
-      body = this.createFormData(body as Record<string, unknown>);
-    }
-
-    if (type === ContentType.Text && body && body !== null && typeof body !== 'string') {
-      body = JSON.stringify(body);
-    }
 
     return this.instance.request({
       ...requestParams,
       headers: {
         ...(requestParams.headers || {}),
-        ...(type ? {'Content-Type': type} : {}),
       },
       params: query,
       responseType: responseFormat,
@@ -260,7 +246,7 @@ export class HttpClient<SecurityDataType = unknown> {
   };
 }
 
-export type ApiControllers = moviesController & questionsController;
+export type ApiControllers = moviesController & questionsController & levelsController;
 
 type moviesController = {
   '/movies-api/v2/movies/{id}': {
@@ -354,15 +340,51 @@ type questionsController = {
     get: [
       {
         query: {
-          genres?: number[];
-          countries?: string[];
+          movie_type?: 'MOVIE' | 'TV_SERIES';
           /** @format int32 */
           limit?: number;
           /** @format int32 */
           variants?: number;
+          genres?: number[];
+          countries?: string[];
+        };
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
         };
       },
       Question[],
+    ];
+  };
+};
+type levelsController = {
+  '/movies-api/v2/levels': {
+    get: [
+      {
+        query: {
+          /** @format int32 */
+          page?: number;
+          /** @format int32 */
+          pageSize?: number;
+        };
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      ListResponseLevelListItem,
+    ];
+  };
+
+  '/movies-api/v2/levels/{id}': {
+    get: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      LevelInfo,
     ];
   };
 };

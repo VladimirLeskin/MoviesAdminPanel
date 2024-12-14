@@ -37,6 +37,8 @@ export const LEVELS_LIST_COLUMNS: ColDef<ILevelListItemDto>[] = [
     field: 'previewImageName',
     sortable: true,
     resizable: true,
-    cellRenderer: ({data}: CustomCellRendererProps<ILevelListItemDto>) => <Image src={data?.previewImageName} />,
+    cellRenderer: ({data}: CustomCellRendererProps<ILevelListItemDto>) => (
+      <Image src={data?.previewImageName} style={{maxHeight: 40}} />
+    ),
   },
 ];

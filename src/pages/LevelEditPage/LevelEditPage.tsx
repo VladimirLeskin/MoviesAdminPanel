@@ -8,12 +8,12 @@ export const LevelEditPage: FC = () => {
   const params = useParams<{levelId: string}>();
   const navigate = useNavigate();
   const onSaved = useCallback(
-    (id: string) => {
-      if (id !== params.levelId) {
-        navigate(ROUTES.LEVELS.DETAILS.replace(':levelId', id));
+    (id: number) => {
+      if (id.toString() !== params.levelId) {
+        navigate(ROUTES.LEVELS.DETAILS.replace(':levelId', id.toString()));
       }
     },
     [navigate, params.levelId]
   );
-  return <LevelEditWidget levelId={params.levelId} onSaved={onSaved} />;
+  return <LevelEditWidget levelId={params.levelId ? +params.levelId : undefined} onSaved={onSaved} />;
 };

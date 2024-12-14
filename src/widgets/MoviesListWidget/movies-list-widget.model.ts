@@ -19,14 +19,9 @@ export class MoviesListWidgetModel extends ItemsListModel<IMovieListItem, IMovie
         return {
           ...response,
           data: {
-            meta: {
-              totalCount: response.data.total,
-              pageCount: Math.ceil(response.data.total / (v?.pagination?.pageSize ?? 50)),
-              currentPage: v?.pagination?.page ?? 0,
-              perPage: v?.pagination?.pageSize ?? 50,
-            },
+            total: response.data.total,
             items: response.data.items.map(dto => ({
-              id: dto.movie_id.toString(),
+              id: dto.movie_id,
               tvSeries: dto.tv_series,
               status: dto.status,
               movie_id: dto.movie_id,
@@ -35,7 +30,7 @@ export class MoviesListWidgetModel extends ItemsListModel<IMovieListItem, IMovie
               genres: dto.genres,
               countries: dto.countries,
               date: dto.date ? new Date(dto.date) : undefined,
-              images: dto.images.map(img => ({...img, id: img.id.toString()})),
+              images: dto.images.map(img => ({...img, id: img.id})),
             })),
           },
         };

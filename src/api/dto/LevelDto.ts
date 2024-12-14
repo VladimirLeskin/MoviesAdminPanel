@@ -1,9 +1,6 @@
 import {QuestionDTO} from './QuestionDTO';
 
-export enum ELevelType {
-  COUNT = 'COUNT',
-  TIME = 'TIME',
-}
+export type ELevelType = 'COUNT' | 'TIME';
 
 export interface ILevelDto {
   id: string;
@@ -18,7 +15,7 @@ export interface ILevelDto {
 }
 
 export interface ILevelListItemDto {
-  id: string;
+  id: number;
   active: boolean;
   description: string;
   previewImageName: string;

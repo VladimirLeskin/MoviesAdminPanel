@@ -1,19 +1,18 @@
 import {ELevelType} from '../../api/dto/LevelDto';
 
 export interface IEditedLevelQuestionVariant {
-  movie_id: string;
+  movie_id: number;
   title: string;
 }
 
 export interface IEditedLevelQuestion {
-  id?: string;
-  image: {id: string; path: string};
+  image: {id: number; path: string};
   variants: IEditedLevelQuestionVariant[];
   correctVariant?: IEditedLevelQuestionVariant;
 }
 
 export interface IEditedLevelInfo {
-  id?: string;
+  id?: number;
   descriptions: {lang: string; title: string; description: string}[];
   questions: IEditedLevelQuestion[];
   type: ELevelType;

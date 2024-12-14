@@ -6,7 +6,7 @@ import {getMoviePickerColumns} from './utils';
 import {MoviesListWidget} from '../MoviesListWidget/MoviesListWidget';
 
 interface MoviePickerProps {
-  onSelectImage?: (movie: IMovieListItem, image: {id: string; path: string}) => void;
+  onSelectImage?: (movie: IMovieListItem, image: {id: number; path: string}) => void;
   onSelectMovie?: (movie: IMovieListItem) => void;
 }
 

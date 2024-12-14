@@ -19,9 +19,11 @@ export const Image: FC<Props> = props => {
   return (
     <div className={css.root}>
       <img onLoad={handleLoad} src={[Config.imagesUrl, src].join('/')} {...other}></img>
-      <span className={css.sizes}>
-        {sizes?.[0]}x{sizes?.[1]}
-      </span>
+      {sizes ? (
+        <span className={css.sizes}>
+          {sizes?.[0]}x{sizes?.[1]}
+        </span>
+      ) : null}
     </div>
   );
 };
