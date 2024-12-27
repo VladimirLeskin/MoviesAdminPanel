@@ -1,7 +1,7 @@
 import {makeObservable} from 'mobx';
 import {IMovieListItem} from '../../api/dto/MovieDto';
 import {IApiEndPoints, ItemsListModel} from '../../models/ItemsListModel';
-import {TypesafeMovies} from '../../api/TypesafeMovies';
+import {MoviesApi} from '../../api/MoviesApi';
 
 interface IMovieFilter {
   search?: string;
@@ -15,7 +15,7 @@ export class MoviesListWidgetModel extends ItemsListModel<IMovieListItem, IMovie
 
   protected apiEndPoints: IApiEndPoints<IMovieListItem, IMovieFilter> = {
     load: v =>
-      TypesafeMovies.getMovies({...v?.filter, ...v?.pagination, sort: v?.sortState}).then(response => {
+      MoviesApi.getMovies({...v?.filter, ...v?.pagination, sort: v?.sortState}).then(response => {
         return {
           ...response,
           data: {

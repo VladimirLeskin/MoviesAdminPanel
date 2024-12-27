@@ -1,15 +1,14 @@
 import {IApiEndPoints, ItemsListModel} from '../../models/ItemsListModel';
-import LevelsApi from '../../api/Levels';
 import {makeObservable} from 'mobx';
-import {TypesafeLevelsApi} from '../../api/TypesafeLevels';
-import {ILevelListItemDto} from '../../api/dto/LevelDto';
+import {LevelsApi} from '../../api/Levels';
+import {ILevelListItemDto} from './types';
 
 type TLevelsFilter = undefined;
 
 export class LevelsListModel extends ItemsListModel<ILevelListItemDto, TLevelsFilter> {
   protected apiEndPoints: IApiEndPoints<ILevelListItemDto, TLevelsFilter> = {
     load: v =>
-      TypesafeLevelsApi.getLevels({page: 0, pageSize: 50, ...v?.pagination}).then(response => ({
+      LevelsApi.getLevels({page: 0, pageSize: 50, ...v?.pagination}).then(response => ({
         ...response,
         data: {
           total: response.data.total,
@@ -38,7 +37,7 @@ export class LevelsListModel extends ItemsListModel<ILevelListItemDto, TLevelsFi
     makeObservable(this, LevelsListModel.getMobxBaseAnnotations());
   }
 
-  public onPublish(id: string, publish: boolean) {
+  public onPublish(id: number, publish: boolean) {
     LevelsApi.publishLevel(id, publish).then(() => {
       this.reload();
     });

@@ -64,20 +64,54 @@ export interface MovieDetails {
   descriptions: Description[];
 }
 
-export interface MoviesImageLoadRequest {
-  moviesIds: number[];
-  /** @format int32 */
-  minImageWidth?: number;
+export interface LevelDescription {
+  lang: string;
+  title: string;
+  description: string;
 }
 
-export interface MovieImagesStats {
-  status: 'SUCCESS' | 'FAIL';
+export interface LevelInfoSaveRequest {
+  image?: LevelSaveImage;
+  questions: LevelSaveRequestQuestion[];
+  descriptions: LevelDescription[];
+  type: 'COUNT' | 'TIME';
   /** @format int32 */
-  imagesCount: number;
+  timeForEach?: number;
+  /** @format int32 */
+  totalTime?: number;
+  active: boolean;
 }
 
-export interface MoviesImageLoadResponse {
-  movies: Record<string, MovieImagesStats>;
+export interface LevelSaveImage {
+  /** @format int32 */
+  id?: number;
+  content?: string;
+}
+
+export interface LevelSaveRequestQuestion {
+  /** @format int32 */
+  imageId: number;
+  variants: number[];
+}
+
+export interface LevelImage {
+  /** @format int32 */
+  id: number;
+  name: string;
+}
+
+export interface LevelInfo {
+  /** @format int32 */
+  id: number;
+  image?: LevelImage;
+  questions: Question[];
+  descriptions: LevelDescription[];
+  type: 'COUNT' | 'TIME';
+  /** @format int32 */
+  timeForEach?: number;
+  /** @format int32 */
+  totalTime?: number;
+  active: boolean;
 }
 
 export interface Question {
@@ -102,6 +136,22 @@ export interface VariantDescription {
   lang: string;
   title: string;
   description?: string;
+}
+
+export interface MoviesImageLoadRequest {
+  moviesIds: number[];
+  /** @format int32 */
+  minImageWidth?: number;
+}
+
+export interface MovieImagesStats {
+  status: 'SUCCESS' | 'FAIL';
+  /** @format int32 */
+  imagesCount: number;
+}
+
+export interface MoviesImageLoadResponse {
+  movies: Record<string, MovieImagesStats>;
 }
 
 export interface Image {
@@ -155,26 +205,6 @@ export interface ListResponseLevelListItem {
   /** @format int32 */
   total: number;
   items: LevelListItem[];
-}
-
-export interface LevelDescription {
-  lang: string;
-  title: string;
-  description: string;
-}
-
-export interface LevelInfo {
-  /** @format int32 */
-  id: number;
-  descriptions: LevelDescription[];
-  questions: Question[];
-  type: 'COUNT' | 'TIME';
-  /** @format int32 */
-  timeForEach?: number;
-  /** @format int32 */
-  totalTime?: number;
-  previewImageName?: string;
-  active: boolean;
 }
 
 import type {AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType} from 'axios';
@@ -246,7 +276,7 @@ export class HttpClient {
   };
 }
 
-export type ApiControllers = moviesController & questionsController & levelsController;
+export type ApiControllers = moviesController & levelsController & questionsController;
 
 type moviesController = {
   '/movies-api/v2/movies/{id}': {
@@ -335,6 +365,72 @@ type moviesController = {
     ];
   };
 };
+type levelsController = {
+  '/movies-api/v2/levels/{id}': {
+    get: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      LevelInfo,
+    ];
+    put: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: LevelInfoSaveRequest;
+      },
+      LevelInfo,
+    ];
+  };
+
+  '/movies-api/v2/levels': {
+    get: [
+      {
+        query: {
+          /** @format int32 */
+          page?: number;
+          /** @format int32 */
+          pageSize?: number;
+        };
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      ListResponseLevelListItem,
+    ];
+    post: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: LevelInfoSaveRequest;
+      },
+      LevelInfo,
+    ];
+  };
+
+  '/movies-api/v2/levels/{id}/publish': {
+    post: [
+      {
+        query: {
+          active: boolean;
+        };
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      void,
+    ];
+  };
+};
 type questionsController = {
   '/movies-api/v2/questions': {
     get: [
@@ -354,37 +450,6 @@ type questionsController = {
         };
       },
       Question[],
-    ];
-  };
-};
-type levelsController = {
-  '/movies-api/v2/levels': {
-    get: [
-      {
-        query: {
-          /** @format int32 */
-          page?: number;
-          /** @format int32 */
-          pageSize?: number;
-        };
-        headers: {
-          /** Bearer {access_token} */
-          Authorization: string;
-        };
-      },
-      ListResponseLevelListItem,
-    ];
-  };
-
-  '/movies-api/v2/levels/{id}': {
-    get: [
-      {
-        headers: {
-          /** Bearer {access_token} */
-          Authorization: string;
-        };
-      },
-      LevelInfo,
     ];
   };
 };

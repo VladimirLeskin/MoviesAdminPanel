@@ -9,7 +9,7 @@ interface IFindRequestParams {
   sort?: Array<{field: string; order: 'asc' | 'desc'}>;
 }
 
-export class TypesafeMovies extends TypesafeBaseApi {
+export class MoviesApi extends TypesafeBaseApi {
   public static getMovies(params: IFindRequestParams) {
     return this.transport.get('/movies-api/v2/movies', {
       query: {

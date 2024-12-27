@@ -1,6 +1,6 @@
 import {makeAutoObservable, runInAction} from 'mobx';
 import {IMovieGenre} from '../api/dto/MovieDto';
-import MoviesApi from '../api/Movies';
+import {GenresApi} from '../api/Genres';
 import {getAxiosErrorText} from '../api/stdAxiosErrorHandler';
 import {toast} from 'react-toastify';
 
@@ -15,7 +15,7 @@ class MoviesGenres {
   public get genres(): Record<number, IMovieGenre> {
     if (!this._genres && !this._isLoading) {
       this._isLoading = true;
-      MoviesApi.getGenresDescriptions()
+      GenresApi.getGenresDescriptions()
         .then(resp => {
           this._genres = resp.data.items;
         })

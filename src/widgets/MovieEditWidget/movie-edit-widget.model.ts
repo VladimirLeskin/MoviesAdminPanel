@@ -1,7 +1,7 @@
 import {makeObservable} from 'mobx';
 import {IEditedMovieInfo} from './types';
 import {EntityEditorModel} from '../../models/EntityEditorModel';
-import {TypesafeMovies} from '../../api/TypesafeMovies';
+import {MoviesApi} from '../../api/MoviesApi';
 import {MovieDetails, MovieSaveInfo} from '../../api/Api';
 
 const emptyMovie: IEditedMovieInfo = {
@@ -59,7 +59,7 @@ export class MovieEditWidgetModel extends EntityEditorModel<IEditedMovieInfo> {
 
   protected async getDataRequestPromise(id?: IEditedMovieInfo['id']): Promise<IEditedMovieInfo> {
     if (id) {
-      const data = await TypesafeMovies.getMovieInfo(id);
+      const data = await MoviesApi.getMovieInfo(id);
       if (data.data) {
         const levelInfoDto = data.data;
         return MovieEditWidgetModel.movieDtoToMovieInfo(levelInfoDto);
@@ -98,8 +98,8 @@ export class MovieEditWidgetModel extends EntityEditorModel<IEditedMovieInfo> {
     };
 
     const response = await (movieInfo.id
-      ? TypesafeMovies.updateMovieInfo(movieInfo.id, dto)
-      : TypesafeMovies.createMovieInfo(dto));
+      ? MoviesApi.updateMovieInfo(movieInfo.id, dto)
+      : MoviesApi.createMovieInfo(dto));
 
     if (response.data) {
       return MovieEditWidgetModel.movieDtoToMovieInfo(response.data);

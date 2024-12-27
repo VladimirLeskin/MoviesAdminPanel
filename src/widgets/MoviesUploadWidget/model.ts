@@ -1,6 +1,6 @@
 import {makeAutoObservable} from 'mobx';
 import {toast} from 'react-toastify';
-import {TypesafeMovies} from '../../api/TypesafeMovies';
+import {MoviesApi} from '../../api/MoviesApi';
 
 export class MoviesUploadModel {
   public isLoading = false;
@@ -12,7 +12,7 @@ export class MoviesUploadModel {
   public async uploadMoviesFile(file: File) {
     this.isLoading = true;
     try {
-      const {data: total} = await TypesafeMovies.createFromFile(file);
+      const {data: total} = await MoviesApi.createFromFile(file);
       toast.success(`Создано успешно: ${total}`);
     } catch {
     } finally {

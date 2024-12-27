@@ -2,13 +2,12 @@ import React from 'react';
 import {ICellRendererParams} from 'ag-grid-community';
 import {Link} from 'react-router-dom';
 import {ROUTES} from 'src/constants';
-import {ILevelDto} from 'src/api/dto/LevelDto';
 
-export const IdCellRenderer = (props: ICellRendererParams<ILevelDto, number>) => {
+export const IdCellRenderer = (props: ICellRendererParams<{id?: number}, number>) => {
   return (
     <>
       {props.data?.id && (
-        <Link to={ROUTES.LEVELS.DETAILS.replace(':levelId', props.data.id)} target="_blank">
+        <Link to={ROUTES.LEVELS.DETAILS.replace(':levelId', props.data.id.toString())} target="_blank">
           {props.data.id}
         </Link>
       )}

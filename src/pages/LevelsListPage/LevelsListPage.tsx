@@ -14,7 +14,7 @@ import {LevelEditWidget} from '../../widgets/LevelEditWidget/LevelEditWidget';
 import {ROUTES} from 'src/constants';
 import {Spinner} from '../../components/Spinner/Spinner';
 import {Pagination} from '../../components/Pagination/Pagination';
-import {ILevelListItemDto} from '../../api/dto/LevelDto';
+import {ILevelListItemDto} from './types';
 
 import css from './LevelsListPage.module.scss';
 
@@ -49,7 +49,7 @@ export const LevelsListPage: FC = observer(() => {
       cellRenderer: ({data}: CustomCellRendererProps<ILevelListItemDto>) => {
         if (data) {
           const onPublish = () => {
-            model.onPublish(data.id.toString(), !data.active);
+            model.onPublish(data.id, !data.active);
           };
           return <Switch checked={data.active} onChange={onPublish} />;
         }

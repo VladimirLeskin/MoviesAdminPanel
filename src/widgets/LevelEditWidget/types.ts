@@ -1,5 +1,3 @@
-import {ELevelType} from '../../api/dto/LevelDto';
-
 export interface IEditedLevelQuestionVariant {
   movie_id: number;
   title: string;
@@ -15,13 +13,13 @@ export interface IEditedLevelInfo {
   id?: number;
   descriptions: {lang: string; title: string; description: string}[];
   questions: IEditedLevelQuestion[];
-  type: ELevelType;
+  type: 'TIME' | 'COUNT';
   timeForEach?: number;
   totalTime?: number;
   image: {
+    id?: number;
     src?: string;
     content?: string;
   };
-  isNewImage: boolean;
   isActive: boolean;
 }

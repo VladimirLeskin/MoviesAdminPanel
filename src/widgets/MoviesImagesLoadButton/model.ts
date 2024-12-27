@@ -1,7 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import {toast} from 'react-toastify';
 
-import {TypesafeMovies} from 'src/api/TypesafeMovies';
+import {MoviesApi} from 'src/api/MoviesApi';
 
 export class MoviesImagesLoadButtonModel {
   public isLoading = false;
@@ -13,7 +13,7 @@ export class MoviesImagesLoadButtonModel {
   public async loadImages(ids: number[]) {
     this.isLoading = true;
     try {
-      const {data: result} = await TypesafeMovies.generateMoviesImages(ids);
+      const {data: result} = await MoviesApi.generateMoviesImages(ids);
       toast.info(
         Object.entries(result.movies)
           .map(([id, {status, imagesCount}]) => `${id}: ${imagesCount} ${status} `)

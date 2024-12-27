@@ -2,7 +2,7 @@ import React from 'react';
 import {ColDef} from 'ag-grid-community';
 import {CustomCellRendererProps} from 'ag-grid-react';
 
-import {ILevelListItemDto} from 'src/api/dto/LevelDto';
+import {ILevelListItemDto} from './types';
 import {IdCellRenderer} from './cellRenderers/IdCellRenderer';
 import {Image} from 'src/components/Image/Image';
 
