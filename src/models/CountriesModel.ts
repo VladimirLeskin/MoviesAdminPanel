@@ -34,7 +34,13 @@ class CountriesModel {
     this._isLoading = true;
     CountriesApi.getCountries()
       .then(resp => {
-        this._countries = resp.data.items;
+        this._countries = resp.data.items.map(it => ({
+          country_code: it.code,
+          name:
+            it.names.find(({lang}) => lang === 'ru')?.name ??
+            it.names.map(({name}) => name).filter(Boolean)[0] ??
+            it.code,
+        }));
       })
       .catch(e => toast.error(`Ошибка загрузки стран\n${getAxiosErrorText(e)}`))
       .finally(() => {

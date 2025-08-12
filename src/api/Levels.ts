@@ -5,14 +5,12 @@ import {LevelInfoSaveRequest} from './Api';
 export class LevelsApi extends TypesafeBaseApi {
   public static createLevelInfo(levelInfo: LevelInfoSaveRequest) {
     return this.transport.post('/movies-api/v2/levels', {
-      headers: {Authorization: `Bearer ${ACCESS_TOKEN_STORAGE.getData()?.token}`},
       data: levelInfo,
     });
   }
 
   public static editLevelInfo(id: number, levelInfo: LevelInfoSaveRequest) {
     return this.transport.put('/movies-api/v2/levels/{id}', {
-      headers: {Authorization: `Bearer ${ACCESS_TOKEN_STORAGE.getData()?.token}`},
       data: levelInfo,
       route: {id: id.toString()},
     });
@@ -27,18 +25,14 @@ export class LevelsApi extends TypesafeBaseApi {
 
   public static getLevelInfo(levelId: number) {
     return this.transport.get('/movies-api/v2/levels/{id}', {
-      headers: {Authorization: `Bearer ${ACCESS_TOKEN_STORAGE.getData()?.token}`},
       route: {id: levelId.toString()},
     });
   }
 
   public static publishLevel(levelId: number, active: boolean) {
     return this.transport.post('/movies-api/v2/levels/{id}/publish', {
-      headers: {Authorization: `Bearer ${ACCESS_TOKEN_STORAGE.getData()?.token}`},
       route: {id: levelId.toString()},
-      query: {
-        active,
-      },
+      query: {active},
     });
   }
 }

@@ -1,10 +1,7 @@
-import {AxiosResponse} from 'axios';
-import {IPagedResponse} from './types';
-import {IMovieGenre} from './dto/MovieDto';
-import {BaseApi} from './BaseApi';
+import {TypesafeBaseApi} from './TypesafeBaseApi';
 
-export class GenresApi extends BaseApi {
-  public static getGenresDescriptions(): Promise<AxiosResponse<IPagedResponse<IMovieGenre>>> {
-    return this.transport.get(this.url('/genres'));
+export class GenresApi extends TypesafeBaseApi {
+  public static getGenresDescriptions() {
+    return this.transport.get('/movies-api/v2/genres', {});
   }
 }

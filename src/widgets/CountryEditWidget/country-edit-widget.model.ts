@@ -29,12 +29,22 @@ export class CountryEditWidgetModel extends EntityEditorModel<ICountry> {
   }
 
   protected getDataSaveRequestPromise(data: ICountry): Promise<ICountry> {
-    return CountriesApi.createCountry({
-      code: data.id,
-      names: data.names,
-    }).then(({data}) => ({
-      id: data.code,
-      names: data.names,
-    }));
+    if (this.data?.id) {
+      return CountriesApi.updateCountry(this.data.id, {
+        code: data.id,
+        names: data.names,
+      }).then(({data}) => ({
+        id: data.code,
+        names: data.names,
+      }));
+    } else {
+      return CountriesApi.createCountry({
+        code: data.id,
+        names: data.names,
+      }).then(({data}) => ({
+        id: data.code,
+        names: data.names,
+      }));
+    }
   }
 }

@@ -42,7 +42,7 @@ export const schema = makeAutoObservable({
         type: EFieldInfoType.ENUM_MULTI,
         title: 'Жанры',
         renderer: MultiEnumField,
-        options: Object.values(MOVIES_GENRES.genres).map(g => ({value: g.genre_id, label: g.name})),
+        options: Object.values(MOVIES_GENRES.genres).map(g => ({value: g.id, label: g.name})),
       },
     };
   },

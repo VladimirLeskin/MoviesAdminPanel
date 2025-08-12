@@ -1,7 +1,6 @@
 export interface ICountryListItemDto {
   country_code: string;
   name: string;
-  lang: string;
 }
 
 export interface CountryInfoDto {

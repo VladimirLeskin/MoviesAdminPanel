@@ -33,10 +33,10 @@ type RequestRouteParams<TRoute> =
       };
 
 type ExtractRequestType<TController extends Controller, TRoute extends keyof TController, TMethod extends Method> = {
-  request: TController[TRoute][TMethod] extends Array<unknown>
+  request: TController[TRoute][TMethod] extends [Payload, unknown]
     ? TController[TRoute][TMethod][0] & RequestRouteParams<TRoute>
     : never;
-  response: TController[TRoute][TMethod] extends Array<unknown> ? TController[TRoute][TMethod][1] : never;
+  response: TController[TRoute][TMethod] extends [Payload, unknown] ? TController[TRoute][TMethod][1] : never;
 };
 
 type Transport<TController extends Controller> = {

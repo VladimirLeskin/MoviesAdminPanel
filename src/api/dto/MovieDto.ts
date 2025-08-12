@@ -1,7 +1,6 @@
 export interface IMovieGenre {
-  genre_id: number;
+  id: number;
   name: string;
-  lang: string;
 }
 
 export interface IMovieListItem {

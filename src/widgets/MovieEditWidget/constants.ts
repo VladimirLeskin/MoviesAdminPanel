@@ -55,7 +55,7 @@ export const schema = makeAutoObservable({
         options: Object.values(MOVIES_GENRES.genres)
           .sort((a, b) => a.name.localeCompare(b.name))
           .map(g => ({
-            value: g.genre_id,
+            value: g.id,
             label: g.name,
           })),
       },

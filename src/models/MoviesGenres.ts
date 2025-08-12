@@ -17,7 +17,12 @@ class MoviesGenres {
       this._isLoading = true;
       GenresApi.getGenresDescriptions()
         .then(resp => {
-          this._genres = resp.data.items;
+          this._genres = resp.data.items.map(genre => ({
+            id: genre.id,
+            name:
+              (genre.names.find(n => n.lang === 'ru')?.name || genre.names.map(({name}) => name).filter(Boolean)[0]) ??
+              genre.id.toString(),
+          }));
         })
         .catch(e => toast.error(`Ошибка загрузки жанров\n${getAxiosErrorText(e)}`))
         .finally(() => {
@@ -29,7 +34,7 @@ class MoviesGenres {
     } else {
       return (
         this._genres?.reduce<Record<number, IMovieGenre>>((acc, cur) => {
-          acc[cur.genre_id] = cur;
+          acc[cur.id] = cur;
           return acc;
         }, {}) ?? {}
       );

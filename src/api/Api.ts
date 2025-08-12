@@ -138,6 +138,16 @@ export interface VariantDescription {
   description?: string;
 }
 
+export interface Country {
+  code: string;
+  names: CountryName[];
+}
+
+export interface CountryName {
+  lang: string;
+  name: string;
+}
+
 export interface MoviesImageLoadRequest {
   moviesIds: number[];
   /** @format int32 */
@@ -205,6 +215,29 @@ export interface ListResponseLevelListItem {
   /** @format int32 */
   total: number;
   items: LevelListItem[];
+}
+
+export interface Genre {
+  /** @format int32 */
+  id: number;
+  names: GenreDescription[];
+}
+
+export interface GenreDescription {
+  lang: string;
+  name: string;
+}
+
+export interface ListResponseGenre {
+  /** @format int32 */
+  total: number;
+  items: Genre[];
+}
+
+export interface ListResponseCountry {
+  /** @format int32 */
+  total: number;
+  items: Country[];
 }
 
 import type {AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType} from 'axios';
@@ -276,7 +309,11 @@ export class HttpClient {
   };
 }
 
-export type ApiControllers = moviesController & levelsController & questionsController;
+export type ApiControllers = moviesController &
+  levelsController &
+  countriesController &
+  questionsController &
+  genresController;
 
 type moviesController = {
   '/movies-api/v2/movies/{id}': {
@@ -367,21 +404,9 @@ type moviesController = {
 };
 type levelsController = {
   '/movies-api/v2/levels/{id}': {
-    get: [
-      {
-        headers: {
-          /** Bearer {access_token} */
-          Authorization: string;
-        };
-      },
-      LevelInfo,
-    ];
+    get: [{}, LevelInfo];
     put: [
       {
-        headers: {
-          /** Bearer {access_token} */
-          Authorization: string;
-        };
         data: LevelInfoSaveRequest;
       },
       LevelInfo,
@@ -406,10 +431,6 @@ type levelsController = {
     ];
     post: [
       {
-        headers: {
-          /** Bearer {access_token} */
-          Authorization: string;
-        };
         data: LevelInfoSaveRequest;
       },
       LevelInfo,
@@ -422,12 +443,46 @@ type levelsController = {
         query: {
           active: boolean;
         };
+      },
+      void,
+    ];
+  };
+};
+type countriesController = {
+  '/movies-api/v2/countries/{code}': {
+    get: [{}, Country];
+    put: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: Country;
+      },
+      Country,
+    ];
+    delete: [
+      {
         headers: {
           /** Bearer {access_token} */
           Authorization: string;
         };
       },
       void,
+    ];
+  };
+
+  '/movies-api/v2/countries': {
+    get: [{}, ListResponseCountry];
+    post: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: Country;
+      },
+      Country,
     ];
   };
 };
@@ -444,12 +499,13 @@ type questionsController = {
           genres?: number[];
           countries?: string[];
         };
-        headers: {
-          /** Bearer {access_token} */
-          Authorization: string;
-        };
       },
       Question[],
     ];
+  };
+};
+type genresController = {
+  '/movies-api/v2/genres': {
+    get: [{}, ListResponseGenre];
   };
 };
