@@ -148,6 +148,26 @@ export interface CountryName {
   name: string;
 }
 
+export interface UpdateProgressRequest {
+  /** @format int32 */
+  levelId: number;
+  /** @format int32 */
+  correctAnswers: number;
+  /** @format int32 */
+  totalTime: number;
+}
+
+export interface UpdateProgressResponse {
+  /** @format int32 */
+  score: number;
+  /** @format int32 */
+  maxScore: number;
+  /** @format int32 */
+  rate: number;
+  /** @format int32 */
+  maxRate: number;
+}
+
 export interface MoviesImageLoadRequest {
   moviesIds: number[];
   /** @format int32 */
@@ -162,6 +182,52 @@ export interface MovieImagesStats {
 
 export interface MoviesImageLoadResponse {
   movies: Record<string, MovieImagesStats>;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface UserTokens {
+  accessToken: string;
+  /** @format int64 */
+  accessTokenExpirationTs: number;
+  refreshToken: string;
+  /** @format int64 */
+  refreshTokenExpirationTs: number;
+}
+
+export interface LoginRequest {
+  login: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  user: User;
+  tokens: UserTokens;
+}
+
+export interface User {
+  /** @format int32 */
+  id: number;
+  login?: string;
+  isGuest: boolean;
+  firstname?: string;
+  lastname?: string;
+  isExternal: boolean;
+  roles: string[];
+  permissions: string[];
+}
+
+export interface UserProgress {
+  /** @format int32 */
+  levelId: number;
+  /** @format int32 */
+  score: number;
+  /** @format int32 */
+  rate: number;
+  /** @format date-time */
+  date?: string;
 }
 
 export interface Image {
@@ -312,6 +378,8 @@ export class HttpClient {
 export type ApiControllers = moviesController &
   levelsController &
   countriesController &
+  userProgressController &
+  authController &
   questionsController &
   genresController;
 
@@ -483,6 +551,80 @@ type countriesController = {
         data: Country;
       },
       Country,
+    ];
+  };
+};
+type userProgressController = {
+  '/movies-api/v2/user-progress': {
+    get: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      UserProgress[],
+    ];
+    post: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: UpdateProgressRequest;
+      },
+      UpdateProgressResponse,
+    ];
+  };
+};
+type authController = {
+  '/movies-api/v2/auth/refresh_token': {
+    post: [
+      {
+        data: RefreshTokenRequest;
+      },
+      UserTokens,
+    ];
+  };
+
+  '/movies-api/v2/auth/login': {
+    post: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: LoginRequest;
+      },
+      LoginResponse,
+    ];
+  };
+
+  '/movies-api/v2/auth/auth_as_guest': {
+    post: [{}, LoginResponse];
+  };
+
+  '/movies-api/v2/auth': {
+    get: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      User,
+    ];
+  };
+
+  '/movies-api/v2/auth/logout': {
+    get: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      void,
     ];
   };
 };

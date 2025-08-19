@@ -38,7 +38,7 @@ export const App: FC = observer(() => {
     return <>Загрузка...</>;
   } else if (!authModel.login) {
     return <LoginForm onLogin={authModel.onLogin} />;
-  } else if (!ADMIN_ROLES.some(r => !!authModel.roles?.[r])) {
+  } else if (!ADMIN_ROLES.some(r => !!authModel.roles?.includes(r))) {
     return null;
   }
   return (

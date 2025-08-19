@@ -20,7 +20,7 @@ export class BaseOAuth2Client {
   }
 
   private refreshAccessToken(): Promise<ITokens> {
-    return AuthApi.refreshToken({refresh_token: this._refreshToken?.token ?? ''});
+    return AuthApi.refreshToken({refreshToken: this._refreshToken?.token ?? ''});
   }
 
   private updateTokens(tokens: ITokens) {

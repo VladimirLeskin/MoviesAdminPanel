@@ -1,35 +1,10 @@
-import {BaseApi} from './BaseApi';
+import {TypesafeBaseApi} from './TypesafeBaseApi';
+import {ACCESS_TOKEN_STORAGE} from './oauth2/BaseOAuth2Client';
+import {UserTokens} from './Api';
 
 export enum EUserRoles {
   admin = 'admin',
   operator = 'operator',
-}
-
-export interface IUserRole {
-  type: number;
-  name: EUserRoles;
-  description: string | null;
-  ruleName: string | null;
-  data: string | null;
-  createdAt: number;
-  updatedAt: number;
-}
-
-interface IUserDto {
-  login?: string;
-  roles?: Partial<Record<EUserRoles, IUserRole>>;
-}
-
-interface ILoginResponse {
-  user: IUserDto;
-  tokens: IOauthTokensDto;
-}
-
-interface IOauthTokensDto {
-  access_token: string;
-  access_token_expiration_ts: number;
-  refresh_token: string;
-  refresh_token_expiration_ts: number;
 }
 
 export interface ITokens {
@@ -42,32 +17,37 @@ export interface IToken {
   expires: Date;
 }
 
-export class AuthApi extends BaseApi {
+export class AuthApi extends TypesafeBaseApi {
   public static login(data: {login: string; password: string}) {
     return this.transport
-      .post<ILoginResponse>(this.url('/auth/login'), data)
+      .post('/movies-api/v2/auth/login', {
+        data,
+        headers: {Authorization: `Bearer ${ACCESS_TOKEN_STORAGE.getData()?.token}`},
+      })
       .then(resp => this.oauthTokensDtoToToken(resp.data.tokens));
   }
 
   public static auth() {
-    return this.transport.get<IUserDto>(this.url('/auth/view'));
+    return this.transport.get('/movies-api/v2/auth', {
+      headers: {Authorization: `Bearer ${ACCESS_TOKEN_STORAGE.getData()?.token}`},
+    });
   }
 
-  public static refreshToken(data: {refresh_token: string}) {
+  public static refreshToken(data: {refreshToken: string}) {
     return this.transport
-      .post<IOauthTokensDto>(this.url('/auth/refresh_token'), data)
+      .post('/movies-api/v2/auth/refresh_token', {data})
       .then(resp => this.oauthTokensDtoToToken(resp.data));
   }
 
-  public static oauthTokensDtoToToken(dto: IOauthTokensDto): ITokens {
+  public static oauthTokensDtoToToken(dto: UserTokens): ITokens {
     return {
       access: {
-        token: dto.access_token,
-        expires: new Date(dto.access_token_expiration_ts * 1000),
+        token: dto.accessToken,
+        expires: new Date(dto.accessTokenExpirationTs * 1000),
       },
       refresh: {
-        token: dto.refresh_token,
-        expires: new Date(dto.refresh_token_expiration_ts * 1000),
+        token: dto.refreshToken,
+        expires: new Date(dto.refreshTokenExpirationTs * 1000),
       },
     };
   }
