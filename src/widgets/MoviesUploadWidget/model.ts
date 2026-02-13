@@ -9,11 +9,15 @@ export class MoviesUploadModel {
     makeAutoObservable(this, undefined, {autoBind: true, deep: false});
   }
 
-  public async uploadMoviesFile(file: File) {
+  public async uploadMoviesFile(file: File, override: boolean) {
     this.isLoading = true;
     try {
-      const {data: total} = await MoviesApi.createFromFile(file);
-      toast.success(`Создано успешно: ${total}`);
+      const {data} = await MoviesApi.createFromFile(file, override);
+      toast.info(`Создано: ${data.created}
+        Обновлено: ${data.updated}
+        Ошибка создания: ${data.failToCreate}
+        Ошибка обновления: ${data.failToUpdate}
+      `);
     } catch {
     } finally {
       this.isLoading = false;

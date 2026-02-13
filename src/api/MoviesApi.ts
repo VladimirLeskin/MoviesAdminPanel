@@ -21,8 +21,9 @@ export class MoviesApi extends TypesafeBaseApi {
     });
   }
 
-  public static createFromFile(file: File) {
+  public static createFromFile(file: File, override: boolean) {
     return this.transport.post('/movies-api/v2/movies/upload', {
+      query: {override},
       data: {file},
       headers: {
         'Content-Type': 'multipart/form-data',

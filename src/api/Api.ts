@@ -168,6 +168,17 @@ export interface UpdateProgressResponse {
   maxRate: number;
 }
 
+export interface MovieCreateManyResponse {
+  /** @format int32 */
+  created: number;
+  /** @format int32 */
+  updated: number;
+  /** @format int32 */
+  failToUpdate: number;
+  /** @format int32 */
+  failToCreate: number;
+}
+
 export interface MoviesImageLoadRequest {
   moviesIds: number[];
   /** @format int32 */
@@ -182,6 +193,16 @@ export interface MovieImagesStats {
 
 export interface MoviesImageLoadResponse {
   movies: Record<string, MovieImagesStats>;
+}
+
+export interface RegisterRequest {
+  login: string;
+  password: string;
+}
+
+export interface LoginCheckResponse {
+  success: boolean;
+  error?: 'LOGIN_ALREADY_IN_USE' | 'LOGIN_VALIDATION_TIP';
 }
 
 export interface RefreshTokenRequest {
@@ -217,6 +238,30 @@ export interface User {
   isExternal: boolean;
   roles: string[];
   permissions: string[];
+}
+
+export interface YaGamesAuthParams {
+  extId: string;
+  oldToken?: string;
+  signature: string;
+}
+
+export interface SignParam {
+  key: string;
+  value?: string;
+}
+
+export interface VkAuthParams {
+  extId: string;
+  oldToken?: string;
+  sign: string;
+  signParams: SignParam[];
+  userInfo: VkUserInfo;
+}
+
+export interface VkUserInfo {
+  firstname: string;
+  lastname: string;
 }
 
 export interface UserProgress {
@@ -444,6 +489,9 @@ type moviesController = {
   '/movies-api/v2/movies/upload': {
     post: [
       {
+        query: {
+          override?: boolean;
+        };
         headers: {'Content-Type': 'multipart/form-data'} & {
           /** Bearer {access_token} */
           Authorization: string;
@@ -453,7 +501,7 @@ type moviesController = {
           file: File;
         };
       },
-      number,
+      MovieCreateManyResponse,
     ];
   };
 
@@ -578,6 +626,15 @@ type userProgressController = {
   };
 };
 type authController = {
+  '/movies-api/v2/auth/register': {
+    post: [
+      {
+        data: RegisterRequest;
+      },
+      LoginCheckResponse,
+    ];
+  };
+
   '/movies-api/v2/auth/refresh_token': {
     post: [
       {
@@ -595,6 +652,24 @@ type authController = {
           Authorization: string;
         };
         data: LoginRequest;
+      },
+      LoginResponse,
+    ];
+  };
+
+  '/movies-api/v2/auth/auth_as_ya_games_user': {
+    post: [
+      {
+        data: YaGamesAuthParams;
+      },
+      LoginResponse,
+    ];
+  };
+
+  '/movies-api/v2/auth/auth_as_vk_user': {
+    post: [
+      {
+        data: VkAuthParams;
       },
       LoginResponse,
     ];
@@ -625,6 +700,17 @@ type authController = {
         };
       },
       void,
+    ];
+  };
+
+  '/movies-api/v2/auth/check_login': {
+    get: [
+      {
+        query: {
+          login: string;
+        };
+      },
+      LoginCheckResponse,
     ];
   };
 };
