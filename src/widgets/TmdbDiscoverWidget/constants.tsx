@@ -22,7 +22,7 @@ export const TMDB_DISCOVER_COLUMNS: ColDef<ITmdbDiscoverListItem>[] = [
     colId: 'title',
     headerName: 'Название',
     field: 'title',
-    sortable: false,
+    sortable: true,
     minWidth: 160,
     flex: 1,
   },
@@ -30,7 +30,7 @@ export const TMDB_DISCOVER_COLUMNS: ColDef<ITmdbDiscoverListItem>[] = [
     colId: 'original_title',
     headerName: 'Оригинальное название',
     field: 'original_title',
-    sortable: false,
+    sortable: true,
     minWidth: 160,
     flex: 1,
   },
@@ -46,21 +46,21 @@ export const TMDB_DISCOVER_COLUMNS: ColDef<ITmdbDiscoverListItem>[] = [
     colId: 'release_date',
     headerName: 'Дата релиза',
     field: 'release_date',
-    sortable: false,
+    sortable: true,
     width: 120,
   },
   {
     colId: 'end_date',
     headerName: 'Дата окончания',
     field: 'end_date',
-    sortable: false,
+    sortable: true,
     width: 130,
   },
   {
     colId: 'popularity',
     headerName: 'Popularity',
     field: 'popularity',
-    sortable: false,
+    sortable: true,
     width: 110,
     valueFormatter: params => (params.data?.popularity != null ? params.data.popularity.toFixed(1) : ''),
   },
@@ -68,14 +68,30 @@ export const TMDB_DISCOVER_COLUMNS: ColDef<ITmdbDiscoverListItem>[] = [
     colId: 'imdb_id',
     headerName: 'IMDB ID',
     field: 'imdb_id',
-    sortable: false,
+    sortable: true,
     width: 120,
+    cellRenderer: (params: ICellRendererParams<ITmdbDiscoverListItem>) => {
+      const imdbId = params.data?.imdb_id;
+      if (!imdbId) {
+        return null;
+      }
+
+      if (!imdbId.startsWith('tt')) {
+        return imdbId;
+      }
+
+      return (
+        <a href={`https://www.imdb.com/title/${imdbId}/`} target="_blank" rel="noopener noreferrer">
+          {imdbId}
+        </a>
+      );
+    },
   },
   {
     colId: 'tmdb_id',
     headerName: 'TMDB ID',
     field: 'tmdb_id',
-    sortable: false,
+    sortable: true,
     width: 100,
   },
   {

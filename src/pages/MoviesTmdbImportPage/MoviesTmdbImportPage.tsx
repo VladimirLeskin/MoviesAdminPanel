@@ -6,7 +6,11 @@ import {TmdbImportButton} from 'src/widgets/TmdbImportButton';
 import {useQueryParams} from 'src/hooks/useQueryParams';
 import {useTitleUpdate} from 'src/hooks/useTitleUpdate';
 
-import {tmdbDiscoverFiltersQueryConfig, tmdbDiscoverPaginationQueryConfig} from './constants';
+import {
+  tmdbDiscoverFiltersQueryConfig,
+  tmdbDiscoverPaginationQueryConfig,
+  tmdbDiscoverSortQueryConfig,
+} from './constants';
 
 import css from './MoviesTmdbImportPage.module.scss';
 
@@ -14,6 +18,7 @@ export const MoviesTmdbImportPage: FC = () => {
   useTitleUpdate('Заполнение базы данных');
   const [pagination, setPagination] = useQueryParams(tmdbDiscoverPaginationQueryConfig);
   const [filter, setFilter] = useQueryParams(tmdbDiscoverFiltersQueryConfig);
+  const [sortState, setSortState] = useQueryParams(tmdbDiscoverSortQueryConfig);
   const [selectedItems, setSelectedItems] = useState<ITmdbDiscoverListItem[]>([]);
   const [revision, setRevision] = useState(Date.now);
 
@@ -21,16 +26,18 @@ export const MoviesTmdbImportPage: FC = () => {
     () => ({
       pagination,
       filter: {...filter, type: filter.type ?? 'movie'},
+      sortState: sortState.sort,
     }),
-    [filter, pagination]
+    [filter, pagination, sortState]
   );
 
   const handleParamsChange = useCallback(
     (newParams: TmdbDiscoverWidgetParams) => {
       setFilter(newParams.filter ?? {type: 'movie'});
       setPagination(newParams.pagination ?? {page: 0, pageSize: 20}, 'replaceIn');
+      setSortState({sort: newParams.sortState}, 'replaceIn');
     },
-    [setFilter, setPagination]
+    [setFilter, setPagination, setSortState]
   );
 
   const forceRecalc = useCallback(() => {

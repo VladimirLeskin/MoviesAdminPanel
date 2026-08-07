@@ -8,3 +8,13 @@
   padding: 12px 6px;
   gap: 6px;
 }
+
+.topBar {
+  flex: 1;
+  min-width: 0;
+}
+
+.queryField {
+  flex: 1;
+  max-width: 360px;
+}

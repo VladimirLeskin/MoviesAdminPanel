@@ -20,11 +20,14 @@ export class TmdbDiscoverWidgetModel extends ItemsListModel<ITmdbDiscoverListIte
 
       return TmdbApi.discover({
         type: filter.type ?? 'movie',
+        query: filter.query?.trim() || undefined,
         popularity: filter.popularity,
         genres: filter.genres,
         date_from: filter.date_from,
         date_to: filter.date_to,
         countries: filter.countries,
+        sort_field: payload?.sortState?.[0]?.field,
+        sort_order: payload?.sortState?.[0]?.order,
         page,
       }).then(response => ({
         ...response,

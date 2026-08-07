@@ -320,7 +320,7 @@ export interface TmdbDiscoverItem {
   genre_ids: number[];
   countries: string[];
   poster_path?: string;
-  imdb_id?: string;
+  imdb_id: string;
 }
 
 export interface TmdbDiscoverResponse {
@@ -703,12 +703,15 @@ type tmdbController = {
       {
         query: {
           type: 'movie' | 'tv';
+          query?: string;
           /** @format double */
           popularity?: number;
           genres?: number[];
           date_from?: string;
           date_to?: string;
           countries?: string[];
+          sort_field?: string;
+          sort_order?: string;
           /** @format int32 */
           page?: number;
         };

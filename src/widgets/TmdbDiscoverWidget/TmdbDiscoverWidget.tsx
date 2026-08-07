@@ -1,6 +1,7 @@
-import React, {FC, useEffect, useMemo} from 'react';
+import React, {FC, useEffect, useMemo, useRef} from 'react';
 import {GridReadyEvent} from 'ag-grid-community/dist/types/core/events';
 import {ColDef} from 'ag-grid-community';
+import {AgGridReact} from 'ag-grid-react';
 import {observer} from 'mobx-react';
 
 import {AgGrid} from 'src/components/AgGrid/AgGrid';
@@ -13,6 +14,7 @@ import {TMDB_DISCOVER_COLUMNS} from './constants';
 import {ITmdbDiscoverListItem, TmdbDiscoverWidgetModel} from './tmdb-discover-widget.model';
 import {TmdbDiscoverWidgetParams} from './types';
 import {useParams} from '../MoviesListWidget/hooks/useParams';
+import {useGridSort} from '../MoviesListWidget/hooks/useGridSort';
 
 import css from './TmdbDiscoverWidget.module.scss';
 
@@ -32,10 +34,12 @@ const defaultColDef: ColDef = {
 
 export const TmdbDiscoverWidget: FC<Props> = observer(({revision, actions, params, onSelect, onParamsChanged}) => {
   const {items: rows, total, isLoading} = model;
+  const gridRef = useRef<AgGridReact>(null);
 
   const {
     filter: [filter, onFilterChanged],
     pagination: [pagination, onPaginationChanged],
+    sortState: [sortState, onSortChanged],
   } = useParams(model, params, onParamsChanged);
 
   useEffect(() => {
@@ -47,6 +51,7 @@ export const TmdbDiscoverWidget: FC<Props> = observer(({revision, actions, param
   }, [params, revision]);
 
   const columns = useMemo(() => TMDB_DISCOVER_COLUMNS, []);
+  const handleSortChange = useGridSort(gridRef.current, sortState ?? [], onSortChanged);
   const selectionProps = useGridSelection(onSelect);
 
   const paginationContainer = (
@@ -68,10 +73,12 @@ export const TmdbDiscoverWidget: FC<Props> = observer(({revision, actions, param
           {...selectionProps}
           onGridReady={onGridReady}
           suppressDragLeaveHidesColumns
+          ref={gridRef}
           rowData={rows}
           defaultColDef={defaultColDef}
           columnDefs={columns}
           className={css.MoviesGrid}
+          onSortChanged={handleSortChange}
         />
         {paginationContainer}
       </div>
