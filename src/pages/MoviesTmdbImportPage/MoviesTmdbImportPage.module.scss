@@ -1,0 +1,12 @@
+.root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .Actions {
+    justify-self: flex-end;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}

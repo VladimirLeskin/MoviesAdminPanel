@@ -3,6 +3,7 @@ export const ROUTES = {
     LIST: '/movies',
     CREATE: '/movies/create',
     DETAILS: '/movies/:movieId',
+    TMDB_IMPORT: '/movies/tmdb-import',
   },
   LEVELS: {
     LIST: '/levels',
