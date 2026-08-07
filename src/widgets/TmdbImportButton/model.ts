@@ -19,10 +19,19 @@ export class TmdbImportButtonModel {
     this.isLoading = true;
     try {
       const {data} = await TmdbApi.importItems({items});
+      const failureDetails = data.failures?.length
+        ? `\n${data.failures
+            .map(
+              f =>
+                `${f.type} ${f.tmdb_id}: ${f.reason}` +
+                `${f.imdb_id ? ` (${f.imdb_id})` : ''}${f.message ? ` — ${f.message}` : ''}`
+            )
+            .join('\n')}`
+        : '';
       toast.info(`Создано: ${data.created}
         Обновлено: ${data.updated}
         Ошибка создания: ${data.failToCreate}
-        Ошибка обновления: ${data.failToUpdate}
+        Ошибка обновления: ${data.failToUpdate}${failureDetails}
       `);
       return true;
     } catch {

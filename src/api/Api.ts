@@ -178,6 +178,27 @@ export interface TmdbImportRequest {
   items: TmdbImportItem[];
 }
 
+export interface TmdbImportFailure {
+  /** @format int32 */
+  tmdb_id: number;
+  type: 'movie' | 'tv';
+  reason: 'FETCH_FAILED' | 'ALREADY_EXISTS';
+  imdb_id?: string;
+  message?: string;
+}
+
+export interface TmdbImportResponse {
+  /** @format int32 */
+  created: number;
+  /** @format int32 */
+  updated: number;
+  /** @format int32 */
+  failToUpdate: number;
+  /** @format int32 */
+  failToCreate: number;
+  failures: TmdbImportFailure[];
+}
+
 export interface MovieCreateManyResponse {
   /** @format int32 */
   created: number;
@@ -673,7 +694,7 @@ type tmdbController = {
         };
         data: TmdbImportRequest;
       },
-      MovieCreateManyResponse,
+      TmdbImportResponse,
     ];
   };
 

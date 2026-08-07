@@ -16,9 +16,15 @@ interface HeaderProps {
 export const Header: FC<HeaderProps> = ({items, title}) => {
   const location = useLocation();
   const preparedItems = useMemo(() => {
-    return items.map(it => {
-      return {...it, active: location.pathname?.includes(it.href)};
-    });
+    const pathname = location.pathname ?? '';
+    const activeHref = items
+      .filter(({href}) => pathname === href || pathname.startsWith(`${href}/`))
+      .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+
+    return items.map(it => ({
+      ...it,
+      active: it.href === activeHref,
+    }));
   }, [items, location.pathname]);
 
   return (
