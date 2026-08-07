@@ -15,13 +15,7 @@ export const TMDB_DISCOVER_COLUMNS: ColDef<ITmdbDiscoverListItem>[] = [
         return null;
       }
 
-      return (
-        <img
-          src={params.data.poster_path}
-          alt={params.data.title}
-          style={{height: 60, objectFit: 'cover'}}
-        />
-      );
+      return <img src={params.data.poster_path} alt={params.data.title} style={{height: 60, objectFit: 'cover'}} />;
     },
   },
   {
