@@ -1,0 +1,29 @@
+.root {
+  height: 100%;
+
+  .GridWithControls {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .TopBar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .MoviesGrid {
+      height: 100%;
+    }
+  }
+}
+
+.PaginationContainer {
+  display: flex;
+  align-items: center;
+
+  .LoaderHidden {
+    visibility: hidden;
+  }
+}

@@ -168,6 +168,16 @@ export interface UpdateProgressResponse {
   maxRate: number;
 }
 
+export interface TmdbImportItem {
+  /** @format int32 */
+  tmdb_id: number;
+  type: 'movie' | 'tv';
+}
+
+export interface TmdbImportRequest {
+  items: TmdbImportItem[];
+}
+
 export interface MovieCreateManyResponse {
   /** @format int32 */
   created: number;
@@ -273,6 +283,33 @@ export interface UserProgress {
   rate: number;
   /** @format date-time */
   date?: string;
+}
+
+export interface TmdbDiscoverItem {
+  /** @format int32 */
+  tmdb_id: number;
+  type: 'movie' | 'tv';
+  title: string;
+  original_title: string;
+  overview?: string;
+  /** @format double */
+  popularity: number;
+  release_date?: string;
+  end_date?: string;
+  genre_ids: number[];
+  countries: string[];
+  poster_path?: string;
+  imdb_id?: string;
+}
+
+export interface TmdbDiscoverResponse {
+  /** @format int32 */
+  page: number;
+  /** @format int32 */
+  total_pages: number;
+  /** @format int32 */
+  total_results: number;
+  results: TmdbDiscoverItem[];
 }
 
 export interface Image {
@@ -424,6 +461,7 @@ export type ApiControllers = moviesController &
   levelsController &
   countriesController &
   userProgressController &
+  tmdbController &
   authController &
   questionsController &
   genresController;
@@ -622,6 +660,43 @@ type userProgressController = {
         data: UpdateProgressRequest;
       },
       UpdateProgressResponse,
+    ];
+  };
+};
+type tmdbController = {
+  '/movies-api/v2/tmdb/import': {
+    post: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: TmdbImportRequest;
+      },
+      MovieCreateManyResponse,
+    ];
+  };
+
+  '/movies-api/v2/tmdb/discover': {
+    get: [
+      {
+        query: {
+          type: 'movie' | 'tv';
+          /** @format double */
+          popularity?: number;
+          genres?: number[];
+          date_from?: string;
+          date_to?: string;
+          countries?: string[];
+          /** @format int32 */
+          page?: number;
+        };
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      TmdbDiscoverResponse,
     ];
   };
 };
