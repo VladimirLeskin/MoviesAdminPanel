@@ -10,7 +10,7 @@ import {Header} from './components/Header/Header';
 import {ROUTES} from './constants';
 import {AuthModel} from './models/AuthModel';
 import {LoginForm} from './components/LoginForm/LoginForm';
-import {EUserRoles} from './api/Auth';
+import {EUserPermissions, EUserRoles} from './api/Auth';
 
 import 'react-toastify/dist/ReactToastify.css';
 import css from './App.module.scss';
@@ -25,19 +25,27 @@ const MoviesTmdbImportPage = React.lazy(() =>
 const CountriesListPage = React.lazy(() =>
   import('./pages/CountriesListPage').then(m => ({default: m.CountriesListPage}))
 );
-
-const HEADER_ITEMS = [
-  {title: 'Фильмы', href: ROUTES.MOVIES.LIST},
-  {title: 'Заполнение БД', href: ROUTES.MOVIES.TMDB_IMPORT},
-  {title: 'Уровни', href: ROUTES.LEVELS.LIST},
-  {title: 'Страны', href: ROUTES.COUNTRIES.LIST},
-];
-
-const authModel = new AuthModel();
+const UsersListPage = React.lazy(() => import('./pages/UsersListPage').then(m => ({default: m.UsersListPage})));
+const RolesListPage = React.lazy(() => import('./pages/RolesListPage').then(m => ({default: m.RolesListPage})));
 
 const ADMIN_ROLES = [EUserRoles.admin, EUserRoles.operator];
 
+const authModel = new AuthModel();
+
 export const App: FC = observer(() => {
+  const headerItems = [
+    {title: 'Фильмы', href: ROUTES.MOVIES.LIST},
+    {title: 'Заполнение БД', href: ROUTES.MOVIES.TMDB_IMPORT},
+    {title: 'Уровни', href: ROUTES.LEVELS.LIST},
+    {title: 'Страны', href: ROUTES.COUNTRIES.LIST},
+    ...(authModel.hasPermission(EUserPermissions.editRoles)
+      ? [
+          {title: 'Пользователи', href: ROUTES.USERS.LIST},
+          {title: 'Роли', href: ROUTES.ROLES.LIST},
+        ]
+      : []),
+  ];
+
   if (!authModel.login && authModel.isLoading) {
     return <>Загрузка...</>;
   } else if (!authModel.login) {
@@ -52,7 +60,7 @@ export const App: FC = observer(() => {
       </div>
       <BrowserRouter basename={`/${process.env.ROUTER_BASENAME}`}>
         <QueryParamProvider adapter={ReactRouter6Adapter} options={{}}>
-          <Header title="админка" items={HEADER_ITEMS} />
+          <Header title="админка" items={headerItems} />
           <div className={css.Content}>
             <Suspense fallback={<>Загрузка...</>}>
               <Routes>
@@ -64,6 +72,12 @@ export const App: FC = observer(() => {
                 <Route path={ROUTES.MOVIES.LIST} element={<MoviesListPage />} />
                 <Route path={ROUTES.MOVIES.TMDB_IMPORT} element={<MoviesTmdbImportPage />} />
                 <Route path={ROUTES.COUNTRIES.LIST} element={<CountriesListPage />} />
+                {authModel.hasPermission(EUserPermissions.editRoles) && (
+                  <>
+                    <Route path={ROUTES.USERS.LIST} element={<UsersListPage />} />
+                    <Route path={ROUTES.ROLES.LIST} element={<RolesListPage />} />
+                  </>
+                )}
               </Routes>
             </Suspense>
           </div>

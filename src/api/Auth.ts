@@ -7,6 +7,10 @@ export enum EUserRoles {
   operator = 'operator',
 }
 
+export enum EUserPermissions {
+  editRoles = 'editRoles',
+}
+
 export interface ITokens {
   access: IToken;
   refresh: IToken;

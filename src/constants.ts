@@ -13,4 +13,10 @@ export const ROUTES = {
   COUNTRIES: {
     LIST: '/countries',
   },
+  USERS: {
+    LIST: '/users',
+  },
+  ROLES: {
+    LIST: '/roles',
+  },
 };

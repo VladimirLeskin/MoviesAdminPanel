@@ -5,7 +5,13 @@
   gap: 8px;
 
   &.MultiValue {
-    min-width: 200px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    :global(.MuiAutocomplete-inputRoot) {
+      flex-wrap: wrap;
+    }
   }
 
   .inputRoot {

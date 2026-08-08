@@ -9,6 +9,36 @@
  * ---------------------------------------------------------------
  */
 
+export interface SetUserRolesRequest {
+  roles: string[];
+}
+
+export interface UserListItem {
+  /** @format int32 */
+  id: number;
+  login?: string;
+  firstname?: string;
+  lastname?: string;
+  assignedRoles: string[];
+}
+
+export interface UpdateRoleRequest {
+  permissions: string[];
+  childRoles: string[];
+}
+
+export interface RoleListItem {
+  name: string;
+  description?: string;
+  permissions: string[];
+  childRoles: string[];
+  effectivePermissions: string[];
+}
+
+export interface SetRolePermissionsRequest {
+  permissions: string[];
+}
+
 export interface Description {
   lang: string;
   title: string;
@@ -146,6 +176,10 @@ export interface Country {
 export interface CountryName {
   lang: string;
   name: string;
+}
+
+export interface AssignRoleRequest {
+  role: string;
 }
 
 export interface UpdateProgressRequest {
@@ -295,6 +329,12 @@ export interface VkUserInfo {
   lastname: string;
 }
 
+export interface ListResponseUserListItem {
+  /** @format int32 */
+  total: number;
+  items: UserListItem[];
+}
+
 export interface UserProgress {
   /** @format int32 */
   levelId: number;
@@ -331,6 +371,23 @@ export interface TmdbDiscoverResponse {
   /** @format int32 */
   total_results: number;
   results: TmdbDiscoverItem[];
+}
+
+export interface ListResponseRoleListItem {
+  /** @format int32 */
+  total: number;
+  items: RoleListItem[];
+}
+
+export interface ListResponsePermissionListItem {
+  /** @format int32 */
+  total: number;
+  items: PermissionListItem[];
+}
+
+export interface PermissionListItem {
+  name: string;
+  description?: string;
 }
 
 export interface Image {
@@ -478,15 +535,126 @@ export class HttpClient {
   };
 }
 
-export type ApiControllers = moviesController &
+export type ApiControllers = usersController &
+  rolesController &
+  moviesController &
   levelsController &
   countriesController &
   userProgressController &
   tmdbController &
   authController &
   questionsController &
+  permissionsController &
   genresController;
 
+type usersController = {
+  '/movies-api/v2/users/{id}/roles': {
+    put: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: SetUserRolesRequest;
+      },
+      UserListItem,
+    ];
+    post: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: AssignRoleRequest;
+      },
+      UserListItem,
+    ];
+  };
+
+  '/movies-api/v2/users': {
+    get: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      ListResponseUserListItem,
+    ];
+  };
+
+  '/movies-api/v2/users/{id}': {
+    get: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      UserListItem,
+    ];
+  };
+
+  '/movies-api/v2/users/{id}/roles/{roleName}': {
+    delete: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      UserListItem,
+    ];
+  };
+};
+type rolesController = {
+  '/movies-api/v2/roles/{name}': {
+    get: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      RoleListItem,
+    ];
+    put: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: UpdateRoleRequest;
+      },
+      RoleListItem,
+    ];
+  };
+
+  '/movies-api/v2/roles/{name}/permissions': {
+    put: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+        data: SetRolePermissionsRequest;
+      },
+      RoleListItem,
+    ];
+  };
+
+  '/movies-api/v2/roles': {
+    get: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      ListResponseRoleListItem,
+    ];
+  };
+};
 type moviesController = {
   '/movies-api/v2/movies/{id}': {
     get: [
@@ -828,6 +996,19 @@ type questionsController = {
         };
       },
       Question[],
+    ];
+  };
+};
+type permissionsController = {
+  '/movies-api/v2/permissions': {
+    get: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      ListResponsePermissionListItem,
     ];
   };
 };
