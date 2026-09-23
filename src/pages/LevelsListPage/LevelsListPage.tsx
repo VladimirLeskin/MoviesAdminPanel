@@ -1,6 +1,6 @@
 import React, {FC, useCallback, useEffect, useMemo, useState} from 'react';
 import {observer} from 'mobx-react';
-import {Button, CircularProgress, Drawer, IconButton, Switch} from '@mui/material';
+import {Button, CircularProgress, Drawer, IconButton, Switch, useMediaQuery} from '@mui/material';
 import {Close, Delete} from '@mui/icons-material';
 import {toast} from 'react-toastify';
 import {Link} from 'react-router-dom';
@@ -18,6 +18,7 @@ import {Pagination} from '../../components/Pagination/Pagination';
 import {ILevelListItemDto} from './types';
 import {authModel} from '../../models/AuthModel';
 import {EUserPermissions} from '../../api/Auth';
+import {drawerPaperWidth} from '../../styles/drawer';
 
 import css from './LevelsListPage.module.scss';
 
@@ -41,6 +42,7 @@ export const LevelsListPage: FC = observer(() => {
   );
 
   const canDeleteLevel = authModel.hasPermission(EUserPermissions.deleteLevel);
+  const isMobile = useMediaQuery('(max-width:768px)');
 
   const onLevelDeleted = useCallback(() => {
     setShowLevelDetails(false);
@@ -140,7 +142,13 @@ export const LevelsListPage: FC = observer(() => {
         />
         {paginationContainer}
       </div>
-      <Drawer open={showLevelDetails} anchor="left" variant="persistent">
+      <Drawer
+        open={showLevelDetails}
+        anchor="left"
+        variant={isMobile ? 'temporary' : 'persistent'}
+        onClose={toggleLevelDetails}
+        PaperProps={{sx: drawerPaperWidth(640)}}
+      >
         <div className={css.LevelDetails}>
           <IconButton onClick={toggleLevelDetails} className={css.CloseBtn}>
             <Close />

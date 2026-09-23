@@ -2,7 +2,9 @@
   .Control {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 16px;
+    max-width: 100%;
 
     .AttachInput {
       flex-shrink: 0;

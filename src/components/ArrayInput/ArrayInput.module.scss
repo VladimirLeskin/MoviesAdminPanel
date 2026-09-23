@@ -3,8 +3,12 @@
   align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 8px;
+  min-width: 0;
+  max-width: 100%;
 
   .ArrayInputItemRenderer {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
+    width: auto;
   }
 }

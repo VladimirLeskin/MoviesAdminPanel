@@ -58,7 +58,10 @@ export const ImagesCellRenderer: FC<Props> = ({movie, onSelectImage}) => {
       >
         <div className={css.PreviewModalContent}>
           <div>
-            <Image src={previewImg?.path} style={{maxWidth: 700, maxHeight: 500}} />
+            <Image
+              src={previewImg?.path}
+              style={{maxWidth: 'min(700px, calc(100vw - 48px))', maxHeight: '70vh', height: 'auto'}}
+            />
             <Button
               variant="contained"
               color="primary"

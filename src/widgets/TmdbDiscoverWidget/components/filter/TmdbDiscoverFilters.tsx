@@ -98,7 +98,7 @@ export const TmdbDiscoverFilters = observer(({filters, onChange}: Props) => {
           <Stack className={css.drawerContent}>
             <Typography variant="h5">Фильтры TMDB</Typography>
             <ItemEditor fields={schema.value} onChange={setValues} value={values} isControlled />
-            <Stack flexDirection="row" gap={2}>
+            <Stack flexDirection="row" flexWrap="wrap" gap={2}>
               <Button variant="contained" onClick={handleSave}>
                 Применить
               </Button>

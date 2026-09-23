@@ -3,6 +3,8 @@ import {observer} from 'mobx-react';
 import {ColDef} from 'ag-grid-community';
 import {Drawer, Stack} from '@mui/material';
 
+import {drawerPaperWidth} from '../../styles/drawer';
+
 import {AgGrid} from '../../components/AgGrid/AgGrid';
 import {ROLES} from '../../models/RolesModel';
 import {RoleListItem} from '../../api/Api';
@@ -51,14 +53,14 @@ export const RolesListPage = observer(() => {
   );
 
   return (
-    <Stack height="100%" direction="column">
+    <Stack height="100%" direction="column" sx={{minWidth: 0, maxWidth: '100%'}}>
       <AgGrid rowData={rows} columnDefs={columns} onShowDetails={handleRoleSelect} />
       <Drawer
         open={drawerVisible}
         anchor="right"
         variant="temporary"
         onClose={toggleDrawer}
-        PaperProps={{sx: {width: 420, maxWidth: '90vw'}}}
+        PaperProps={{sx: drawerPaperWidth(420)}}
       >
         <RoleEditWidget roleName={selectedName} onSaved={invalidate} />
       </Drawer>

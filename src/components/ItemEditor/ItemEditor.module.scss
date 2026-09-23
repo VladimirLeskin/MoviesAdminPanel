@@ -1,3 +1,14 @@
 .Layout {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
+  @media (max-width: 768px) {
+    :global(.MuiTextField-root),
+    :global(.MuiAutocomplete-root),
+    :global(.MuiFormControl-root) {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
 }

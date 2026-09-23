@@ -1,3 +1,27 @@
+.root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+
+  @media (max-width: 600px) {
+    :global(.MuiTablePagination-toolbar) {
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      min-height: 44px;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    :global(.MuiTablePagination-selectLabel) {
+      display: none;
+    }
+
+    :global(.MuiTablePagination-displayedRows) {
+      margin: 0 8px;
+    }
+  }
+}
+
 .spacer {
   display: none;
 }

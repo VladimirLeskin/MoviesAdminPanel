@@ -3,6 +3,8 @@ import {IconButton, TextField} from '@mui/material';
 import {Filters} from './Filters';
 import {Search} from '@mui/icons-material';
 
+import css from './Filters.module.scss';
+
 export interface IMovieFilter {
   search?: string;
   tvSeries?: boolean;
@@ -50,7 +52,7 @@ export const MoviesListFilter: FC<MoviesFilterProps> = ({onChange, values = EMPT
   );
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className={css.searchForm}>
       <TextField
         size="small"
         value={filterState.search ?? ''}
