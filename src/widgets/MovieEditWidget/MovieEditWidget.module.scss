@@ -2,6 +2,8 @@
   display: flex;
   position: relative;
   flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
 
   .SaveButton {
     position: sticky;
@@ -13,9 +15,19 @@
     position: sticky;
     bottom: 0;
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
     padding: 16px;
     width: 100%;
     z-index: 1;
+
+    @media (max-width: 768px) {
+      gap: 8px;
+      padding: 12px;
+
+      :global(.MuiButton-root) {
+        flex: 1 1 160px;
+      }
+    }
   }
 }

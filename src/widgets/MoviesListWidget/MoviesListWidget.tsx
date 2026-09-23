@@ -19,6 +19,7 @@ import {MoviesListWidgetParams} from './types';
 
 import css from './MoviesListWidget.module.scss';
 import {useGridSelection} from '../../hooks/useGridSelection';
+import {sizeColumnsToFitOnDesktop} from '../../components/AgGrid/sizeColumnsToFitOnDesktop';
 
 interface Props {
   prepareColumns?: (columns: ColDef<IMovieListItem>[]) => ColDef<IMovieListItem>[];
@@ -98,5 +99,5 @@ export const MoviesListWidget: FC<Props> = observer(
 );
 
 function onGridReady(event: GridReadyEvent) {
-  event.api.sizeColumnsToFit();
+  sizeColumnsToFitOnDesktop(event);
 }

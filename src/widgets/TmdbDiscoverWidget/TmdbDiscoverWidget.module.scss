@@ -1,20 +1,43 @@
 .root {
   height: 100%;
+  min-width: 0;
+  max-width: 100%;
 
   .GridWithControls {
     height: 100%;
+    min-width: 0;
     display: flex;
     flex-direction: column;
 
     .TopBar {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
       gap: 8px;
+      min-width: 0;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    .TopBar + .PaginationContainer {
+      @media (max-width: 768px) {
+        display: none;
+      }
     }
 
     .MoviesGrid {
       height: 100%;
+      min-width: 0;
+      width: 100%;
+
+      @media (max-width: 768px) {
+        flex: 1 1 auto;
+        min-height: 280px;
+      }
     }
   }
 }
@@ -22,6 +45,8 @@
 .PaginationContainer {
   display: flex;
   align-items: center;
+  min-width: 0;
+  max-width: 100%;
 
   .LoaderHidden {
     visibility: hidden;

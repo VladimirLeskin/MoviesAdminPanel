@@ -3,6 +3,8 @@ import {observer} from 'mobx-react';
 import {ColDef} from 'ag-grid-community';
 import {Drawer, Stack} from '@mui/material';
 
+import {drawerPaperWidth} from '../../styles/drawer';
+
 import {AgGrid} from '../../components/AgGrid/AgGrid';
 import {USERS} from '../../models/UsersModel';
 import {UserListItem} from '../../api/Api';
@@ -39,9 +41,15 @@ export const UsersListPage = observer(() => {
   );
 
   return (
-    <Stack height="100%" direction="column">
+    <Stack height="100%" direction="column" sx={{minWidth: 0, maxWidth: '100%'}}>
       <AgGrid rowData={rows} columnDefs={columns} onShowDetails={handleUserSelect} />
-      <Drawer open={drawerVisible} anchor="right" variant="temporary" onClose={toggleDrawer}>
+      <Drawer
+        open={drawerVisible}
+        anchor="right"
+        variant="temporary"
+        onClose={toggleDrawer}
+        PaperProps={{sx: drawerPaperWidth(420)}}
+      >
         <UserEditWidget userId={selectedId} onSaved={invalidate} />
       </Drawer>
     </Stack>

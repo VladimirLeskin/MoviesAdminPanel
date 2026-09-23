@@ -12,9 +12,18 @@
 .topBar {
   flex: 1;
   min-width: 0;
+
+  @media (max-width: 768px) {
+    flex: none;
+    width: 100%;
+  }
 }
 
 .queryField {
   flex: 1;
   max-width: 360px;
+
+  @media (max-width: 768px) {
+    max-width: none;
+  }
 }

@@ -24,7 +24,7 @@ export const CountryEditWidget = observer(({code, onSaved}: Props) => {
   }, [onSaved, save]);
 
   return (
-    <div style={{height: '100%'}} key={revision}>
+    <div style={{height: '100%', padding: 16, width: '100%', boxSizing: 'border-box', overflow: 'auto'}} key={revision}>
       <ItemEditor fields={schema} defaultValue={data} onChange={editData} />
       <Fab onClick={handleSave} variant="extended" color="primary" disabled={isLoading}>
         <Stack direction="row" display="inline-flex" gap={1}>

@@ -2,14 +2,24 @@
   padding: 20px;
   display: flex;
   max-width: 800px;
+  width: 100%;
+  box-sizing: border-box;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 8px;
+  }
 
   .Actions {
     position: sticky;
     bottom: 16px;
     align-self: flex-end;
     display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     gap: 12px;
+    max-width: 100%;
   }
 
   .SaveButton,

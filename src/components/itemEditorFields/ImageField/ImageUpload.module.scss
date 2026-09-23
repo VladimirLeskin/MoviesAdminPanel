@@ -1,12 +1,16 @@
 .root {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
+  max-width: 100%;
 }
 
 .images {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 6px;
+  max-width: 100%;
 }
 
 .transferButton {

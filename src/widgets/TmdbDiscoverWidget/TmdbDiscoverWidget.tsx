@@ -17,6 +17,7 @@ import {useParams} from '../MoviesListWidget/hooks/useParams';
 import {useGridSort} from '../MoviesListWidget/hooks/useGridSort';
 
 import css from './TmdbDiscoverWidget.module.scss';
+import {sizeColumnsToFitOnDesktop} from '../../components/AgGrid/sizeColumnsToFitOnDesktop';
 
 interface Props {
   params?: TmdbDiscoverWidgetParams;
@@ -87,5 +88,5 @@ export const TmdbDiscoverWidget: FC<Props> = observer(({revision, actions, param
 });
 
 function onGridReady(event: GridReadyEvent) {
-  event.api.sizeColumnsToFit();
+  sizeColumnsToFitOnDesktop(event);
 }

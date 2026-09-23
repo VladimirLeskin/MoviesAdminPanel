@@ -3,6 +3,8 @@ import {observer} from 'mobx-react';
 import {ColDef} from 'ag-grid-community';
 import {Button, Drawer, Stack} from '@mui/material';
 
+import {drawerPaperWidth} from '../../styles/drawer';
+
 import {AgGrid} from '../../components/AgGrid/AgGrid';
 import {COUNTRIES} from '../../models/CountriesModel';
 import {ICountryListItemDto} from '../../api/dto/ICountryDto';
@@ -35,12 +37,18 @@ export const CountriesListPage = observer(() => {
     [setDrawerState]
   );
   return (
-    <Stack height="100%" direction="column">
+    <Stack height="100%" direction="column" sx={{minWidth: 0, maxWidth: '100%'}}>
       <Button onClick={handleAdd} variant="contained" fullWidth>
         Добавить
       </Button>
       <AgGrid rowData={rows} columnDefs={columns} onShowDetails={handleCountrySelect} />
-      <Drawer open={drawerVisible} anchor="right" variant="temporary" onClose={toggleDrawer}>
+      <Drawer
+        open={drawerVisible}
+        anchor="right"
+        variant="temporary"
+        onClose={toggleDrawer}
+        PaperProps={{sx: drawerPaperWidth(420)}}
+      >
         <CountryEditWidget code={selectedId} onSaved={invalidate} />
       </Drawer>
     </Stack>

@@ -7,6 +7,7 @@ import {useBooleanState} from 'src/hooks/useBooleanState';
 import {MoviePicker} from 'src/widgets/MoviesPicker/MoviePicker';
 import {IMovieListItem} from 'src/api/dto/MovieDto';
 import {Image} from 'src/components/Image';
+import {drawerPaperWidth} from 'src/styles/drawer';
 
 import css from './QuestionEdit.module.scss';
 
@@ -91,12 +92,24 @@ export const QuestionEdit: FC<QuestionEditProps> = ({value = defaultQuestion, on
           Добавить вариант
         </Button>
       </div>
-      <Drawer open={imagesPickerOpened} anchor="right" variant="temporary" onClose={toggleImagesPicker}>
+      <Drawer
+        open={imagesPickerOpened}
+        anchor="right"
+        variant="temporary"
+        onClose={toggleImagesPicker}
+        PaperProps={{sx: drawerPaperWidth(800)}}
+      >
         <div className={css.moviePicker}>
           <MoviePicker onSelectImage={onSelectImage} />
         </div>
       </Drawer>
-      <Drawer open={moviesPickerOpened} anchor="right" variant="temporary" onClose={toggleMoviesPicker}>
+      <Drawer
+        open={moviesPickerOpened}
+        anchor="right"
+        variant="temporary"
+        onClose={toggleMoviesPicker}
+        PaperProps={{sx: drawerPaperWidth(800)}}
+      >
         <div className={css.moviePicker}>
           <MoviePicker onSelectMovie={onAddVariant} />
         </div>
