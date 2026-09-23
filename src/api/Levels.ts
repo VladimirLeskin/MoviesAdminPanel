@@ -35,4 +35,11 @@ export class LevelsApi extends TypesafeBaseApi {
       query: {active},
     });
   }
+
+  public static deleteLevel(levelId: number) {
+    return this.transport.delete('/movies-api/v2/levels/{id}', {
+      headers: {Authorization: `Bearer ${ACCESS_TOKEN_STORAGE.getData()?.token}`},
+      route: {id: levelId.toString()},
+    });
+  }
 }

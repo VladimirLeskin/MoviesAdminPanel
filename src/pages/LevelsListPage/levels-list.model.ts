@@ -1,11 +1,13 @@
 import {IApiEndPoints, ItemsListModel} from '../../models/ItemsListModel';
-import {makeObservable} from 'mobx';
+import {makeObservable, observable, runInAction} from 'mobx';
 import {LevelsApi} from '../../api/Levels';
 import {ILevelListItemDto} from './types';
 
 type TLevelsFilter = undefined;
 
 export class LevelsListModel extends ItemsListModel<ILevelListItemDto, TLevelsFilter> {
+  public deletingIds: number[] = [];
+
   protected apiEndPoints: IApiEndPoints<ILevelListItemDto, TLevelsFilter> = {
     load: v =>
       LevelsApi.getLevels({page: 0, pageSize: 50, ...v?.pagination}).then(response => ({
@@ -29,12 +31,32 @@ export class LevelsListModel extends ItemsListModel<ILevelListItemDto, TLevelsFi
           }),
         },
       })),
-    delete: () => Promise.reject(new Error('not implemented')),
+    delete: id => LevelsApi.deleteLevel(id).then(() => true),
   };
 
   constructor() {
     super();
-    makeObservable(this, LevelsListModel.getMobxBaseAnnotations());
+    makeObservable(this, {
+      ...LevelsListModel.getMobxBaseAnnotations(),
+      deletingIds: observable,
+    });
+  }
+
+  public override async deleteItem(id: number) {
+    if (this.deletingIds.includes(id)) {
+      return false;
+    }
+
+    runInAction(() => {
+      this.deletingIds = [...this.deletingIds, id];
+    });
+    try {
+      return await super.deleteItem(id);
+    } finally {
+      runInAction(() => {
+        this.deletingIds = this.deletingIds.filter(itemId => itemId !== id);
+      });
+    }
   }
 
   public onPublish(id: number, publish: boolean) {

@@ -1,4 +1,4 @@
-import {makeObservable} from 'mobx';
+import {action, makeObservable, observable, runInAction} from 'mobx';
 import {IEditedLevelInfo} from './types';
 import {EntityEditorModel} from '../../models/EntityEditorModel';
 import {LevelsApi} from '../../api/Levels';
@@ -14,10 +14,16 @@ const emptyLevel: IEditedLevelInfo = {
 };
 
 export class LevelEditWidgetModel extends EntityEditorModel<IEditedLevelInfo> {
+  public isDeleting = false;
+
   constructor() {
     super();
     this.data = emptyLevel;
-    makeObservable(this, LevelEditWidgetModel.getMobxBaseAnnotations());
+    makeObservable(this, {
+      ...LevelEditWidgetModel.getMobxBaseAnnotations(),
+      isDeleting: observable,
+      deleteLevel: action.bound,
+    });
   }
 
   protected async getDataRequestPromise(id: number | undefined): Promise<IEditedLevelInfo> {
@@ -46,6 +52,23 @@ export class LevelEditWidgetModel extends EntityEditorModel<IEditedLevelInfo> {
       }
     }
     return errors;
+  }
+
+  public async deleteLevel() {
+    const id = this.data?.id;
+    if (!id || this.isDeleting || this.isLoading) {
+      return false;
+    }
+
+    this.isDeleting = true;
+    try {
+      await LevelsApi.deleteLevel(id);
+      return true;
+    } finally {
+      runInAction(() => {
+        this.isDeleting = false;
+      });
+    }
   }
 
   protected async getDataSaveRequestPromise(data: IEditedLevelInfo): Promise<IEditedLevelInfo> {

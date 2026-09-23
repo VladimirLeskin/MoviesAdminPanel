@@ -46,3 +46,5 @@ export class AuthModel {
     return Object.values(EUserRoles).includes(value as EUserRoles);
   }
 }
+
+export const authModel = new AuthModel();
