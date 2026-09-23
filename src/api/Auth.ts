@@ -9,6 +9,7 @@ export enum EUserRoles {
 
 export enum EUserPermissions {
   editRoles = 'editRoles',
+  deleteLevel = 'deleteLevel',
 }
 
 export interface ITokens {

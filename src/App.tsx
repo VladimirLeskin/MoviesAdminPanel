@@ -8,7 +8,7 @@ import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
 
 import {Header} from './components/Header/Header';
 import {ROUTES} from './constants';
-import {AuthModel} from './models/AuthModel';
+import {authModel} from './models/AuthModel';
 import {LoginForm} from './components/LoginForm/LoginForm';
 import {EUserPermissions, EUserRoles} from './api/Auth';
 
@@ -29,8 +29,6 @@ const UsersListPage = React.lazy(() => import('./pages/UsersListPage').then(m =>
 const RolesListPage = React.lazy(() => import('./pages/RolesListPage').then(m => ({default: m.RolesListPage})));
 
 const ADMIN_ROLES = [EUserRoles.admin, EUserRoles.operator];
-
-const authModel = new AuthModel();
 
 export const App: FC = observer(() => {
   const headerItems = [

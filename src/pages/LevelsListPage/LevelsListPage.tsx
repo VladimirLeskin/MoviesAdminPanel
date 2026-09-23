@@ -1,7 +1,8 @@
 import React, {FC, useCallback, useEffect, useMemo, useState} from 'react';
 import {observer} from 'mobx-react';
-import {Button, Drawer, IconButton, Switch} from '@mui/material';
-import {Close} from '@mui/icons-material';
+import {Button, CircularProgress, Drawer, IconButton, Switch} from '@mui/material';
+import {Close, Delete} from '@mui/icons-material';
+import {toast} from 'react-toastify';
 import {Link} from 'react-router-dom';
 import {CustomCellRendererProps} from 'ag-grid-react';
 
@@ -15,6 +16,8 @@ import {ROUTES} from 'src/constants';
 import {Spinner} from '../../components/Spinner/Spinner';
 import {Pagination} from '../../components/Pagination/Pagination';
 import {ILevelListItemDto} from './types';
+import {authModel} from '../../models/AuthModel';
+import {EUserPermissions} from '../../api/Auth';
 
 import css from './LevelsListPage.module.scss';
 
@@ -37,8 +40,16 @@ export const LevelsListPage: FC = observer(() => {
     [selectedLevelId, setShowLevelDetails, toggleLevelDetails]
   );
 
+  const canDeleteLevel = authModel.hasPermission(EUserPermissions.deleteLevel);
+
+  const onLevelDeleted = useCallback(() => {
+    setShowLevelDetails(false);
+    setSelectedLevelId(undefined);
+    model.reload();
+  }, [model, setShowLevelDetails]);
+
   const columns = useMemo(() => {
-    return LEVELS_LIST_COLUMNS.concat({
+    const nextColumns = LEVELS_LIST_COLUMNS.concat({
       colId: 'active',
       headerName: 'Опубл.',
       field: 'active',
@@ -56,7 +67,49 @@ export const LevelsListPage: FC = observer(() => {
         return null;
       },
     });
-  }, [model]);
+
+    if (canDeleteLevel) {
+      nextColumns.push({
+        colId: 'delete',
+        headerName: '',
+        width: 56,
+        sortable: false,
+        resizable: false,
+        cellClass: css.CellWithoutPaddings,
+        cellRenderer: observer(({data}: CustomCellRendererProps<ILevelListItemDto>) => {
+          if (!data) {
+            return null;
+          }
+          const isDeleting = model.deletingIds.includes(data.id);
+          const onDelete = () => {
+            if (isDeleting) {
+              return;
+            }
+            if (!confirm(`Удалить уровень${data.title ? ` «${data.title}»` : ''}?`)) {
+              return;
+            }
+            model.deleteItem(data.id).then(deleted => {
+              if (!deleted) {
+                return;
+              }
+              toast.success('Уровень удалён');
+              if (selectedLevelId === data.id) {
+                setShowLevelDetails(false);
+                setSelectedLevelId(undefined);
+              }
+            });
+          };
+          return (
+            <IconButton onClick={onDelete} size="small" color="error" title="Удалить" disabled={isDeleting}>
+              {isDeleting ? <CircularProgress size={18} color="inherit" /> : <Delete fontSize="small" />}
+            </IconButton>
+          );
+        }),
+      });
+    }
+
+    return nextColumns;
+  }, [canDeleteLevel, model, selectedLevelId, setShowLevelDetails]);
 
   useEffect(() => {
     init();
@@ -92,7 +145,7 @@ export const LevelsListPage: FC = observer(() => {
           <IconButton onClick={toggleLevelDetails} className={css.CloseBtn}>
             <Close />
           </IconButton>
-          <LevelEditWidget levelId={selectedLevelId} />
+          <LevelEditWidget levelId={selectedLevelId} onDeleted={onLevelDeleted} />
         </div>
       </Drawer>
     </>

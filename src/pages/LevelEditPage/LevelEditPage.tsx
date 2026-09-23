@@ -15,5 +15,10 @@ export const LevelEditPage: FC = () => {
     },
     [navigate, params.levelId]
   );
-  return <LevelEditWidget levelId={params.levelId ? +params.levelId : undefined} onSaved={onSaved} />;
+  const onDeleted = useCallback(() => {
+    navigate(ROUTES.LEVELS.LIST);
+  }, [navigate]);
+  return (
+    <LevelEditWidget levelId={params.levelId ? +params.levelId : undefined} onSaved={onSaved} onDeleted={onDeleted} />
+  );
 };

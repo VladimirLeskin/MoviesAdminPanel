@@ -51,7 +51,7 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
     const currentRequestId = Symbol();
     this.lastRequestId = currentRequestId;
     this.isLoading = true;
-    this.apiEndPoints
+    return this.apiEndPoints
       .load(payload)
       .then(resp => {
         if (currentRequestId === this.lastRequestId) {
@@ -62,9 +62,11 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
         }
       })
       .finally(() => {
-        runInAction(() => {
-          this.isLoading = false;
-        });
+        if (currentRequestId === this.lastRequestId) {
+          runInAction(() => {
+            this.isLoading = false;
+          });
+        }
       });
   }
 
@@ -102,7 +104,7 @@ export abstract class ItemsListModel<T extends TBaseItem, Filters> {
   public async deleteItem(value: T['id']) {
     try {
       await this.apiEndPoints.delete(value);
-      this.loadItems(this.lastLoadPayload);
+      await this.loadItems(this.lastLoadPayload);
       return true;
     } catch {
       return false;

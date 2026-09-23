@@ -199,6 +199,10 @@ export interface UpdateProgressResponse {
   /** @format int32 */
   rate: number;
   /** @format int32 */
+  bestScore: number;
+  /** @format int32 */
+  bestRate: number;
+  /** @format int32 */
   maxRate: number;
 }
 
@@ -493,7 +497,7 @@ export class HttpClient {
   private format?: ResponseType;
 
   constructor({format, ...axiosConfig}: ApiConfig = {}) {
-    this.instance = axios.create({...axiosConfig, baseURL: axiosConfig.baseURL || 'http://localhost:8080'});
+    this.instance = axios.create({...axiosConfig, baseURL: axiosConfig.baseURL || 'http://movies-backend:8080'});
     this.format = format;
   }
 
@@ -753,6 +757,15 @@ type levelsController = {
         data: LevelInfoSaveRequest;
       },
       LevelInfo,
+    ];
+    delete: [
+      {
+        headers: {
+          /** Bearer {access_token} */
+          Authorization: string;
+        };
+      },
+      void,
     ];
   };
 
