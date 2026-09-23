@@ -1,5 +1,5 @@
 import React, {FC, useCallback} from 'react';
-import {TablePagination, useMediaQuery} from '@mui/material';
+import {TablePagination} from '@mui/material';
 
 import css from './Pagination.module.scss';
 
@@ -29,7 +29,6 @@ export const Pagination: FC<Props> = props => {
     ...others
   } = props;
   const pageSize = initPageSize ?? pageSizeOptions[0] ?? 0;
-  const isCompact = useMediaQuery('(max-width:600px)');
 
   const onPageChange = useCallback(
     (_: unknown, newPage: number) =>
@@ -52,8 +51,8 @@ export const Pagination: FC<Props> = props => {
     <TablePagination
       component="div"
       classes={css}
-      showFirstButton={!isCompact}
-      showLastButton={!isCompact}
+      showFirstButton
+      showLastButton
       page={page}
       rowsPerPageOptions={pageSizeOptions}
       rowsPerPage={pageSize ?? -1}
