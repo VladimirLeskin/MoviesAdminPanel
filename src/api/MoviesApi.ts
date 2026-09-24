@@ -14,6 +14,7 @@ export class MoviesApi extends TypesafeBaseApi {
     return this.transport.get('/movies-api/v2/movies', {
       query: {
         ...params,
+        search: params.search?.trim() || undefined,
         sort: params.sort?.map(({field, order}) => `${order === 'desc' ? '-' : ''}${field}`),
         sortLang: 'ru',
       },
