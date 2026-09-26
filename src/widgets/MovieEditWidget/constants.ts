@@ -18,6 +18,7 @@ import {withCollapsibleContent} from '../../components/itemEditorFields/modifica
 import {ImageField} from '../../components/itemEditorFields/ImageField/ImageField';
 import {Section2Horizontal} from '../../components/layouts/Section2Horizontal';
 import {ArrayUtils} from '../../utils/ArrayUtils';
+import {ImdbIdField} from './components/ImdbIdField/ImdbIdField';
 
 export const schema = makeAutoObservable({
   get value(): TItemSchema<IEditedMovieInfo> {
@@ -34,7 +35,7 @@ export const schema = makeAutoObservable({
       tv_series: {title: 'Сериал', renderer: BooleanField},
       original_title: {title: 'Оригинальное название', renderer: StringField},
       tmdb_id: {title: 'tmdb_id', renderer: StringField},
-      imdb_id: {title: 'imdb_id', renderer: StringField},
+      imdb_id: {title: 'imdb_id', renderer: ImdbIdField},
       release_date: {title: 'Дата релиза', renderer: DateField},
       end_date: {title: 'Дата окончания', renderer: DateField},
       countries: {

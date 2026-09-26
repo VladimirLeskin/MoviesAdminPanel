@@ -1,0 +1,15 @@
+.root {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  white-space: nowrap;
+}
