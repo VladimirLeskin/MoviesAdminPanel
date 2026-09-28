@@ -17,6 +17,12 @@ remote="${PREVIEW_GIT_REMOTE:-https://github.com/${GITHUB_REPOSITORY:?GITHUB_REP
 
 export GIT_TERMINAL_PROMPT=0
 
+work=$(mktemp -d)
+trap 'rm -rf "$work"' EXIT
+# Вне каталога checkout: у actions/checkout уже есть Authorization, и второй
+# заголовок из этого скрипта даёт 400 и заставляет пересоздать gh-pages.
+cd "$work"
+
 if [[ -n "${GITHUB_TOKEN:-}" ]]; then
   basic_auth=$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)
   export GIT_CONFIG_COUNT=1
@@ -25,10 +31,8 @@ if [[ -n "${GITHUB_TOKEN:-}" ]]; then
   unset basic_auth
 fi
 
-work=$(mktemp -d)
-trap 'rm -rf "$work"' EXIT
-
-if git ls-remote --heads "$remote" gh-pages | grep -q 'refs/heads/gh-pages$'; then
+heads=$(git ls-remote --heads "$remote" gh-pages)
+if grep -q 'refs/heads/gh-pages$' <<<"$heads"; then
   git clone --depth 1 --branch gh-pages "$remote" "$work/site"
 else
   mkdir -p "$work/site"
