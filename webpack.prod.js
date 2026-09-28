@@ -6,11 +6,19 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const staticFilePath = 'static';
 const hashType = '[contenthash:8]';
 
+const resolvePublicPath = () => {
+  const configured = process.env.PUBLIC_PATH;
+  if (!configured) {
+    return '/admin/';
+  }
+  return configured.endsWith('/') ? configured : `${configured}/`;
+};
+
 module.exports = merge(common, {
   mode: 'production',
   output: {
     clean: true,
-    publicPath: `/admin/`,
+    publicPath: resolvePublicPath(),
   },
   optimization: {
     minimize: true,
