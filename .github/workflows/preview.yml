@@ -1,0 +1,105 @@
+name: pr-preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build preview
+        run: npm run build
+        env:
+          PUBLIC_PATH: /${{ github.event.repository.name }}/pr-${{ github.event.pull_request.number }}/
+          ROUTER_BASENAME: ${{ github.event.repository.name }}/pr-${{ github.event.pull_request.number }}
+          API_ORIGIN: https://testing.kinobattle.ru
+          IMAGES_ORIGIN: https://testing.kinobattle.ru
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview
+          path: build
+          if-no-files-found: error
+          retention-days: 5
+
+  deploy:
+    needs: build
+    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      pages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: preview
+          path: build
+
+      - name: Publish GitHub Pages preview
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: .github/scripts/publish-pr-preview.sh deploy "$PR_NUMBER"
+
+      - name: Comment preview URL
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: .github/scripts/comment-pr-preview.sh upsert
+
+      - name: Ensure GitHub Pages is served from gh-pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh api "/repos/${GITHUB_REPOSITORY}/pages" >/dev/null 2>&1; then
+            echo "GitHub Pages already enabled"
+            exit 0
+          fi
+          gh api --method POST "/repos/${GITHUB_REPOSITORY}/pages" \
+            -f "source[branch]=gh-pages" \
+            -f "source[path]=/" ||
+            echo "Не удалось включить GitHub Pages автоматически. В Settings → Pages выберите ветку gh-pages и каталог / (root)."
+
+  cleanup:
+    if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Remove preview
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: .github/scripts/publish-pr-preview.sh remove "$PR_NUMBER"
+
+      - name: Comment preview removal
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: .github/scripts/comment-pr-preview.sh remove

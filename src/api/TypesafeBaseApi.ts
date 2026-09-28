@@ -3,6 +3,7 @@ import {toast} from 'react-toastify';
 import qs from 'query-string';
 import {ApiControllers, HttpClient} from './Api';
 import {getAxiosErrorText} from './stdAxiosErrorHandler';
+import Config from '../entries/Config';
 
 type Method = 'get' | 'delete' | 'post' | 'put' | 'patch' | 'head' | 'options';
 
@@ -49,7 +50,7 @@ type Transport<TController extends Controller> = {
 export class TypesafeBaseApi {
   private static httpClient: HttpClient = new HttpClient({
     format: 'json',
-    baseURL: '/',
+    baseURL: Config.apiOrigin || '/',
     paramsSerializer: params => {
       return qs.stringify(params, {arrayFormat: 'comma'});
     },

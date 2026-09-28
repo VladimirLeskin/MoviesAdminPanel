@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Movies Admin</title>
+    <script>
+      // GitHub Pages не умеет history fallback. Клиентский путь вида
+      // /<repo>/pr-<номер>/movies/1 перенаправляется на index стенда,
+      // а src/index.html возвращает адрес без перезагрузки приложения.
+      (function () {
+        var parts = window.location.pathname.split('/').filter(Boolean);
+        var prIndex = -1;
+        for (var i = 0; i < parts.length; i++) {
+          if (/^pr-\d+$/.test(parts[i])) {
+            prIndex = i;
+            break;
+          }
+        }
+        if (prIndex === -1) {
+          return;
+        }
+
+        var base = '/' + parts.slice(0, prIndex + 1).join('/') + '/';
+        var rest = parts.slice(prIndex + 1).join('/');
+        if (!rest && !window.location.search) {
+          window.location.replace(base);
+          return;
+        }
+
+        var search = window.location.search ? '&' + window.location.search.slice(1).replace(/&/g, '~and~') : '';
+        window.location.replace(base + '?/' + rest.replace(/&/g, '~and~') + search + window.location.hash);
+      })();
+    </script>
+</head>
+<body>
+    Страница стенда не найдена.
+</body>
+</html>

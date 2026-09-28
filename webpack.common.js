@@ -65,6 +65,8 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       'process.env.ROUTER_BASENAME': JSON.stringify(process.env.ROUTER_BASENAME ?? ''),
+      'process.env.API_ORIGIN': JSON.stringify(process.env.API_ORIGIN ?? ''),
+      'process.env.IMAGES_ORIGIN': JSON.stringify(process.env.IMAGES_ORIGIN ?? ''),
     }),
   ],
 };

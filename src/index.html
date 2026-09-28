@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
     <title>Movies Admin</title>
+    <script>
+      // Восстанавливает путь после редиректа GitHub Pages (см. .github/pages/404.html).
+      (function (location) {
+        if (location.search[1] === '/') {
+          var decoded = location.search
+            .slice(1)
+            .split('&')
+            .map(function (part) {
+              return part.replace(/~and~/g, '&');
+            })
+            .join('?');
+          window.history.replaceState(null, '', location.pathname.replace(/\/$/, '') + decoded + location.hash);
+        }
+      })(window.location);
+    </script>
 </head>
 <body style="margin: 0;">
     <div id="root"></div>
